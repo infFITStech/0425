@@ -11,9 +11,6 @@
 
 <script setup>
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
-import { mdiMinus, mdiPlus,mdiViewList } from '@mdi/js'
-import BaseIcon from '@/components/BaseIcon.vue'
-import { ref , computed} from 'vue';
 import SupportQA from '@/components/SupportQA.vue';
 
 const QA=[

@@ -1,5 +1,5 @@
 <template>
-    <div :class="{'hover:bg-gray-100 dark:hover:bg-slate-700':hasDropdown, 'has-dropdown': hasDropdown}" class="ml-2 py-3 w-full cursor-pointer bg-gray-50 dark:bg-slate-800 item" @click="clickDrop">
+    <div :class="{'hover:bg-gray-100 dark:hover:bg-slate-700':hasDropdown, 'has-dropdown': hasDropdown}" class=" py-3 w-full cursor-pointer bg-gray-50 dark:bg-slate-800 item" @click="clickDrop">
         <BaseIcon
         v-if="hasDropdown"
         :path="mdiViewList"
@@ -25,7 +25,7 @@
       />
         
     </div>
-    <div v-if="isDropdownActive" >
+    <div v-if="isDropdownActive" class="pl-2" >
         <SupportQA
         
         v-for="(a, index) in item.menu"
@@ -36,7 +36,7 @@
 
     <hr
     v-if="hasDropdown"
-    :class="'my-0 -mx-6 dark:border-slate-800'"
+    :class="'my-0 dark:border-slate-800'"
     class="border-t border-gray-100"
   />
 
@@ -67,7 +67,7 @@ const props = defineProps({
 
 <style scoped>
 .item:nth-child(odd):not(.has-dropdown) {
-    background-color: #f8f8f8; /* 淺灰色 */
+    background-color: #fdfbfbf3; /* 淺灰色 */
   }
   .item:nth-child(even):not(.has-dropdown) {
     background-color: #ffffff; /* 白色 */

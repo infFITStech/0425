@@ -1,13 +1,12 @@
 <script setup>
-import { reactive, ref,markRaw} from 'vue'
-import { useMainStore } from '@/stores/main'
-import { mdiAccount, mdiMail, mdiAsterisk, mdiFormTextboxPassword } from '@mdi/js'
+import { ref,markRaw} from 'vue'
+import { mdiAccount, mdiAsterisk, mdiFormTextboxPassword } from '@mdi/js'
 import SectionMain from '@/components/SectionMain.vue'
 import CardBox from '@/components/CardBox.vue'
 import BaseDivider from '@/components/BaseDivider.vue'
 import FormField from '@/components/FormField.vue'
 import FormControl from '@/components/FormControl.vue'
-import FormFilePicker from '@/components/FormFilePicker.vue'
+// import FormFilePicker from '@/components/FormFilePicker.vue'
 import BaseButton from '@/components/BaseButton.vue'
 import BaseButtons from '@/components/BaseButtons.vue'
 import UserCard from '@/components/UserCard.vue'
@@ -19,12 +18,6 @@ import OrderNext from '@/components/OrderNext.vue'
 import { useAuthStore } from '@/stores/userStore.js';
 
 const authStore = useAuthStore();
-const mainStore = useMainStore()
-
-const profileForm = reactive({
-  name: mainStore.userName,
-  email: mainStore.userEmail
-})
 
 const passwordForm = ref({
   password_current: '',
@@ -37,9 +30,6 @@ const tabsForChild = ref([
   { name: '下期訂閱', component: markRaw(OrderNext)}
 ])
 
-const submitProfile = () => {
-  mainStore.setUser(profileForm)
-}
 
 const submitPass = async () => {
   if (passwordForm.value.password !== passwordForm.value.password_confirmation) {

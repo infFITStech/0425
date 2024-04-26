@@ -1,20 +1,12 @@
+import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
+
 import axios from 'axios'
 
 window.global ||= window;
 
 export const useMainStore = defineStore('main', () => {
-  const userName = ref('John Doe')
-  const userEmail = ref('doe.doe.doe@example.com')
-
-  const userAvatar = computed(
-    () =>
-      `https://api.dicebear.com/7.x/avataaars/svg?seed=${userEmail.value.replace(
-        /[^a-z0-9]+/gi,
-        '-'
-      )}`
-  )
+  
 
   const isFieldFocusRegistered = ref(false)
 
@@ -35,15 +27,7 @@ export const useMainStore = defineStore('main', () => {
   }
 
 
-  function setUser(payload) {
-    if (payload.name) {
-      userName.value = payload.name
-    }
-    if (payload.email) {
-      userEmail.value = payload.email
-    }
-  }
-
+  
   function fetchSampleClients() {
     axios
       .get(`data-sources/clients.json?v=3`)
@@ -67,13 +51,9 @@ export const useMainStore = defineStore('main', () => {
   }
 
   return {
-    userName,
-    userEmail,
-    userAvatar,
     isFieldFocusRegistered,
     clients,
     history,
-    setUser,
     fetchSampleClients,
     fetchSampleHistory,
     setIsAnnounce,

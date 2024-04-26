@@ -6,7 +6,7 @@ import {
   // mdiThemeLightDark,
   mdiBellOutline,
   mdiMessageAlert,
-  mdiBellBadgeOutline, //有notification顯示
+  // mdiBellBadgeOutline, //有notification顯示
   mdiBullhornVariantOutline,
   mdiMenuRight
 } from '@mdi/js'

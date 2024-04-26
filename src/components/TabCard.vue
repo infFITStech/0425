@@ -25,7 +25,6 @@
   
   <script setup>
   import { ref } from 'vue'
-  import BaseDivider from '@/components/BaseDivider.vue'
 
   const props = defineProps({
   tabs: {

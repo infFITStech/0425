@@ -312,7 +312,7 @@ img.onload = () => {
 
                 console.log(imgsrc)
 
-                this.editTag.Imgsrc = imgsrc
+                editTag.value.Imgsrc = imgsrc
 
             })
 
@@ -332,15 +332,15 @@ img.onload = () => {
 
 };
 
-const previewImg=(event)=> {
+// const previewImg=(event)=> {
 
-const file = event.target.files[0]
+// const file = event.target.files[0]
 
-const reader = new FileReader()
+// const reader = new FileReader()
 
 
 
-};
+// };
 const getTagGroupList=()=> {
             // Key: 主題名稱
             // Tag: 標籤ID, 
@@ -393,7 +393,7 @@ const saveTag=() =>{
 
 
 const deleteTag=()=> {
-            axios.delete(`https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/del_tag?Brand=INFS&Tag=${this.editTag.Tag}`).then(response => {
+            axios.delete(`https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/del_tag?Brand=INFS&Tag=${editTag.value.Tag}`).then(response => {
                 console.log(response)
                 getTagGroupList()
                 setEditTag({}, true, 'deleteModal')

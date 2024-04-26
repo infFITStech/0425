@@ -1,39 +1,53 @@
-import { defineStore } from 'pinia';
-import { useCognito } from '@/components/new/useCognito.js'; 
 
-export const useAuthStore = defineStore('auth', {
-    state: () => ({
-        cognitoUser: null,
-        isLoggedIn: false,
-        idToken: '',
-        MainConfig: null
-    }),
-    actions: {
-        async login(username, password) {
-            const cognito = useCognito();
-            try {
-                await cognito.login(username, password);
+import { defineStore } from 'pinia'
+import { ref } from 'vue'
+import { useCognito } from '@/components/new/useCognito.js'
 
-                this.cognitoUser = cognito.cognitoUser.value;
-                this.isLoggedIn = true;
-                this.idToken = cognito.idToken;
-                // this.MainConfig = cognito.MainConfig
-                console.log("hi",this.cognitoUser)
-            } catch (error) {
-                console.log('Login failed:', error);
-            }
-        },
-        async logout() {
-            console.log('Logout begin');
-            const cognito = useCognito();
-            await cognito.logout();
-            this.$reset(); // Resets to initial state
-        },
+export const useAuthStore = defineStore('auth', () => {
+  const cognitoUser = ref(null)
+  const isLoggedIn = ref(false)
+  const idToken = ref('')
+  const MainConfig = ref(null)
 
-        setMainConfig(config){
-            this.MainConfig = config
-        }
-
-        
+  const login = async (username, password) => {
+    const cognito = useCognito();
+    try {
+      await cognito.login(username, password);
+      cognitoUser.value = cognito.cognitoUser.value;
+      isLoggedIn.value = true;
+      idToken.value = cognito.idToken;
+      console.log("Logged in as", cognitoUser.value);
+    } catch (error) {
+      console.error('Login failed:', error);
     }
+  }
+
+  const logout = async () => {
+    console.log('Logout begin');
+    const cognito = useCognito();
+    try {
+      await cognito.logout();
+      cognitoUser.value = null;
+      isLoggedIn.value = false;
+      idToken.value = '';
+      MainConfig.value = null;
+      console.log('Logged out');
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  }
+
+  const setMainConfig = (config) => {
+    MainConfig.value = config;
+  }
+
+  return {
+    cognitoUser,
+    isLoggedIn,
+    idToken,
+    MainConfig,
+    login,
+    logout,
+    setMainConfig
+  }
 });

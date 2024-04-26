@@ -72,7 +72,6 @@
     overflow: auto;
   }
   
-  .popup-content {
-  }
+
   </style>
   
