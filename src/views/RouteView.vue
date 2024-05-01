@@ -434,16 +434,16 @@ export default defineComponent({
             }
             axios.post('https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/update_route', payload).then(response => {
                 console.log(response)
-                state.getRouteList()
-                state.setEditRoute({}, true, 'editModal')
+                getRouteList()
+                setEditRoute({}, true, 'editModal')
             })
         };
 
         const deleteRoute=()=> {
             axios.delete(`https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/del_route?Brand=INFS&Route=${state.editRoute.Route}`).then(response => {
                 console.log(response)
-                state.getRouteList()
-                state.setEditRoute({}, true, 'deleteModal')
+                getRouteList()
+                setEditRoute({}, true, 'deleteModal')
             })
         }
 

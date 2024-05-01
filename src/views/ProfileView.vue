@@ -19,6 +19,8 @@ import { useAuthStore } from '@/stores/userStore.js';
 
 const authStore = useAuthStore();
 
+const billingInform= ref(authStore.MainConfig.Billing["0"].Item)
+
 const passwordForm = ref({
   password_current: '',
   password: '',
@@ -56,6 +58,7 @@ const submitPass = async () => {
 
 <template>
   <LayoutAuthenticated>
+    {{billingInform}}
     <SectionMain>
       <SectionTitleLineWithButton :icon="mdiAccount" title="Profile" main>
         <!-- title+button -->

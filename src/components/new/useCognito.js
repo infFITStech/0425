@@ -185,6 +185,7 @@ const Initial=async (c)=>{
         data = await lambdaClient.send(new InvokeCommand(getObjectParams));
         pullResults = JSON.parse(new TextDecoder("utf-8").decode(data.Payload));
         const authStore = useAuthStore();
+        MainConfig=pullResults;
         authStore.setMainConfig(pullResults);
     
         return pullResults;
