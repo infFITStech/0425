@@ -15,7 +15,6 @@
     />
 
   
-      <!-- 标签页内容 -->
       <div v-if="currentTab" class="f16 h-full" >
         <component :is="currentTab.component"></component>
       </div>

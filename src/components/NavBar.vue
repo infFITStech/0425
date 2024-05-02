@@ -19,26 +19,36 @@ const menuClick = (event, item) => {
   emit('menu-click', event, item)
 }
 
-const isMenuNavBarActive = ref(false)
+// const isMenuNavBarActive = ref(false)
 </script>
 
 <template>
   <nav
-    class="top-0 inset-x-0 fixed bg-gray-50 h-14 z-41 transition-position w-screen lg:w-auto dark:bg-slate-800"
+    class="top-0 inset-x-0 fixed z-50 transition-position w-screen lg:w-auto dark:bg-slate-800 shadow-sm"
   >
+  <!-- 放logo -->
+  <div class="items-center space-x-4 py-3 pl-10" style="position:fixed; top:0;left:0; height:60px; width:auto;">
+    <a href="/" class="float items-center">
+      <img src="https://myinffits.com/images/infFITS_Logo_graycenter.png" alt="Logo" style="height:100%;width:auto">
+    </a>
+    <!-- 其他导航栏项目 -->
+  </div>
+
     <div class="flex lg:items-stretch" :class="containerMaxW">
-      <div class="flex flex-1 items-stretch h-14">
+      <div class="flex flex-1 items-stretch" style="height: 60px;">
         <slot />
       </div>
-      <div class="flex-none items-stretch flex h-14 lg:hidden">
+      <!-- <div class="flex-none items-stretch flex h-14 lg:hidden"> 
         <NavBarItemPlain @click.prevent="isMenuNavBarActive = !isMenuNavBarActive">
           <BaseIcon :path="isMenuNavBarActive ? mdiClose : mdiDotsVertical" size="24" />
         </NavBarItemPlain>
-      </div>
+      </div> -->
       <div
-        class="max-h-screen-menu overflow-y-auto lg:overflow-visible absolute w-screen top-14 left-0 bg-gray-50  lg:w-auto lg:flex lg:static lg:shadow-none dark:bg-slate-800"
-        :class="[isMenuNavBarActive ? 'block' : 'hidden']"
+        class="max-h-screen-menu overflow-visible w-screen top-14 left-0 w-auto flex static shadow-none dark:bg-slate-800"
+        :class="[1 ? 'block' : 'hidden']"
+        style="background-color: white;"
       >
+      <!-- isMenuNavBarActive -->
         <NavBarMenuList :menu="menu" @menu-click="menuClick" />
       </div>
     </div>
@@ -52,5 +62,9 @@ const isMenuNavBarActive = ref(false)
 }
 .z-41{
   z-index: 41;
+}
+nav{
+  height: 60px;
+  background-color: white !important;
 }
 </style>

@@ -63,8 +63,11 @@ export function useCognito() {
             $('#logintext').hide();
                 // switchToLoggedInView();
             idToken = result.getIdToken().getJwtToken();
-    
-            await getCognitoIdentityCredentials();
+
+            const authStore = useAuthStore();
+            authStore.setIDToken(idToken);
+
+            await getCognitoIdentityCredentials(idToken);
             // console.log('Credentials:', credentials);
 
     
@@ -114,7 +117,7 @@ export function useCognito() {
     
     };
 
-    const getCognitoIdentityCredentials= async () =>{
+    const getCognitoIdentityCredentials= async (idToken) =>{
 
         identityPoolId = 'ap-northeast-2:67aa8e60-64f2-480a-98a9-2a281e865beb';
         // AWS.config.region = region;
@@ -154,7 +157,7 @@ export function useCognito() {
 const Initial=async (c)=>{
 
     const lambdaClient = new LambdaClient({ region: 'ap-northeast-2', apiVersion: '2015-03-31', credentials: c });
-    const cognitoUsername = cognitoUser.value.username; // Ensure cognitoUser is defined and accessible
+    const cognitoUsername = localStorage.getItem('UserName'); // Ensure cognitoUser is defined and accessible
     var PayloadString = '{"Brand":"'+cognitoUsername+'"}';
     const invokeParams = {
         FunctionName: 'inffits_Manager_Authorization',
@@ -242,7 +245,7 @@ const Initial=async (c)=>{
                       logMessage('Session found! Logged in.');
                       // switchToLoggedInView();
                       idToken = session.getIdToken().getJwtToken();
-                      getCognitoIdentityCredentials();
+                      getCognitoIdentityCredentials(idToken);
                       
                   }
               });
@@ -256,6 +259,6 @@ const Initial=async (c)=>{
       }
 
 
-   return { MainConfig,logout, userPool,getcurrentloggedinsession, idToken , login, cognitoUser, identityPoolId, Initial, switchToLogInView, logMessage };
+   return { MainConfig,logout, userPool,getcurrentloggedinsession, idToken , login, cognitoUser, identityPoolId, Initial, switchToLogInView, logMessage , getCognitoIdentityCredentials};
 
 }

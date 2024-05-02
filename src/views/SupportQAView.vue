@@ -1,18 +1,25 @@
 <template>
-    <LayoutAuthenticated>
 
+    <LayoutAuthenticated>
+<SectionMain>
+    <SectionTitleLineWithButton :icon="mdiAccount" title="支援" main>
+        &nbsp;
+    </SectionTitleLineWithButton>
         <SupportQA
         v-for="(item, index) in QA"
         :key="index"
         :item="item"
       />
+</SectionMain>
     </LayoutAuthenticated>
 </template>
 
 <script setup>
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
 import SupportQA from '@/components/SupportQA.vue';
-
+import SectionMain from '@/components/SectionMain.vue'
+import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue';
+import { mdiAccount } from '@mdi/js';
 const QA=[
     {
         title:"About Q1",
@@ -89,6 +96,3 @@ const QA=[
 </script>
 
 
-<style scoped>
-
-</style>

@@ -1,10 +1,13 @@
 <template>
 <LayoutAuthenticated>
-
-    <div class="container py-3">
-        <div class="row mb-3">
+<SectionMain>
+    <SectionTitleLineWithButton :icon="mdiAccount" title="動線管理" main>
+        &nbsp;
+    </SectionTitleLineWithButton>
+    <div class="container pb-3">
+        <!-- <div class="row mb-3">
             <h1 class="col-12">動線管理</h1>
-        </div>
+        </div> -->
 
         <h3>設定提問動線</h3>
         <div v-for="(route,routeIdx) in routeList"
@@ -303,6 +306,8 @@
             </div>
         </div>
     </div>
+</SectionMain>
+
 </LayoutAuthenticated>
 </template>
 
@@ -310,17 +315,21 @@
 import { defineComponent, onMounted, reactive, toRefs } from 'vue';
 import axios from 'axios';
 import draggable from 'vuedraggable';
+import { mdiAccount } from '@mdi/js';
 import $ from 'jquery';
 import 'popper.js';
 import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
-
-
+import SectionMain from '@/components/SectionMain.vue'
+import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue';
 export default defineComponent({
   components: {
     draggable,
-    LayoutAuthenticated
+    LayoutAuthenticated,
+    SectionMain,
+    SectionTitleLineWithButton,
+
   },
   setup() {
     const state = reactive({
@@ -460,7 +469,8 @@ export default defineComponent({
       setEditRoute,
       toggleModal,
       saveRoute,
-      deleteRoute
+      deleteRoute,
+      mdiAccount
     };
   }
 });

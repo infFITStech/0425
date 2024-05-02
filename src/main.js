@@ -4,14 +4,24 @@ import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
 import { useMainStore } from '@/stores/main.js'
+import { useAuthStore } from '@/stores/userStore.js';
 
 import './css/main.css'
 
 // Init Pinia
 const pinia = createPinia()
 
+
 // Create Vue app
-createApp(App).use(pinia).use(router).mount('#app')
+const app=createApp(App)
+app.use(pinia)
+
+const authStore = useAuthStore();
+await authStore.initializeAuthState();
+
+app.use(router)
+app.mount('#app')
+
 
 // Init main store
 const mainStore = useMainStore(pinia)

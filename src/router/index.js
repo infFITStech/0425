@@ -11,7 +11,7 @@ const routes = [
       title: 'home'
     },
     path: '/',
-    redirect: '/dashboard'
+    redirect: '/profile'
   },
   {
     // Document title tag
@@ -112,6 +112,7 @@ router.beforeEach((to, from, next) => {
 
   if (requiresAuth && !isAuthenticated) {
     next('/login'); 
+    console.log("pppppppppppppppppppppppppppppppppppppppppppppp")
   } else {
     next(); 
   }

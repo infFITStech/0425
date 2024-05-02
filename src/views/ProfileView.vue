@@ -16,6 +16,8 @@ import TabCard from '@/components/TabCard.vue'
 import OrderNow from '@/components/OrderNow.vue'
 import OrderNext from '@/components/OrderNext.vue'
 import { useAuthStore } from '@/stores/userStore.js';
+import BreadCrumb from '@/components/BreadCrumb.vue';
+
 
 const authStore = useAuthStore();
 
@@ -58,21 +60,18 @@ const submitPass = async () => {
 
 <template>
   <LayoutAuthenticated>
-    {{billingInform}}
+    <!-- {{billingInform}} -->
     <SectionMain>
-      <SectionTitleLineWithButton :icon="mdiAccount" title="Profile" main>
-        <!-- title+button -->
-        <!-- <BaseButton
-          href="https://github.com/justboil/admin-one-vue-tailwind"
-          target="_blank"
-          :icon="mdiGithub"
-          label="Star on GitHub"
-          color="contrast"
-          rounded-full
-          small
-        /> -->
+      <SectionTitleLineWithButton :icon="mdiAccount" title="商家設定" main>
+        &nbsp;
       </SectionTitleLineWithButton>
+      
+      <BreadCrumb>
+      </BreadCrumb>
 
+      
+
+      
       <UserCard class="mb-6" /> 
       <!-- user img and inform -->
 
@@ -167,20 +166,27 @@ const submitPass = async () => {
           <label class="block font-bold mb-2 text-lg">品牌帳單資訊</label>
           <BaseDivider />
 
-          <label v-if="true" class="block mb-2 text-lg">沒有服務費用</label>
+          <label v-if="!billingInform.length" class="block mb-2 text-lg">沒有服務費用</label>
 
           <table>
-            <thead>
+            <thead class="TH">
               <tr>
-                <th>帳單號碼</th>
-                <th>項目</th>
-                <th>帳單周期</th>
-                <th>帳單狀態</th>
-                <th>該期總金額</th>
-                <th>繳費期限</th>
+                <th>項目名稱</th>
+                <th>描述</th>
+                <th>數量</th>
+                <th>單位</th>
+                <th>金額</th>
+                <!-- <th>繳費期限</th> -->
               </tr>
             </thead>
             <tbody>
+              <tr v-for="item in billingInform" :key="item['#']">
+                <td class="TD" data-label="項目名稱">{{ item['項目名稱'] }}</td>
+                <td class="TD" data-label="描述">{{ item['描述'] }}</td>
+                <td class="TD" data-label="數量">{{ item['數量'] }}</td>
+                <td class="TD" data-label="單位">{{ item['單位'] }}</td>
+                <td class="TD" data-label="金額">{{ item['金額'] ? item['金額'] : '-' }}</td>
+              </tr>
             </tbody>
           </table>
         </CardBox>
@@ -200,41 +206,41 @@ const submitPass = async () => {
           <BaseDivider />
 
           <FormField label="付款指示" >
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 lg:gap-6">
 
-              <div class="lg:col-span-1"> 
+              <div class="md:col-span-1"> 
                 <label class="block  mb-2 text-sm">帳戶:</label>
               </div>
-              <div class="lg:col-span-2"> 
+              <div class="md:col-span-2"> 
                 <label class="block  mb-2 text-sm">123</label>
               </div>
-              <div class="lg:col-span-1"> 
+              <div class="md:col-span-1"> 
 
                 <label class="block  mb-2 text-sm">銀行:</label>
               </div>
-              <div class="lg:col-span-2"> 
+              <div class="md:col-span-2"> 
                 <label class="block  mb-2 text-sm">123</label>
               </div>
-              <div class="lg:col-span-1"> 
+              <div class="md:col-span-1"> 
 
                 <label class="block  mb-2 text-sm">分行代碼:</label>
               </div>
-              <div class="lg:col-span-2"> 
+              <div class="md:col-span-2"> 
                 <label class="block  mb-2 text-sm">123</label>
               </div>
-              <div class="lg:col-span-1"> 
+              <div class="md:col-span-1"> 
 
                 <label class="block  mb-2 text-sm">銀行代碼:</label>
               </div>
-              <div class="lg:col-span-2"> 
+              <div class="md:col-span-2"> 
                 <label class="block  mb-2 text-sm">123</label>
               </div>
-              <div class="lg:col-span-1"> 
+              <div class="md:col-span-1"> 
 
                 <label class="block  mb-2 text-sm">帳戶號碼:</label>
 
               </div>
-              <div class="lg:col-span-2"> 
+              <div class="md:col-span-2"> 
                 <label class="block  mb-2 text-sm">123</label>
               </div>
             

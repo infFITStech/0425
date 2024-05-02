@@ -15,7 +15,12 @@ export const useAuthStore = defineStore('auth', () => {
       await cognito.login(username, password);
       cognitoUser.value = cognito.cognitoUser.value;
       isLoggedIn.value = true;
-      idToken.value = cognito.idToken;
+      // idToken.value = cognito.idToken;
+
+
+      localStorage.setItem('idToken', idToken.value);
+      localStorage.setItem('cognitoUser', JSON.stringify(cognitoUser.value));
+
       console.log("Logged in as", cognitoUser.value);
     } catch (error) {
       console.error('Login failed:', error);
@@ -31,6 +36,9 @@ export const useAuthStore = defineStore('auth', () => {
       isLoggedIn.value = false;
       idToken.value = '';
       MainConfig.value = null;
+
+      localStorage.removeItem('idToken');
+      localStorage.removeItem('cognitoUser');
       console.log('Logged out');
     } catch (error) {
       console.error('Logout failed:', error);
@@ -41,6 +49,36 @@ export const useAuthStore = defineStore('auth', () => {
     MainConfig.value = config;
   }
 
+  const setIDToken = (token) => {
+    idToken.value = token;
+  }
+
+
+//保存登入狀態(localstorage)
+  const initializeAuthState = async() => {
+    const cognito = useCognito();
+    const token = localStorage.getItem('idToken');
+    const userStr = localStorage.getItem('cognitoUser');
+
+
+    if (token&&userStr) {//&&userStr
+        idToken.value = token;
+        cognitoUser.value = JSON.parse(userStr);
+        try{
+          await cognito.getCognitoIdentityCredentials(token);
+          isLoggedIn.value = true;
+
+        }
+        catch(error){
+          isLoggedIn.value = false;
+
+        }
+        
+        
+        
+    }
+}
+
   return {
     cognitoUser,
     isLoggedIn,
@@ -48,6 +86,8 @@ export const useAuthStore = defineStore('auth', () => {
     MainConfig,
     login,
     logout,
-    setMainConfig
+    setMainConfig,
+    setIDToken,
+    initializeAuthState
   }
 });

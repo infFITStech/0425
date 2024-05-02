@@ -7,43 +7,42 @@ import {
 
 export default [
   {
-    to: '/dashboard',
-    icon: mdiMonitor,
-    label: 'Dashboard'
+    label: '選單'
   },
+  // {
+  //   to: '/login',
+  //   label: 'Login',
+  //   icon: mdiLock
+  // },
+ 
   {
-    to: '/profile',
-    label: 'Profile',
-    icon: mdiAccountCircle
-  },
-  {
-    to: '/login',
-    label: 'Login',
-    icon: mdiLock
-  },
-  {
-    to: '/route',
-    label: 'Route',
+    to: '/product',
+    label: '商品管理',
     icon: mdiAlertCircle
   },
   {
-    to: '/product',
-    label: 'Product',
+    to: '/route',
+    label: '購物動線規劃',
     icon: mdiAlertCircle
   },
   {
     to: '/theme',
-    label: 'Theme',
+    label: '主題及標籤',
     icon: mdiAlertCircle
   },
   {
+    to: '/profile',
+    label: '商家設定',
+    icon: mdiAccountCircle
+  },
+  {
     to: '/contact',
-    label: 'Contact',
+    label: '聯絡我們',
     icon: mdiAlertCircle
   },
   {
     to: '/supportQA',
-    label: 'SupportQA',
+    label: '支援',
     icon: mdiAlertCircle
   },
   // {

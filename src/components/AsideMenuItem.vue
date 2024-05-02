@@ -62,6 +62,9 @@ const menuClick = (event) => {
         w="w-16"
         :size="18"
       />
+      <div v-else class="pl-7">
+      </div>
+      <!-- 沒有icon 右邊留位置 -->
       <span
         class="grow text-ellipsis line-clamp-1"
         :class="[

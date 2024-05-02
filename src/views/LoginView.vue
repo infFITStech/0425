@@ -338,6 +338,7 @@ else {
 </script>
 
 <template>
+    
 <div class="body">
     <!-- Preloader -->
   <div class="preloader" id='loader'>
@@ -427,13 +428,16 @@ else {
 
 <style scoped>
 
+body{
+    
+    background-color: #efeff6;
+}
 .body {
   display: -ms-flexbox;
   display: flex;
   -ms-flex-align: center;
   align-items: center;
-  padding-top: 40px;
-  padding-bottom: 40px; 
+ 
   font-family: 'Circular Std Book';
   font-style: normal;
   font-weight: 400;
@@ -441,6 +445,7 @@ else {
   color: #71748d;
   background-color: #efeff6;
   -webkit-font-smoothing: antialiased;
+  height: 100%;
 }
 .preloader img{
   height: 15px;
@@ -468,6 +473,23 @@ else {
   border: 1px solid #d2d2e4;
   border-radius: 2px;
 }
+.card{
+    width: 410px;
+}
+input{
+    height: 46px;
 
-
+}
+form{
+    height:220px
+}
+.card-body{
+    height: 272px;
+}
+.splash-container {
+    width: 100%;
+    max-width: 450px;
+    padding: 20px;
+    margin: auto;
+}
 </style>

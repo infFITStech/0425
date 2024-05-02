@@ -1,9 +1,11 @@
 <template>
 <LayoutAuthenticated>
-    <div class="container py-3">
-        <div class="row mb-3">
-            <h1 class="col-12">主題標籤管理</h1>
-        </div>
+    <SectionMain>
+        <SectionTitleLineWithButton :icon="mdiAccount" title="主題標籤管理" main>
+            &nbsp;
+        </SectionTitleLineWithButton>
+    <div class="container pb-3">
+        
 
         <div v-for="(group,groupIdx) in tagGroupList"
              :key="groupIdx"
@@ -246,6 +248,7 @@
             </div>
         </div>
     </div>
+    </SectionMain>
 </LayoutAuthenticated>
 </template>
 
@@ -257,7 +260,9 @@ import 'popper.js';
 import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
-
+import SectionMain from '@/components/SectionMain.vue'
+import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue';
+import { mdiAccount } from '@mdi/js';
 const rawList = ref([]);
 const tagGroupList = ref([]);
 const editTag = ref({});

@@ -170,4 +170,7 @@ if (props.ctrlKFocus) {
 .p25{
   padding-left: 2.5rem!important;
 }
+.h-12{
+  height: 2.5rem;
+}
 </style>

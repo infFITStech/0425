@@ -8,9 +8,9 @@
 
 
 
-<div class="flex mt-3 h-full">
+<div class="sm:flex mt-3 h-full">
     <!-- 左侧列 -->
-    <div class="w-1/2 p-4">
+    <div class="sm:w-1/2 p-4">
         <div class="text-sm ">
             <div  class="flex justify-between items-center cursor-pointer" @click="toggle">
                 <span>擴充功能 ({{ items.length }})</span>
@@ -32,7 +32,7 @@
     <div class="hidden lg:block lg:w-px bg-gray-300"></div>
   
     <!-- 右侧列 -->
-    <div class="w-1/2 p-4">
+    <div class="sm:w-1/2 p-4">
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
             <div class="lg:col-span-1"> 
