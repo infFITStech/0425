@@ -94,6 +94,11 @@ const routes = [
   //   name: 'signup',
   //   component: () => import('@/views/ThemeView.vue')
   // },
+  {
+    path: '/iframe-container',
+    name: 'IframeContainer',
+    component: () => import('@/components/IframeContainer.vue')
+  }
 
 ]
 

@@ -8,7 +8,7 @@ const authStore = useAuthStore();
 </script>
 
 <template>
-  <UserAvatar :username="authStore.cognitoUser.username" :avatar="authStore.MainConfig.Logo">
+  <UserAvatar v-if="authStore.cognitoUser" :username="authStore.cognitoUser.username" :avatar="authStore.MainConfig.Logo">
     <slot />
   </UserAvatar>
 </template>

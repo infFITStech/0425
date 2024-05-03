@@ -18,7 +18,7 @@ import SideNotify from '@/components/SideNotify.vue';
 
 const mainStore = useMainStore();
 
-const layoutAsidePadding = 'xl:pl-60'
+const layoutAsidePadding = 'xl:pl-64'
 
 const darkModeStore = useDarkModeStore()
 
@@ -56,13 +56,14 @@ const menuClick = (event, item) => {
     }"
   >
     <div
-      :class="[layoutAsidePadding, { 'ml-60 lg:ml-0': isAsideMobileExpanded }]"
+      :class="[layoutAsidePadding, { 'ml-60 xl:ml-0': isAsideMobileExpanded }]"
       class="pt-14 min-h-screen w-screen transition-position lg:w-auto dark:bg-slate-800 dark:text-slate-100"
       style="background-color: #efeff6;"
     >
+    <!--lg:w-auto 菜單右側內容是否要完全顯示  -->
       <NavBar
         :menu="menuNavBar"
-        :class="[layoutAsidePadding, { 'ml-60 lg:ml-0': isAsideMobileExpanded }]"
+        :class="[layoutAsidePadding, { 'ml-60 xl:ml-0': isAsideMobileExpanded }]"
         @menu-click="menuClick"
       >
         <NavBarItemPlain
@@ -72,7 +73,8 @@ const menuClick = (event, item) => {
           <BaseIcon :path="isAsideMobileExpanded ? mdiBackburger : mdiForwardburger" size="24" />
         </NavBarItemPlain>
         
-        <NavBarItemPlain display="hidden lg:flex xl:hidden" @click.prevent="isAsideLgActive = true">
+        <NavBarItemPlain display="hidden lg:flex xl:hidden" @click.prevent="isAsideMobileExpanded = !isAsideMobileExpanded">
+          <!--"isAsideLgActive = true"  -->
           <BaseIcon :path="mdiMenu" size="24" />
         </NavBarItemPlain>
 

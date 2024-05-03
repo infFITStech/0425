@@ -56,7 +56,13 @@ export function useCognito() {
             Pool: userPool
         };
         cognitoUser.value = new CognitoUser(userData);
-        
+        //try本來不再這
+        try {
+            localStorage.setItem('UserName', cognitoUser.value.username);
+        } catch (e) {
+            console.log('NOLS')
+        }
+
         try {
             const result = await authenticateUserPromise(cognitoUser.value , authenticationDetails);
             
@@ -66,18 +72,13 @@ export function useCognito() {
 
             const authStore = useAuthStore();
             authStore.setIDToken(idToken);
-
+            
             await getCognitoIdentityCredentials(idToken);
             // console.log('Credentials:', credentials);
 
     
             //redirect
-            try {
-                localStorage.setItem('UserName', cognitoUser.value.username);
-                
-            } catch (e) {
-                console.log('NOLS')
-            }
+            //try本來在這
             //ouo ??
             // window.location.href = '/';
             logMessage('Logged in!');
@@ -135,7 +136,7 @@ export function useCognito() {
         // console.log(loginMap);
         try {
             const credentials = await credentialsProvider();
-            
+
             console.log('AWS Access Key:', credentials.accessKeyId);
             console.log('AWS Secret Key:', credentials.secretAccessKey);
             console.log('AWS Session Token:', credentials.sessionToken);
@@ -159,6 +160,7 @@ const Initial=async (c)=>{
     const lambdaClient = new LambdaClient({ region: 'ap-northeast-2', apiVersion: '2015-03-31', credentials: c });
     const cognitoUsername = localStorage.getItem('UserName'); // Ensure cognitoUser is defined and accessible
     var PayloadString = '{"Brand":"'+cognitoUsername+'"}';
+    
     const invokeParams = {
         FunctionName: 'inffits_Manager_Authorization',
         InvocationType: 'RequestResponse',
@@ -166,12 +168,10 @@ const Initial=async (c)=>{
         Payload: PayloadString,
       };
       try {
-        console.log("pp")
 
         let data = await lambdaClient.send(new InvokeCommand(invokeParams));
-        console.log("pp")
         let pullResults = JSON.parse(new TextDecoder("utf-8").decode(data.Payload));
-        console.log(pullResults);
+
         let infManID = pullResults;
     
         console.log('infManID : ' + infManID);
@@ -189,6 +189,7 @@ const Initial=async (c)=>{
         pullResults = JSON.parse(new TextDecoder("utf-8").decode(data.Payload));
         const authStore = useAuthStore();
         MainConfig=pullResults;
+
         authStore.setMainConfig(pullResults);
     
         return pullResults;

@@ -9,6 +9,12 @@ import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
 import SectionMain from '@/components/SectionMain.vue'
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue';
 import { mdiAccount } from '@mdi/js';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
+const iframeSrc = router.resolve({ name: 'IframeContainer' }).href;
+
+const pre = ref(false)
 const rawList = ref([]);
 const tagGroupList = ref([]);
 const routeList = ref([]);
@@ -179,6 +185,10 @@ const saveProduct = async (updateData) => {
   console.log(response);
   getProductList();
 };
+
+const preview=()=>{
+  pre.value = !pre.value
+}
 
 const deleteProduct = async () => {
     const response = await axios.delete(`https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/del_product?Brand=INFS&id=${editProduct.value.id}`);
@@ -497,6 +507,18 @@ onMounted(() => {
                                           d="M14 10.25a1.25 1.25 0 1 1 2.5 0a1.25 1.25 0 0 1-2.5 0m-5 0a1.25 1.25 0 1 1 2.5 0a1.25 1.25 0 0 1-2.5 0m-5 0a1.249 1.249 0 1 1 2.5 0a1.25 1.25 0 1 1-2.5 0" />
                                 </svg>
                             </button>
+                            <button class="btn h4 mb-0 p-0 bg-white border d-flex align-items-center justify-content-center rounded-pill rounded-md-circle"
+                                    type="button"
+                                    @click="preview()"
+                                    style="width: 2rem; height: 2rem;">
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                     width="1em"
+                                     height="1em"
+                                     viewBox="0 0 20 20">
+                                    <path fill="currentColor"
+                                          d="M14 10.25a1.25 1.25 0 1 1 2.5 0a1.25 1.25 0 0 1-2.5 0m-5 0a1.25 1.25 0 1 1 2.5 0a1.25 1.25 0 0 1-2.5 0m-5 0a1.249 1.249 0 1 1 2.5 0a1.25 1.25 0 1 1-2.5 0" />
+                                </svg>
+                            </button>
                         </div>
                     </div>
 
@@ -550,6 +572,12 @@ onMounted(() => {
         </div>
     </div>
 </div>
+<!-- preview -->
+<div v-if="pre" style="position: fixed; width: 100%; height: 100%; top: 0px; left: 0px; z-index: 2147483647; background: rgba(0, 0, 0, 0.5); transform: none;">
+  <div id="inffits_cblock" style='z-index:60;display:block;position: absolute;top:0;bottom:0;left:0;right:0;margin:auto;'>
+      <div id="tryon"><iframe id="inffits_tryon_window" style=" width:100%; height:100%; visibility:visible; position:relative; border:none; outline:none;  z-index:14;border-radius:10px;box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 8px;" :src="iframeSrc"></iframe></div>
+  </div>
+</div>
     </SectionMain>
 </LayoutAuthenticated>
 </template>
@@ -562,5 +590,80 @@ onMounted(() => {
 @import url('@/css/css-in/style.min.css');
 .collapse{
   visibility: visible;
+}
+
+@media screen and (min-height: 721px) {
+  #inffits_cblock {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    height: 720px;
+    width: 480px !important;
+  }
+  #tryon {
+    margin: auto;
+    height: 720px;
+    width: 480px !important;
+  }
+}
+
+@media screen and (min-width: 441px) and (max-height: 720px) {
+  #inffits_cblock {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    height: 700px;
+    width: 440px !important;
+  }
+  #tryon {
+    margin: auto;
+    height: 700px;
+    width: 440px !important;
+  }
+}
+
+@media screen and (min-width: 401px) and (max-width: 440px) {
+  #inffits_cblock {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    height: 640px;
+    width: 400px !important;
+  }
+  #tryon {
+    margin: auto;
+    height: 640px;
+    width: 400px !important;
+  }
+}
+
+@media screen and (min-width: 361px) and (max-width: 400px) {
+  #inffits_cblock {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    height: 600px;
+    width: 360px !important;
+  }
+  #tryon {
+    margin: auto;
+    height: 600px;
+    width: 360px !important;
+  }
+}
+
+@media screen and (max-width: 360px) {
+  #inffits_cblock {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    height: 580px;
+    width: 320px !important;
+  }
+  #tryon {
+    margin: auto;
+    height: 580px;
+    width: 320px !important;
+  }
 }
 </style>

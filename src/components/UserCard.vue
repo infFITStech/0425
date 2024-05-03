@@ -10,7 +10,7 @@ import { useAuthStore } from '@/stores/userStore.js';
 
 const authStore = useAuthStore();
 
-const userName = computed(() => authStore.cognitoUser.username)
+const userName = authStore.cognitoUser ?authStore.cognitoUser.username:'';
 
 </script>
 
@@ -40,7 +40,7 @@ const userName = computed(() => authStore.cognitoUser.username)
             <h1 class="text-2xl">
             <b>{{ userName }}</b>
             <br/>
-             <label class="text-sm"> {{ authStore.MainConfig.BrandName }}</label>
+             <label v-if="authStore.MainConfig" class="text-sm"> {{ authStore.MainConfig.BrandName }}</label>
             </h1>
 
             <div class="flex justify-center md:block">

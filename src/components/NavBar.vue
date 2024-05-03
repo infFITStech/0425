@@ -28,9 +28,7 @@ const menuClick = (event, item) => {
   >
   <!-- 放logo -->
   <div class="items-center space-x-4 py-3 pl-10" style="position:fixed; top:0;left:0; height:60px; width:auto;">
-    <a href="/" class="float items-center">
-      <img src="https://myinffits.com/images/infFITS_Logo_graycenter.png" alt="Logo" style="height:100%;width:auto">
-    </a>
+      <img src="https://myinffits.com/images/infFITS_Logo_graycenter.png" alt="Logo" style="height:100%;width:auto" class="float items-center">
     <!-- 其他导航栏项目 -->
   </div>
 
