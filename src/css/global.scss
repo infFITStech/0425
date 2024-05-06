@@ -1,3 +1,16 @@
+//ch
+@font-face {
+  font-family: 'Circular Std Book';
+  src: url(//fonts.gstatic.com/ea/notosanstc/v1/NotoSansTC-Regular.woff2) format('woff2');
+  unicode-range: U+4E00-9FFF;
+}
+//en
+// @font-face {
+//   font-family: 'Circular Std Book';
+//   src: local('Circular Std Book');
+//   unicode-range: U+0000-024F;
+// }
+
 html,
 body,
 #app{
@@ -18,4 +31,3 @@ html {
   overflow-x: hidden;
 
 }
-
