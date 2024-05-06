@@ -96,13 +96,18 @@ const menuClick = (event, item) => {
       <SideNotify v-if="mainStore.IsNotify.state">
       </SideNotify>
       <slot />
+      <div style="background-color: white;">
       <FooterBar>
         <!-- Get more with
         <a href="https://tailwind-vue.justboil.me/" target="_blank" class="text-blue-600"
           >Premium version</a
         > -->
-        Footer
+        <a href="https://.me/" target="_blank" style="color: gray;">Support</a>
+        &nbsp;&nbsp;&nbsp;
+        <a href="https://.me/" target="_blank" style="color: gray;">Contact us</a>
+        
       </FooterBar>
+      </div>
     </div>
   </div>
 </template>

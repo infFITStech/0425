@@ -43,7 +43,7 @@ const menuClick = (event) => {
 </script>
 
 <template>
-  <li>
+  <li class="purple">
     <component
       :is="item.to ? RouterLink : 'a'"
       v-slot="vSlot"
@@ -89,3 +89,9 @@ const menuClick = (event) => {
     />
   </li>
 </template>
+
+<style scoped>
+.style-basic:not(.dark) .aside-menu-item{
+  color: #7a80b4;
+}
+</style>
