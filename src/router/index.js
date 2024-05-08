@@ -95,6 +95,9 @@ const routes = [
   //   component: () => import('@/views/ThemeView.vue')
   // },
   {
+    mata:{
+      requiresAuth: false  
+    },
     path: '/iframe-container',
     name: 'IframeContainer',
     component: () => import('@/components/IframeContainer.vue')

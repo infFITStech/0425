@@ -144,7 +144,9 @@ const setProductRoute = (product, route) => {
   });
 };
 
-
+const close_preview = () => {
+  pre.value=false;
+}
 const setTag = (product, tagGroupName, tag) => {
   if (!product.Tags[tagGroupName]) {
     product.Tags[tagGroupName] = [];
@@ -219,10 +221,10 @@ onMounted(() => {
         <!-- render tags -->
         <div class="col-12">
             <div class="h-100 flex-grow-1 bg-white rounded container-fluid">
-                <div class="row d-flex align-items-center py-3">
+                <div class="row d-flex align-items-center py-4">
                     <!-- img -->
-                    <div class="col-2 col-md-1 flex-grow-0 mb-4 mb-md-0">
-                        <div class="profile-img">
+                    <div class="col-2 col-md-1 flex-grow-0 mb-4 mb-md-0 px-3" style="max-width: max-content;">
+                        <div class="profile-img m-0">
                             <div class="img-circle-wrapper">
                                 <div class="img-circle img-fluid bg-gray-light"
                                      :class="product.Imgsrc ? '' : 'd-none'"></div>
@@ -233,7 +235,7 @@ onMounted(() => {
                             </div>
                         </div>
                     </div>
-                    <div class="col-8 col-md-2 text-body font-bold mb-4 mb-md-0">{{product.ItemName}}</div>
+                    <div class="col-8 col-md-2 text-body font-bold mb-4 mb-md-0" style="white-space: nowrap; overflow-x: scroll; -ms-overflow-style: none; scrollbar-width: none; ">{{product.ItemName}}</div>
 
                     <!-- delete -->
                     <div class="d-block d-md-none col-2 text-right">
@@ -251,12 +253,14 @@ onMounted(() => {
 
                     <div class="col-12 px-md-0 col-md flex-shrink-0 flex-grow-1 d-flex flex-column flex-md-row align-items-stretch">
                         <!-- route -->
-                        <div class="dropdown mr-md-2 mr-lg-3 mb-1 mb-md-0">
-                            <button class="w-100 btn btn-primary rounded-pill dropdown-toggle"
+                        <div class="dropdown mr-md-1 mr-lg-1 mb-1 mb-md-0 ml-1">
+                            <button class="w-100 btn border dropdown-toggle"
                                     type="button"
                                     data-toggle="dropdown"
-                                    aria-expanded="false">
-                                {{getRouteName(product.Routes) || '選擇動線'}}
+                                    aria-expanded="false"
+                                    style="color: gray;">
+                                {{getRouteName(product.Routes) || '動線規劃'}}
+                                
                             </button>
                             <div class="dropdown-menu">
                                 <div class="dropdown-item"
@@ -273,11 +277,12 @@ onMounted(() => {
                         </div>
 
                         <!-- tag group -->
-                        <div class="dropdown mr-md-2 mb-1 mb-md-0">
-                            <button class="w-100 btn btn-primary rounded-pill dropdown-toggle"
+                        <div class="dropdown mr-md-1 mb-1 mb-md-0">
+                            <button class="w-100 btn border rounded-pill dropdown-toggle"
                                     type="button"
                                     data-toggle="dropdown"
-                                    aria-expanded="false">
+                                    aria-expanded="false"
+                                    style="color: gray;">
                                 {{'新增標籤'}}
                             </button>
                             <div :id="`tagDropdownMenu${productIdx}`"
@@ -371,15 +376,16 @@ onMounted(() => {
                         </div>
 
                         <!-- tags -->
-                        <div class="container-fluid px-2 mr-md-2">
-                            <div class="row">
+                        <div class="container-fluid px-0 mr-md-2 border py-1 px-2" style="border-radius: 13px;">
+                            <div class="row m-0">
                                 <div v-for="tagObj in JSON.parse(JSON.stringify(tagListByProduct(product))).slice(0, 4)"
                                      :key="tagObj"
                                      class="col-12 col-md-3 p-0 px-1 mb-1 mb-md-0">
-                                    <div class="w-100 rounded-pill cursor-pointer d-flex align-items-center border
+                                    <div class="w-100 cursor-pointer d-flex align-items-center
                                      position-relative"
-                                         :class="true ? 'bg-secondary text-white' : 'bg-white text-secondary'"
-                                         @click="removeTag(product, tagObj.tag.TagGroup, tagObj.tag)">
+                                         :class="true ? 'bg-white text-gray' : 'bg-white text-secondary'"
+                                         @click="removeTag(product, tagObj.tag.TagGroup, tagObj.tag)"
+                                        >
                                         <div v-if="!true"
                                              class="position-absolute left-0"
                                              style="top: 50%; transform: translate(50%, -50%);">
@@ -395,7 +401,8 @@ onMounted(() => {
                                                 </g>
                                             </svg>
                                         </div>
-                                        <div class="w-100 text-center d-inline-flex align-items-center px-3 px-md-4 py-1 py-md-2">
+                                        <div class="w-100 text-center d-inline-flex align-items-center px-3 px-md-4 py-1  border" style="border-radius: 6px; box-shadow : rgba(0,0,0,0.15) 0 2px 8px;
+                                        ">
                                             <div class="profile-img mr-1 ml-0"
                                                  style="border: none; width: 20px; min-width: 20px;">
                                                 <div class="img-circle-wrapper">
@@ -426,17 +433,36 @@ onMounted(() => {
                                         </div>
                                     </div>
                                 </div>
-
-                            </div>
-                            <div class="collapse row"
+                                                        <!-- more tag button-->
+                                <div v-if="tagListByProduct(product).length > 4"
+                                  class="flex-shrink-0 inline-block">
+                                  <button class="btn h4 mb-0 p-0 bg-white border d-flex align-items-center justify-content-center rounded-pill rounded-md-circle"
+                                          type="button"
+                                          data-toggle="collapse"
+                                          :data-target="`#collapseTag${productIdx}`"
+                                          aria-expanded="false"
+                                          :aria-controls="`collapseTag${productIdx}`"
+                                          style="width: 2rem; height: 2rem;">
+                                      <svg xmlns="http://www.w3.org/2000/svg"
+                                            width="1em"
+                                            height="1em"
+                                            viewBox="0 0 20 20">
+                                          <path fill="currentColor"
+                                                d="M14 10.25a1.25 1.25 0 1 1 2.5 0a1.25 1.25 0 0 1-2.5 0m-5 0a1.25 1.25 0 1 1 2.5 0a1.25 1.25 0 0 1-2.5 0m-5 0a1.249 1.249 0 1 1 2.5 0a1.25 1.25 0 1 1-2.5 0" />
+                                      </svg>
+                                  </button>
+                                  </div>
+                              </div>
+                            <div class="collapse row m-0 mt-1"
                                  :id="`collapseTag${productIdx}`">
                                 <div v-for="tagObj in JSON.parse(JSON.stringify(tagListByProduct(product))).slice(4)"
                                      :key="tagObj"
                                      class="col-12 col-md-3 p-0 px-1 mb-1 mb-md-0">
-                                    <div class="w-100 rounded-pill cursor-pointer d-flex align-items-center border
+                                    <div class="w-100 cursor-pointer d-flex align-items-center border
                                       position-relative"
-                                         :class="true ? 'bg-secondary text-white' : 'bg-white text-secondary'"
-                                         @click="removeTag(product, tagObj.tag.TagGroup, tagObj.tag)">
+                                         :class="true ? 'bg-white text-gray' : 'bg-white text-secondary'"
+                                         @click="removeTag(product, tagObj.tag.TagGroup, tagObj.tag)"
+                                         style="border-radius: 6px;">
                                         <div v-if="!true"
                                              class="position-absolute left-0"
                                              style="top: 50%; transform: translate(50%, -50%);">
@@ -487,43 +513,16 @@ onMounted(() => {
                                     </div>
                                 </div>
                             </div>
+
+  
+
+                                
                         </div>
 
-                        <!-- more tag button-->
-                        <div v-if="tagListByProduct(product).length > 4"
-                             class="flex-shrink-0">
-                            <button class="btn h4 mb-0 p-0 bg-white border d-flex align-items-center justify-content-center rounded-pill rounded-md-circle"
-                                    type="button"
-                                    data-toggle="collapse"
-                                    :data-target="`#collapseTag${productIdx}`"
-                                    aria-expanded="false"
-                                    :aria-controls="`collapseTag${productIdx}`"
-                                    style="width: 2rem; height: 2rem;">
-                                <svg xmlns="http://www.w3.org/2000/svg"
-                                     width="1em"
-                                     height="1em"
-                                     viewBox="0 0 20 20">
-                                    <path fill="currentColor"
-                                          d="M14 10.25a1.25 1.25 0 1 1 2.5 0a1.25 1.25 0 0 1-2.5 0m-5 0a1.25 1.25 0 1 1 2.5 0a1.25 1.25 0 0 1-2.5 0m-5 0a1.249 1.249 0 1 1 2.5 0a1.25 1.25 0 1 1-2.5 0" />
-                                </svg>
-                            </button>
-                            <button class="btn h4 mb-0 p-0 bg-white border d-flex align-items-center justify-content-center rounded-pill rounded-md-circle"
-                                    type="button"
-                                    @click="preview()"
-                                    style="width: 2rem; height: 2rem;">
-                                <svg xmlns="http://www.w3.org/2000/svg"
-                                     width="1em"
-                                     height="1em"
-                                     viewBox="0 0 20 20">
-                                    <path fill="currentColor"
-                                          d="M14 10.25a1.25 1.25 0 1 1 2.5 0a1.25 1.25 0 0 1-2.5 0m-5 0a1.25 1.25 0 1 1 2.5 0a1.25 1.25 0 0 1-2.5 0m-5 0a1.249 1.249 0 1 1 2.5 0a1.25 1.25 0 1 1-2.5 0" />
-                                </svg>
-                            </button>
-                        </div>
                     </div>
 
                     <!-- delete -->
-                    <div class="d-none d-md-block col-auto text-right">
+                    <div class="d-none d-md-block col-auto text-right pr-3 pl-0">
                         <div class="h3 text-danger d-inline-flex align-items-center cursor-pointer"
                              @click="setEditProduct(product, true, 'deleteModal')">
                             <svg xmlns="http://www.w3.org/2000/svg"
@@ -534,6 +533,34 @@ onMounted(() => {
                                       d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6zM19 4h-3.5l-1-1h-5l-1 1H5v2h14z" />
                             </svg>
                         </div>
+                         <!-- preview tag button-->
+                         <div 
+                         class="flex-shrink-0">
+                        <!-- <button class="btn h4 mb-0 p-0 bg-white border d-flex align-items-center justify-content-center rounded-pill rounded-md-circle"
+                                type="button"
+                                data-toggle="collapse"
+                                :data-target="`#collapseTag${productIdx}`"
+                                aria-expanded="false"
+                                :aria-controls="`collapseTag${productIdx}`"
+                                style="width: 2rem; height: 2rem;">
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                 width="1em"
+                                 height="1em"
+                                 viewBox="0 0 20 20">
+                                <path fill="currentColor"
+                                      d="M14 10.25a1.25 1.25 0 1 1 2.5 0a1.25 1.25 0 0 1-2.5 0m-5 0a1.25 1.25 0 1 1 2.5 0a1.25 1.25 0 0 1-2.5 0m-5 0a1.249 1.249 0 1 1 2.5 0a1.25 1.25 0 1 1-2.5 0" />
+                            </svg>
+                        </button> -->
+                        <button class="btn h4 mb-0 p-1 bg-white border d-flex align-items-center justify-content-center rounded-pill rounded-md-circle"
+                                type="button"
+                                @click="preview()"
+                                style="  box-shadow : rgba(0,0,0,0.15) 0 2px 8px;
+                                "
+                                >
+                              <img src="@/img/inffits_f_black.png" alt="f" style="height: 14px; width:auto; vertical-align: middle; margin-right: 3px"> 預覽
+                        </button>
+                    </div>
+
                     </div>
                 </div>
             </div>
@@ -573,11 +600,17 @@ onMounted(() => {
     </div>
 </div>
 <!-- preview -->
+<transition name="fade">
 <div v-if="pre" style="position: fixed; width: 100%; height: 100%; top: 0px; left: 0px; z-index: 2147483647; background: rgba(0, 0, 0, 0.5); transform: none;">
   <div id="inffits_cblock" style='z-index:60;display:block;position: absolute;top:0;bottom:0;left:0;right:0;margin:auto;'>
       <div id="tryon"><iframe id="inffits_tryon_window" style=" width:100%; height:100%; visibility:visible; position:relative; border:none; outline:none;  z-index:14;border-radius:10px;box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 8px;" :src="iframeSrc"></iframe></div>
-  </div>
+      <div id="inf_close" @click="close_preview()" style="cursor: pointer;position:absolute;top: -5px;z-index: 10000009;right: -10px;padding: 5px;height: 25px;width: 25px;border-radius: 50%;box-shadow: rgb(54 62 81 / 15%) 0px 0.0625rem 0.125rem 0.0625rem;background: white; opacity:1">
+        <img src="https://inffits.com/webDesign/HTML/img/cancel.png" style="position:absolute;top:0;bottom:0;right:0;left:0;width:10px;margin:auto;">
+      </div>
+
+    </div>
 </div>
+</transition>
     </SectionMain>
 </LayoutAuthenticated>
 </template>
@@ -666,4 +699,28 @@ onMounted(() => {
     width: 320px !important;
   }
 }
+
+button{
+
+}
+
+html body .font-bold{
+  font-weight: 600;
+}
+
+@media (min-width: 768px) {
+  .col-md-3{
+    flex:0 0 25%;
+    max-width: calc((100% - 28px) / 4);
+  }
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.5s;
+}
+.fade-enter, .fade-leave-to {
+  opacity: 0;
+}
+
+
 </style>
