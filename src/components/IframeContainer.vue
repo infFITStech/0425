@@ -66,7 +66,7 @@ $(function () {
                             </div>
                         </div>
                         <div class="footer">
-                            <img class="type_backarrow" id="container-${r}-backarrow" src="./img/left-arrow.png" width="100%"
+                            <img class="type_backarrow" id="container-${r}-backarrow" src="/left-arrow.png" width="100%"
                                 height="100%">
                             <a class='c-${r}'>略過</a>
                         </div>
@@ -186,18 +186,90 @@ const show_results = (response) =>{
 }
 </script>
 
-<style scoped>
-
+<style>
+* {
+    font-family: "Montserrat", "Noto Sans TC", sans-serif;
+}
 #iframe-container {
     @import url('@/css/css-in/iframe_style.min.css') ;
 
 }  
+body{
+    background-color: white;
+}
 .container.back {
     display: block;
     z-index: 99;
     box-shadow: 0 3px 20px -5px rgb(0 0 0 / 50%);
 }
+.c_header {
+    position: relative;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 600;
+    color: rgba(0, 0, 0, 0.8);
+    line-height: 200%;
+    opacity: 1;
+    border-bottom: 1px solid #eee;
+    padding: 2%;
+    letter-spacing: 1px;
+}
 
+.selection_scroll {
+    top: 24px;
+    height: calc(50% + 24px);
+    overflow: scroll;
+    scroll-behavior: smooth;
+    width: 100%;
+    display: block;
+    position: relative;
+
+}
+.axd_selection p {
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    margin: 4px;
+    font-weight: 400;
+    cursor: auto;
+}
+.axd_img {
+    width: 92.5%;
+    border: solid 1px transparent;
+    transition: all .5s;
+    border-radius: 5px;
+}
+::-webkit-scrollbar {
+    display: none;
+}
+*{
+    -ms-overflow-style: none; scrollbar-width: none; 
+}
+.axd_selection {
+    width: 30%;
+    display: inline-block;
+    position: relative;
+    font-weight: 400;
+    text-align: center;
+    background-color: white;
+    opacity: 1;
+    border-radius: 2px;
+    transition: background-color .10s ease-in-out;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    padding: 1%;
+    cursor: pointer;
+    color: gray;
+    transition: all .2s;
+}
+.selection {
+    position: relative;
+    width: 100%;
+    display: inline-block;
+    height: 100%;
+    -webkit-transform: translate(0);
+}
 .container {
     position: absolute;
     height: 65%;
@@ -212,6 +284,36 @@ const show_results = (response) =>{
     display: none;
     border-top-right-radius: 10px;
     border-top-left-radius: 10px;
+}
+.footer a {
+    position: absolute;
+    right: 4%;
+    font-size: 12px;
+    font-weight: 400;
+    color: gray;
+    top: 10px;
+    text-decoration: underline;
+    cursor: pointer;
+    letter-spacing: .1em;
+    line-height: 20px;
+}
+.type_backarrow {
+    position: absolute;
+    top: 7.5px;
+    z-index: 10;
+    height: 15px;
+    width: 15px;
+    left: 4%;
+    cursor: pointer;
+    background-color: lightgray;
+    border-radius: 50%;
+    padding: 5px;
+}
+.footer {
+    position: absolute;
+    height: 20%;
+    width: 100%;
+    bottom: 0;
 }
 .mbinfo{
     z-index: 100;
@@ -229,6 +331,13 @@ html, body {
     height: 100%;
     padding: 0;
     margin: 0;
+}
+
+*:not(input.field) {
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 .container.animX {
