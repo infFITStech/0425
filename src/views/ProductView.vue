@@ -212,7 +212,6 @@ onMounted(() => {
     <SectionTitleLineWithButton :icon="mdiAccount" title="產品管理" main>
       &nbsp;
   </SectionTitleLineWithButton>
-
   <div class="container-fluid pb-3">
     
     <div v-for="(product,productIdx) in productList"
@@ -235,7 +234,7 @@ onMounted(() => {
                             </div>
                         </div>
                     </div>
-                    <div class="col-8 col-md-2 text-body font-bold mb-4 mb-md-0" style="white-space: nowrap; overflow-x: scroll; -ms-overflow-style: none; scrollbar-width: none; ">{{product.ItemName}}</div>
+                    <div class="col-8 col-md-2 text-body font-bold mb-4 mb-md-0 px-0" style="white-space: nowrap; overflow-x: scroll; -ms-overflow-style: none; scrollbar-width: none; ">{{product.ItemName}}</div>
 
                     <!-- delete -->
                     <div class="d-block d-md-none col-2 text-right">
@@ -376,15 +375,15 @@ onMounted(() => {
                         </div>
 
                         <!-- tags -->
-                        <div class="container-fluid px-0 mr-md-2 border py-1 px-2" style="border-radius: 13px;">
+                        <div class="container-fluid px-0 mr-md-2 border py-1 px-2 " style="border-radius: 13px; ">
                             <div class="row m-0">
                                 <div v-for="tagObj in JSON.parse(JSON.stringify(tagListByProduct(product))).slice(0, 4)"
                                      :key="tagObj"
                                      class="col-12 col-md-3 p-0 px-1 mb-1 mb-md-0">
-                                    <div class="w-100 cursor-pointer d-flex align-items-center
+                                    <div class="w-100 d-flex align-items-center
                                      position-relative"
                                          :class="true ? 'bg-white text-gray' : 'bg-white text-secondary'"
-                                         @click="removeTag(product, tagObj.tag.TagGroup, tagObj.tag)"
+                                         style="cursor: default;"
                                         >
                                         <div v-if="!true"
                                              class="position-absolute left-0"
@@ -401,8 +400,7 @@ onMounted(() => {
                                                 </g>
                                             </svg>
                                         </div>
-                                        <div class="w-100 text-center d-inline-flex align-items-center px-3 px-md-4 py-1  border" style="border-radius: 6px; box-shadow : rgba(0,0,0,0.15) 0 2px 8px;
-                                        ">
+                                        <div class="w-100 text-center d-inline-flex align-items-center px-3 px-md-4 py-1  border" style="border-radius: 6px; box-shadow : rgba(0,0,0,0.15) 0 2px 8px; ">
                                             <div class="profile-img mr-1 ml-0"
                                                  style="border: none; width: 20px; min-width: 20px;">
                                                 <div class="img-circle-wrapper">
@@ -414,11 +412,15 @@ onMounted(() => {
                                                          alt="">
                                                 </div>
                                             </div>
+                                            <div style="white-space: nowrap; overflow-x: scroll; -ms-overflow-style: none; scrollbar-width: none;"> 
                                             {{tagObj.tag?.Name}}
+                                            </div>
                                         </div>
                                         <div v-if="true"
-                                             class="position-absolute right-0"
-                                             style="top: 50%; transform: translate(-50%, -50%);">
+                                             class="position-absolute right-0 cursor-pointer"
+                                             style="top: 50%; transform: translate(-50%, -50%); "
+                                             @click="removeTag(product, tagObj.tag.TagGroup, tagObj.tag)"
+                                             >
                                             <!-- cross -->
                                             <svg xmlns="http://www.w3.org/2000/svg"
                                                  width="1em"
@@ -458,11 +460,10 @@ onMounted(() => {
                                 <div v-for="tagObj in JSON.parse(JSON.stringify(tagListByProduct(product))).slice(4)"
                                      :key="tagObj"
                                      class="col-12 col-md-3 p-0 px-1 mb-1 mb-md-0">
-                                    <div class="w-100 cursor-pointer d-flex align-items-center border
+                                    <div class="w-100 d-flex align-items-center 
                                       position-relative"
                                          :class="true ? 'bg-white text-gray' : 'bg-white text-secondary'"
-                                         @click="removeTag(product, tagObj.tag.TagGroup, tagObj.tag)"
-                                         style="border-radius: 6px;">
+                                         style="cursor: default;">
                                         <div v-if="!true"
                                              class="position-absolute left-0"
                                              style="top: 50%; transform: translate(50%, -50%);">
@@ -481,7 +482,7 @@ onMounted(() => {
                                         <!-- <span class="w-100 text-center d-inline-block px-3 px-md-4 py-1 py-md-2">
                                             {{tagObj.tag?.Name}}
                                         </span> -->
-                                        <div class="w-100 text-center d-inline-flex align-items-center px-3 px-md-4 py-1 py-md-2">
+                                        <div class="w-100 text-center d-inline-flex align-items-center px-3 px-md-4 py-1 border " style="border-radius: 6px; box-shadow : rgba(0,0,0,0.15) 0 2px 8px; ">
                                             <div class="profile-img mr-1 ml-0"
                                                  style="border: none; width: 20px; min-width: 20px;">
                                                 <div class="img-circle-wrapper">
@@ -493,11 +494,16 @@ onMounted(() => {
                                                          alt="">
                                                 </div>
                                             </div>
-                                            {{tagObj.tag?.Name}}
+                                            <div style="white-space: nowrap; overflow-x: scroll; -ms-overflow-style: none; scrollbar-width: none;"> 
+                                              {{tagObj.tag?.Name}}
+                                            </div>
+
                                         </div>
                                         <div v-if="true"
-                                             class="position-absolute right-0"
-                                             style="top: 50%; transform: translate(-50%, -50%);">
+                                             class="position-absolute right-0  cursor-pointer "
+                                             style="top: 50%; transform: translate(-50%, -50%);"
+                                             @click="removeTag(product, tagObj.tag.TagGroup, tagObj.tag)"
+                                             >
                                             <!-- cross -->
                                             <svg xmlns="http://www.w3.org/2000/svg"
                                                  width="1em"
@@ -522,20 +528,9 @@ onMounted(() => {
                     </div>
 
                     <!-- delete -->
-                    <div class="d-none d-md-block col-auto text-right pr-3 pl-0">
-                        <div class="h3 text-danger d-inline-flex align-items-center cursor-pointer"
-                             @click="setEditProduct(product, true, 'deleteModal')">
-                            <svg xmlns="http://www.w3.org/2000/svg"
-                                 width="1em"
-                                 height="1em"
-                                 viewBox="0 0 24 24">
-                                <path fill="currentColor"
-                                      d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6zM19 4h-3.5l-1-1h-5l-1 1H5v2h14z" />
-                            </svg>
-                        </div>
-                         <!-- preview tag button-->
-                         <div 
-                         class="flex-shrink-0">
+                    <div class="d-none d-md-block col-auto text-right pr-2 pl-0">
+                        <!-- preview tag button-->
+                         <div class="flex-shrink-0 mr-1" style="display:inline-flex">
                         <!-- <button class="btn h4 mb-0 p-0 bg-white border d-flex align-items-center justify-content-center rounded-pill rounded-md-circle"
                                 type="button"
                                 data-toggle="collapse"
@@ -551,15 +546,27 @@ onMounted(() => {
                                       d="M14 10.25a1.25 1.25 0 1 1 2.5 0a1.25 1.25 0 0 1-2.5 0m-5 0a1.25 1.25 0 1 1 2.5 0a1.25 1.25 0 0 1-2.5 0m-5 0a1.249 1.249 0 1 1 2.5 0a1.25 1.25 0 1 1-2.5 0" />
                             </svg>
                         </button> -->
-                        <button class="btn h4 mb-0 p-1 bg-white border d-flex align-items-center justify-content-center rounded-pill rounded-md-circle"
+                        <button class="btn h4 mb-0 pl-2 bg-white border d-flex align-items-center justify-content-center rounded-pill rounded-md-circle"
                                 type="button"
                                 @click="preview()"
-                                style="  box-shadow : rgba(0,0,0,0.15) 0 2px 8px;
+                                style="  box-shadow : rgba(0,0,0,0.15) 0 2px 8px; font-size:12px
                                 "
                                 >
-                              <img src="@/img/inffits_f_black.png" alt="f" style="height: 14px; width:auto; vertical-align: middle; margin-right: 3px"> 預覽
+                              <img src="@/img/inffits_f_black.png" alt="f" class="m-1" style="height: 10px; width:auto; vertical-align: middle; margin-right: 3px; "> 預覽
                         </button>
-                    </div>
+                        </div>
+
+                        <div class="h3 text-danger d-inline-flex align-items-center cursor-pointer mb-0"
+                             @click="setEditProduct(product, true, 'deleteModal')">
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                 width="0.9em"
+                                 height="0.9em"
+                                 viewBox="0 0 24 24">
+                                <path fill="currentColor"
+                                      d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6zM19 4h-3.5l-1-1h-5l-1 1H5v2h14z" />
+                            </svg>
+                        </div>
+                         
 
                     </div>
                 </div>
@@ -621,6 +628,10 @@ onMounted(() => {
 @import url('@/css/css-in/frame.css');
 @import url('@/css/css-in/style.css');
 @import url('@/css/css-in/style.min.css');
+#inffits_tryon_window {
+  @import url('@/css/css-in/iframe_style.min.css') !important;
+
+}  
 .collapse{
   visibility: visible;
 }

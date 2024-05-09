@@ -5,8 +5,9 @@
         </div>
     
     
-        <div class='container back' id='containerback'></div>
+        
         <!-- container -->
+        <div class='container back' id='containerback'></div>
         <div class='container mbinfo animY' id="container-recom">
             <div class="c_header" id="container-container-recom-header">
                 <span>推薦給您的商品</span>
@@ -17,7 +18,7 @@
             </div>
             <div class="footer">
                 <!-- <button class="enabled" id="confirm-button_recom" style="margin: auto;">選取商品</button> -->
-                <button id='startover' class='startover enabled' onclick=reset() style='width:auto;margin-bottom:5px'>重新輸入
+                <button id='startover' class='startover enabled' @click=reset() style='width:auto;margin-bottom:5px'>重新輸入
                 </button>
                 <!-- <img class="type_backarrow" id="container-recom-backarrow" src="../../img/left-arrow.png" width="100%"
                     height="100%">
@@ -186,63 +187,61 @@ const show_results = (response) =>{
 </script>
 
 <style scoped>
-@import url('@/css/css-in/iframe_style.min.css');
 
-.axd_selection{
-    transition: all .2s;
-}
-.selection_scroll {
-    top:24px;
-    height: calc(50% + 24px);
-    overflow: scroll;
-    scroll-behavior: smooth; /* 平滑滚动效果 */
-}
-.selection{
-    height:100%;
-}
-.axd_selection p {
-    font-size: 12px;
-    letter-spacing: 0.1em;
-    margin: 4px;
-}
-.axd_img{
-    border-radius:5px;
-}
-.c-recom{
-    max-height:300px;
-    box-shadow:rgba(0,0,0,0.15) 0 2px 8px;
-    width: 92.5%;
-    border: solid 1px transparent;
-    transition: all .5s;
-    border-radius: 5px;
+#iframe-container {
+    @import url('@/css/css-in/iframe_style.min.css') ;
 
-}
-.recom-text{
-    letter-spacing: .1em !important;
-    color:black;
-    font-size: 12px;
-    font-weight: 500 !important;
-    line-height: 1.4em;
-    color: #0a0101;
-    text-transform: none;
-    text-align: left;
-    margin-top: 8px !important;
-    max-height: 48px;
-    overflow: scroll;
-}
-.recom-price{
-    letter-spacing: 0 !important;
-    color:gray;
-    font-size: 12px;
-    font-weight: 400;
-    color: #0a0101;
-    text-align: left;
-    line-height: 1.2em;
-    /* font-family: 'Noto Sans TC'; */
+}  
+.container.back {
+    display: block;
+    z-index: 99;
+    box-shadow: 0 3px 20px -5px rgb(0 0 0 / 50%);
 }
 
-#container-recom .axd_selection:hover{
-    transform:scale(1.025);
+.container {
+    position: absolute;
+    height: 65%;
+    width: 100%;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 1);
+    background-size: cover;
+    color: black;
+    z-index: 12;
+    text-align: center;
+    vertical-align: middle;
+    display: none;
+    border-top-right-radius: 10px;
+    border-top-left-radius: 10px;
+}
+.mbinfo{
+    z-index: 100;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+}
+
+html, body {
+    box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.2);
+    -moz-box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.2);
+    font-family: "Montserrat", "Noto Sans TC", sans-serif;
+    width: 100% !important;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+.container.animX {
+    animation: SlideInX .8s;
+    animation-timing-function: cubic-bezier(0.06,0.43,0.26,0.99);
+    -webkit-animation-timing-function: cubic-bezier(0.06,0.43,0.26,0.99);
+    will-change: transform;
+}
+
+@media (min-width: 0px) {
+    .container {
+        max-width: 100%;
+    }
 }
 
 </style>
