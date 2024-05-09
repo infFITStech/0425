@@ -194,6 +194,7 @@ const show_results = (response) =>{
     @import url('@/css/css-in/iframe_style.min.css') ;
 
 }  
+
 body{
     background-color: white;
 }
@@ -214,7 +215,20 @@ body{
     padding: 2%;
     letter-spacing: 1px;
 }
+#startover {
+    background: transparent;
+    box-shadow: none;
+    text-decoration: underline;
+    color: rgba(0, 0, 0, 0.8);
+    font-weight: 400;
+}
 
+.container.animY {
+    animation: SlideIn .8s;
+    animation-timing-function: cubic-bezier(0.06,0.43,0.26,0.99);
+    -webkit-animation-timing-function: cubic-bezier(0.06,0.43,0.26,0.99);
+    will-change: transform;
+}
 .selection_scroll {
     top: 24px;
     height: calc(50% + 24px);
@@ -284,15 +298,34 @@ body{
     display: none;
     border-top-right-radius: 10px;
     border-top-left-radius: 10px;
+    padding:0px;
+}
+.axd_img:hover {
+    border: solid 1px gray;
+}
+.c-recom {
+    max-height: 300px;
+    box-shadow: rgba(0, 0, 0, 0.15) 0 2px 8px;
+    width: 92.5%;
+    border: solid 1px transparent;
+    transition: all .5s;
+    border-radius: 5px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+#container-recom .axd_selection:hover {
+    transform: scale(1.025);
 }
 .footer a {
     position: absolute;
     right: 4%;
     font-size: 12px;
     font-weight: 400;
-    color: gray;
+    color: gray !important;
     top: 10px;
-    text-decoration: underline;
+    text-decoration: underline !important;
     cursor: pointer;
     letter-spacing: .1em;
     line-height: 20px;
@@ -301,8 +334,8 @@ body{
     position: absolute;
     top: 7.5px;
     z-index: 10;
-    height: 15px;
-    width: 15px;
+    height: 25px;
+    width: 25px;
     left: 4%;
     cursor: pointer;
     background-color: lightgray;
@@ -314,6 +347,14 @@ body{
     height: 20%;
     width: 100%;
     bottom: 0;
+
+    border-top: none;
+    padding: 0px;
+    color: black;
+    background-color: #fff;
+}
+img{
+    display: inline;
 }
 .mbinfo{
     z-index: 100;
@@ -346,11 +387,99 @@ html, body {
     -webkit-animation-timing-function: cubic-bezier(0.06,0.43,0.26,0.99);
     will-change: transform;
 }
+.footer button {
+    display: block;
+    cursor: pointer;
+    width: 68%;
+    height: 40px;
+    font-weight: 600;
+    color: #eee;
+    background-color: rgba(0, 0, 0, 0.8);
+    transition: .2s ease-in-out;
+    border: 0;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    cursor: pointer;
+    outline: 0;
+    border-radius: 5px;
+    letter-spacing: .1em;
+    font-size: 12px;
+    margin: auto;
+    box-shadow: rgba(50, 50, 93, 0.25) 0 6px 12px -2px, rgba(0, 0, 0, 0.3) 0 3px 7px -3px;
+}
 
 @media (min-width: 0px) {
     .container {
         max-width: 100%;
     }
 }
-
+@keyframes SlideIn {
+	0% {
+		transform: translateY(100%);
+		visibility: visible
+	}
+	100% {
+		transform: translateY(0)
+	}
+}
+@-webkit-keyframes SlideIn {
+	0% {
+		-webkit-transform: translateY(100%);
+		-webkit-visibility: visible
+	}
+	100% {
+		-webkit-transform: translateY(0)
+	}
+}
+@-webkit-keyframes SlideInm {
+	0% {
+		-webkit-transform: translateY(-25%);
+		-webkit-visibility: visible
+	}
+	100% {
+		-webkit-transform: translateY(0)
+	}
+}
+@keyframes SlideOut {
+	0% {
+		transform: translateY(0)
+	}
+	100% {
+		transform: translateY(100%);
+		visibility: hidden;
+		bottom: 0
+	}
+}
+@keyframes SlideInbck {
+	0% {
+		transform: translateY(-100%);
+		visibility: visible
+	}
+	100% {
+		transform: translateY(0)
+	}
+}
+@keyframes SlideOutbck {
+	0% {
+		transform: translateY(0)
+	}
+	100% {
+		transform: translateY(-100%);
+		visibility: hidden;
+		bottom: 0
+	}
+}
+@keyframes SlideInX {
+	0% {
+		transform: translateX(100%);
+		visibility: visible
+	}
+	10% {
+		transform: translateX(100%);
+		visibility: visible
+	}
+	100% {
+		transform: translateX(0)
+	}
+}
 </style>

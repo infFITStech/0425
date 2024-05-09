@@ -12,7 +12,7 @@ import { mdiAccount } from '@mdi/js';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
-const iframeSrc = router.resolve({ name: 'IframeContainer' }).href;
+const iframeSrc = router.resolve({ name: 'IframeContainer'}).href;
 
 const pre = ref(false)
 const rawList = ref([]);
@@ -188,7 +188,8 @@ const saveProduct = async (updateData) => {
   getProductList();
 };
 
-const preview=()=>{
+const preview=(id)=>{
+  console.log(id)
   pre.value = !pre.value
 }
 
@@ -236,8 +237,22 @@ onMounted(() => {
                     </div>
                     <div class="col-8 col-md-2 text-body font-bold mb-4 mb-md-0 px-0" style="white-space: nowrap; overflow-x: scroll; -ms-overflow-style: none; scrollbar-width: none; ">{{product.ItemName}}</div>
 
+                    <!-- preview -->
+                    <div class="d-block d-md-none col-1 text-right mr-3" >
+                      <div class="flex-shrink-0 mr-1" style="display:inline-flex">
+                
+                        <button class="btn h4 mb-0 pl-2 bg-white border d-flex align-items-center justify-content-center rounded-pill rounded-md-circle"
+                                type="button"
+                                @click="preview(product.ClothID)"
+                                style="  box-shadow : rgba(0,0,0,0.15) 0 2px 8px; font-size:12px
+                                "
+                                >
+                              <img src="@/img/inffits_f_black.png" alt="f" class="m-1" style="height: 10px; width:auto; vertical-align: middle; margin-right: 3px; "> 預覽
+                        </button>
+                        </div>
+                    </div>
                     <!-- delete -->
-                    <div class="d-block d-md-none col-2 text-right">
+                    <div class="d-block d-md-none col-1 text-right">
                         <div class="h3 text-danger d-inline-flex align-items-center cursor-pointer mr-4"
                              @click="setEditProduct(product, true, 'deleteModal')">
                             <svg xmlns="http://www.w3.org/2000/svg"
@@ -249,6 +264,7 @@ onMounted(() => {
                             </svg>
                         </div>
                     </div>
+
 
                     <div class="col-12 px-md-0 col-md flex-shrink-0 flex-grow-1 d-flex flex-column flex-md-row align-items-stretch">
                         <!-- route -->
@@ -531,24 +547,10 @@ onMounted(() => {
                     <div class="d-none d-md-block col-auto text-right pr-2 pl-0">
                         <!-- preview tag button-->
                          <div class="flex-shrink-0 mr-1" style="display:inline-flex">
-                        <!-- <button class="btn h4 mb-0 p-0 bg-white border d-flex align-items-center justify-content-center rounded-pill rounded-md-circle"
-                                type="button"
-                                data-toggle="collapse"
-                                :data-target="`#collapseTag${productIdx}`"
-                                aria-expanded="false"
-                                :aria-controls="`collapseTag${productIdx}`"
-                                style="width: 2rem; height: 2rem;">
-                            <svg xmlns="http://www.w3.org/2000/svg"
-                                 width="1em"
-                                 height="1em"
-                                 viewBox="0 0 20 20">
-                                <path fill="currentColor"
-                                      d="M14 10.25a1.25 1.25 0 1 1 2.5 0a1.25 1.25 0 0 1-2.5 0m-5 0a1.25 1.25 0 1 1 2.5 0a1.25 1.25 0 0 1-2.5 0m-5 0a1.249 1.249 0 1 1 2.5 0a1.25 1.25 0 1 1-2.5 0" />
-                            </svg>
-                        </button> -->
+                
                         <button class="btn h4 mb-0 pl-2 bg-white border d-flex align-items-center justify-content-center rounded-pill rounded-md-circle"
                                 type="button"
-                                @click="preview()"
+                                @click="preview(product.ClothID)"
                                 style="  box-shadow : rgba(0,0,0,0.15) 0 2px 8px; font-size:12px
                                 "
                                 >

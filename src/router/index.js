@@ -80,7 +80,7 @@ const routes = [
   },
   {
     meta: {
-      title: 'SupportQA'
+      title: 'SupportQA',
     },
     path: '/supportQA',
     name: 'supportQA',
@@ -113,12 +113,19 @@ const router = createRouter({
   }
 })
 
+
+
 router.beforeEach((to, from, next) => {
+  const parts= window.location.href.slice(1).split('/');
+
   const authStore = useAuthStore();
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth !== false);
   const isAuthenticated = authStore.isLoggedIn;
-
-  if (requiresAuth && !isAuthenticated) {
+  if(parts[parts.length-1]=="iframe-container")
+  {
+    next(); 
+  }
+  else if (requiresAuth && !isAuthenticated) {
     next('/login'); 
     console.log("pppppppppppppppppppppppppppppppppppppppppppppp")
   } else {

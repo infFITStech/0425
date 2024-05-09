@@ -72,7 +72,9 @@ export const useAuthStore = defineStore('auth', () => {
         }
         catch(error){
           isLoggedIn.value = false;
-
+          localStorage.removeItem('idToken');
+          localStorage.removeItem('cognitoUser');
+          localStorage.removeItem('UserName');
         }
         
         
