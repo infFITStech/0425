@@ -32,19 +32,37 @@
 
 <script setup>
 import $ from 'jquery';
+import {onMounted, ref} from 'vue'
 var reset;
+const ClothID=ref('INFS_20240222MT09292040');
+const Brand=ref('INFS');
+window.addEventListener('message', async (event) => {
+  if(event.data.header=='from_preview')
+  {
+    await $('.update_delete').remove();
+    await $('#container-recom').hide();
 
+    ClothID.value=event.data.id;
+    Brand.value=event.data.brand;
+    console.log('change clothID: brand:', ClothID.value, Brand.value);
+    fetchData();
 
+  }
+  else{
+    ;
+  }
+  console.log('Message received from parent:', event.data);
 
-$(function () {
-    //Get Route
+});
+
+const fetchData = async () => {
+  const options = { method: 'GET', headers: { accept: 'application/json' } };
+  try {
+
     var obj;
-    const options = {method: 'GET', headers: {accept: 'application/json'}};
-
-    fetch('https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/run_product?Brand=INFS&ClothID=INFS_20240222MT09292040', options)
-    .then(response => response.json())
-    .then(response => {
-        console.log(response);obj = response
+    const response = await fetch('https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/run_product?Brand='+Brand.value+'&ClothID='+ClothID.value, options);
+    const data = await response.json();
+    console.log(response);obj = data
         let all_Route = obj.Product.Routes[0]['TagGroups_order']
         let Route_in_frame = {}
         for (var n = 0 ; n < all_Route.length ; n++){
@@ -59,7 +77,7 @@ $(function () {
             console.log('TagGroup : '+r)
             console.log('Description : '+Route_in_frame[r][0].Description.S)
             document.getElementById('pback').insertAdjacentHTML('beforebegin',  
-            `<div class='container mbinfo animX' id="container-${r}">
+            `<div class='container mbinfo animX update_delete' id="container-${r}">
                         <div class="c_header" id="container-x-header">
                             <span>${r}</span>
                             <p>${Route_in_frame[r][0].Description.S}</p>
@@ -124,9 +142,15 @@ $(function () {
         $('#loadingbar').hide();
         $('#pback').show();
         $("#containerback").show();
-    })
-.catch(err => console.error(err));
-})
+  } catch (error) {
+    console.error('Fetch error:', error);
+  }
+};
+
+
+onMounted(() => {
+  fetchData();
+});
 
 const get_recom_res = () =>{
     $('#loadingbar').show();
@@ -176,7 +200,7 @@ const show_results = (response) =>{
     for(let i = 0 ; i < response.Item.length ; i++){
         console.log(response.Item[i])
         $(`#container-recom`).find('.selection').append(`
-        <a href="${response.Item[i].Link}" target="_blank">
+        <a href="${response.Item[i].Link}" target="_blank" class="update_delete">
             <div class="axd_selection cursor-pointer">
                 <img class="c-recom" id="container-recom-${i}" data-item="0" src="${response.Item[i].Imgsrc}">
                 <p class="recom-text">${response.Item[i].ItemName}</p>
@@ -187,12 +211,70 @@ const show_results = (response) =>{
         `)
     }
 }
-window.addEventListener('message', (event) => {
-  console.log('Message received from parent:', event.data);
-});
-</script>
 
+</script>
 <style>
+@import url('@/css/css-in/iframe_style.min.css') ;
+
+.axd_selection{
+    transition: all .2s;
+}
+.selection_scroll {
+    top:24px;
+    height: calc(50% + 24px);
+    overflow: scroll;
+    scroll-behavior: smooth; /* 平滑滚动效果 */
+}
+.selection{
+    height:100%;
+}
+.axd_selection p {
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    margin: 4px;
+}
+.axd_img{
+    border-radius:5px;
+}
+.c-recom{
+    max-height:300px;
+    box-shadow:rgba(0,0,0,0.15) 0 2px 8px;
+    width: 92.5%;
+    border: solid 1px transparent;
+    transition: all .5s;
+    border-radius: 5px;
+
+}
+.recom-text{
+    letter-spacing: .1em !important;
+    color:black;
+    font-size: 12px;
+    font-weight: 500 !important;
+    line-height: 1.4em;
+    color: #0a0101;
+    text-transform: none;
+    text-align: left;
+    margin-top: 8px !important;
+    max-height: 48px;
+    overflow: scroll;
+}
+.recom-price{
+    letter-spacing: 0 !important;
+    color:gray;
+    font-size: 12px;
+    font-weight: 400;
+    color: #0a0101;
+    text-align: left;
+    line-height: 1.2em;
+    /* font-family: 'Noto Sans TC'; */
+}
+
+#container-recom .axd_selection:hover{
+    transform:scale(1.025);
+}
+
+</style>
+<!-- <style>
 
 html {
     scrollbar-width: none;
@@ -499,4 +581,4 @@ html, body {
 	}
 }
 
-</style>
+</style> -->

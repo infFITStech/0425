@@ -55,7 +55,7 @@
                             </div>
                         </div>
                         <div class="h4 font-bold text-body mb-1">{{tag.Name}}</div>
-                        <small class="text-break text-truncate">{{tag.Description}}</small>
+                        <small class="text-break text-truncate" style="white-space: wrap;">{{tag.Description}}</small>
 
                         <div class="position-absolute top-0 right-0 dropdown p-3">
                             <div class="cursor-pointer"

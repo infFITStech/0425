@@ -14,6 +14,7 @@ import { useRouter } from 'vue-router';
 const router = useRouter();
 const iframeSrc = router.resolve({ name: 'IframeContainer'}).href;
 
+const tagNum_row=ref(4);
 const pre = ref(false)
 const rawList = ref([]);
 const tagGroupList = ref([]);
@@ -24,7 +25,17 @@ const editProduct = ref({
   Tags: {}
 });
 
-
+window.addEventListener('resize', () => {
+  if (window.innerWidth < 990) {
+    tagNum_row.value = 2;
+  }
+  else if (window.innerWidth < 1150) {
+    tagNum_row.value = 3;
+  } 
+  else {
+    tagNum_row.value = 4;
+  }
+});
 const getTagGroupList = async () => {
     // Key: 主題名稱
     // Tag: 標籤ID, 
@@ -184,7 +195,6 @@ const tagListByProduct = (product) => {
 const myiframe = ref(null);
 
 
-// 保存产品
 const saveProduct = async (updateData) => {
   const payload = {
     Brand: 'INFS',
@@ -195,11 +205,14 @@ const saveProduct = async (updateData) => {
   getProductList();
 };
 
-const preview=(id)=>{
-  console.log(id)
+const preview=(id, brand)=>{
   $('#preview_box').fadeIn();
+  var iframe_preview_obj={};
+  iframe_preview_obj['id']=id;
+  iframe_preview_obj['header']='from_preview';
+  iframe_preview_obj['brand']=brand
   if (myiframe.value) {
-    myiframe.value.contentWindow.postMessage('Hello from parent', "*");
+    myiframe.value.contentWindow.postMessage(iframe_preview_obj, "*");
   }
 }
 
@@ -213,6 +226,17 @@ onMounted(() => {
   getTagGroupList();
   getRouteList();
   getProductList();
+
+  if (window.innerWidth < 990) {
+    tagNum_row.value = 2;
+  }
+  else if (window.innerWidth < 1150) {
+    tagNum_row.value = 3;
+  } 
+  else {
+    tagNum_row.value = 4;
+  }
+
 });
 
 </script>
@@ -276,10 +300,10 @@ onMounted(() => {
                     </div>
 
 
-                    <div class="col-12 px-md-0 col-md flex-shrink-0 flex-grow-1 d-flex flex-column flex-md-row align-items-stretch">
+                    <div class="col-12 px-md-0 col-md flex-shrink-0 flex-grow-1 d-flex flex-column flex-md-row align-items-center">
                         <!-- route -->
                         <div class="dropdown mr-md-1 mr-lg-1 mb-1 mb-md-0 ml-1">
-                            <button class="w-100 btn border dropdown-toggle"
+                            <button class="w-100 btn border dropdown-toggle rounded-pill"
                                     type="button"
                                     data-toggle="dropdown"
                                     aria-expanded="false"
@@ -303,7 +327,7 @@ onMounted(() => {
 
                         <!-- tag group -->
                         <div class="dropdown mr-md-1 mb-1 mb-md-0">
-                            <button class="w-100 btn border rounded-pill dropdown-toggle"
+                            <button class="w-100 btn border dropdown-toggle"
                                     type="button"
                                     data-toggle="dropdown"
                                     aria-expanded="false"
@@ -342,11 +366,11 @@ onMounted(() => {
                                             <div v-for="tag in tagGroup.tags"
                                                  :key="tag"
                                                  class="col-4 p-0 px-1 mb-2">
-                                                <div class="w-100 rounded-pill cursor-pointer d-flex align-items-center border
+                                                <div class="w-100 cursor-pointer d-flex align-items-center border
                                      position-relative"
                                                      :class="hasTag(product, tagGroup.group, tag) ? 'bg-secondary text-white' : 'bg-white text-secondary'"
                                                      @click.stop="setTag(product, tagGroup.group, tag)"
-                                                     style="line-height: 1;">
+                                                     style="line-height: 1; border-radius: 6px;box-shadow : rgba(0,0,0,0.15) 0 2px 8px;">
                                                     <div v-if="!hasTag(product, tagGroup.group, tag)"
                                                          class="position-absolute left-0"
                                                          style="top: 50%; transform: translate(50%, -50%);">
@@ -362,7 +386,7 @@ onMounted(() => {
                                                             </g>
                                                         </svg>
                                                     </div>
-                                                    <div class="w-100 text-center d-inline-flex align-items-center px-3 px-md-4 py-1 py-md-2">
+                                                    <div class="w-100 text-center d-inline-flex align-items-center px-3 px-md-4 py-1 py-md-1" style="line-height: 1.5; ">
                                                         <div class="profile-img mr-1"
                                                              style="border: none; width: 20px; min-width: 20px;">
                                                             <div class="img-circle-wrapper">
@@ -374,7 +398,7 @@ onMounted(() => {
                                                                      alt="">
                                                             </div>
                                                         </div>
-                                                        {{tag.Name}}
+                                                        <div style="white-space: nowrap; overflow-x: scroll; -ms-overflow-style: none; scrollbar-width: none;">{{tag.Name}}</div>
                                                     </div>
                                                     <div v-if="hasTag(product, tagGroup.group, tag)"
                                                          class="position-absolute right-0"
@@ -403,7 +427,7 @@ onMounted(() => {
                         <!-- tags -->
                         <div class="container-fluid px-0 mr-md-2 border py-1 px-2 " style="border-radius: 13px; ">
                             <div class="row m-0">
-                                <div v-for="tagObj in JSON.parse(JSON.stringify(tagListByProduct(product))).slice(0, 4)"
+                                <div v-for="tagObj in JSON.parse(JSON.stringify(tagListByProduct(product))).slice(0, tagNum_row)"
                                      :key="tagObj"
                                      class="col-12 col-md-3 p-0 px-1 mb-1 mb-md-0">
                                     <div class="w-100 d-flex align-items-center
@@ -426,7 +450,7 @@ onMounted(() => {
                                                 </g>
                                             </svg>
                                         </div>
-                                        <div class="w-100 text-center d-inline-flex align-items-center px-3 px-md-4 py-1  border" style="border-radius: 6px; box-shadow : rgba(0,0,0,0.15) 0 2px 8px; ">
+                                        <div class="w-100 text-center d-inline-flex align-items-center px-3 pr-md-4 py-1  border" style="border-radius: 6px; box-shadow : rgba(0,0,0,0.15) 0 2px 8px; ">
                                             <div class="profile-img mr-1 ml-0"
                                                  style="border: none; width: 20px; min-width: 20px;">
                                                 <div class="img-circle-wrapper">
@@ -462,7 +486,7 @@ onMounted(() => {
                                     </div>
                                 </div>
                                                         <!-- more tag button-->
-                                <div v-if="tagListByProduct(product).length > 4"
+                                <div v-if="tagListByProduct(product).length > tagNum_row"
                                   class="flex-shrink-0 inline-block">
                                   <button class="btn h4 mb-0 p-0 bg-white border d-flex align-items-center justify-content-center rounded-pill rounded-md-circle"
                                           type="button"
@@ -483,9 +507,10 @@ onMounted(() => {
                               </div>
                             <div class="collapse row m-0 mt-1"
                                  :id="`collapseTag${productIdx}`">
-                                <div v-for="tagObj in JSON.parse(JSON.stringify(tagListByProduct(product))).slice(4)"
+                                <div v-for="tagObj in JSON.parse(JSON.stringify(tagListByProduct(product))).slice(tagNum_row)"
                                      :key="tagObj"
-                                     class="col-12 col-md-3 p-0 px-1 mb-1 mb-md-0">
+                                     class="col-12 col-md-3 p-0 px-1 mb-1 mb-md-1"
+                                     >
                                     <div class="w-100 d-flex align-items-center 
                                       position-relative"
                                          :class="true ? 'bg-white text-gray' : 'bg-white text-secondary'"
@@ -508,7 +533,7 @@ onMounted(() => {
                                         <!-- <span class="w-100 text-center d-inline-block px-3 px-md-4 py-1 py-md-2">
                                             {{tagObj.tag?.Name}}
                                         </span> -->
-                                        <div class="w-100 text-center d-inline-flex align-items-center px-3 px-md-4 py-1 border " style="border-radius: 6px; box-shadow : rgba(0,0,0,0.15) 0 2px 8px; ">
+                                        <div class="w-100 text-center d-inline-flex align-items-center px-3 pr-md-4 py-1 border " style="border-radius: 6px; box-shadow : rgba(0,0,0,0.15) 0 2px 8px; ">
                                             <div class="profile-img mr-1 ml-0"
                                                  style="border: none; width: 20px; min-width: 20px;">
                                                 <div class="img-circle-wrapper">
@@ -554,13 +579,13 @@ onMounted(() => {
                     </div>
 
                     <!-- delete -->
-                    <div class="d-none d-md-block col-auto text-right pr-2 pl-0">
+                    <div class="d-none d-md-flex col-auto text-right pr-2 pl-0 align-items-center">
                         <!-- preview tag button-->
                          <div class="flex-shrink-0 mr-1" style="display:inline-flex">
                 
                         <button class="btn h4 mb-0 pl-2 bg-white border d-flex align-items-center justify-content-center rounded-pill rounded-md-circle"
                                 type="button"
-                                @click="preview(product.ClothID)"
+                                @click="preview(product.ClothID, product.Brand)"
                                 style="  box-shadow : rgba(0,0,0,0.15) 0 2px 8px; font-size:12px
                                 "
                                 >
@@ -734,10 +759,29 @@ html body .font-bold{
 
 @media (min-width: 768px) {
   .col-md-3{
+    flex:0 0 50%;
+    max-width: calc((100% - 28px) / 2);
+  }
+
+}
+
+@media (min-width: 990px) {
+  .col-md-3{
+    flex:0 0 33%;
+    max-width: calc((100% - 28px) / 3);
+  }
+
+}
+
+@media (min-width: 1150px) {
+  .col-md-3{
     flex:0 0 25%;
     max-width: calc((100% - 28px) / 4);
   }
+
 }
+
+
 
 
 

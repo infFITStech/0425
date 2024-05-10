@@ -6,7 +6,7 @@ import router from './router'
 import { useMainStore } from '@/stores/main.js'
 import { useAuthStore } from '@/stores/userStore.js';
 
-import './css/main.css'
+// import './css/main.css'
 
 // Init Pinia
 const pinia = createPinia()
@@ -23,6 +23,7 @@ if(parts[parts.length-1]!=="iframe-container")
 {
   const authStore = useAuthStore();
   await authStore.initializeAuthState();
+  import('./css/main.css'); 
 }
 
 
