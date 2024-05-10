@@ -257,7 +257,7 @@ onMounted(() => {
             <div class="h-100 flex-grow-1 bg-white rounded container-fluid">
                 <div class="row d-flex align-items-center py-4">
                     <!-- img -->
-                    <div class="col-2 col-md-1 flex-grow-0 mb-4 mb-md-0 px-3" style="max-width: max-content;">
+                    <div class="col-2 col-md-1 flex-grow-0 mb-4 mb-md-0 px-3">
                         <div class="profile-img m-0">
                             <div class="img-circle-wrapper">
                                 <div class="img-circle img-fluid bg-gray-light"
@@ -269,10 +269,11 @@ onMounted(() => {
                             </div>
                         </div>
                     </div>
-                    <div class="col-8 col-md-2 text-body font-bold mb-4 mb-md-0 px-0" style="white-space: nowrap; overflow-x: scroll; -ms-overflow-style: none; scrollbar-width: none; ">{{product.ItemName}}</div>
+                    <div class="col-7 col-md-2 text-body font-bold mb-4 mb-md-0 px-0" style="white-space: nowrap; overflow-x: scroll; -ms-overflow-style: none; scrollbar-width: none;">{{product.ItemName}}</div>
 
+                  <div class="col-3 d-flex d-md-none text-right align-items-center mb-4" style="justify-content:flex-end">
                     <!-- preview -->
-                    <div class="d-block d-md-none col-1 text-right mr-3" >
+                    <div class="d-flex d-md-none mx-3" >
                       <div class="flex-shrink-0 mr-1" style="display:inline-flex">
                 
                         <button class="btn h4 mb-0 pl-2 bg-white border d-flex align-items-center justify-content-center rounded-pill rounded-md-circle"
@@ -286,8 +287,8 @@ onMounted(() => {
                         </div>
                     </div>
                     <!-- delete -->
-                    <div class="d-block d-md-none col-1 text-right">
-                        <div class="h3 text-danger d-inline-flex align-items-center cursor-pointer mr-4"
+                    <div class="d-flex d-md-none text-left">
+                        <div class="h3 mb-0 text-danger d-inline-flex align-items-center cursor-pointer "
                              @click="setEditProduct(product, true, 'deleteModal')">
                             <svg xmlns="http://www.w3.org/2000/svg"
                                  width="1em"
@@ -298,11 +299,11 @@ onMounted(() => {
                             </svg>
                         </div>
                     </div>
+                  </div>
 
-
-                    <div class="col-12 px-md-0 col-md flex-shrink-0 flex-grow-1 d-flex flex-column flex-md-row align-items-center">
+                    <div class="col-12 px-md-0 col-md flex-shrink-0 flex-grow-1 d-flex flex-column flex-md-row align-items-center" >
                         <!-- route -->
-                        <div class="dropdown mr-md-1 mr-lg-1 mb-1 mb-md-0 ml-1">
+                        <div class="dropdown mr-md-1 mr-lg-1 mb-1 mb-md-0 ml-1 w100-max768">
                             <button class="w-100 btn border dropdown-toggle rounded-pill"
                                     type="button"
                                     data-toggle="dropdown"
@@ -326,7 +327,7 @@ onMounted(() => {
                         </div>
 
                         <!-- tag group -->
-                        <div class="dropdown mr-md-1 mb-1 mb-md-0">
+                        <div class="dropdown mr-md-1 mb-1 mb-md-0 w100-max768">
                             <button class="w-100 btn border dropdown-toggle"
                                     type="button"
                                     data-toggle="dropdown"
@@ -755,6 +756,13 @@ button{
 
 html body .font-bold{
   font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .w100-max768{
+    width: 100%;
+  }
+
 }
 
 @media (min-width: 768px) {
