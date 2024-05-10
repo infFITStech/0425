@@ -33,6 +33,9 @@
 <script setup>
 import $ from 'jquery';
 var reset;
+
+
+
 $(function () {
     //Get Route
     var obj;
@@ -184,9 +187,19 @@ const show_results = (response) =>{
         `)
     }
 }
+window.addEventListener('message', (event) => {
+  console.log('Message received from parent:', event.data);
+});
 </script>
 
 <style>
+
+html {
+    scrollbar-width: none;
+    scrollbar-color: rgb(156, 163, 175) rgb(249, 250, 251);
+  }
+
+  
 * {
     font-family: "Montserrat", "Noto Sans TC", sans-serif;
 }
@@ -229,6 +242,7 @@ body{
     -webkit-animation-timing-function: cubic-bezier(0.06,0.43,0.26,0.99);
     will-change: transform;
 }
+
 .selection_scroll {
     top: 24px;
     height: calc(50% + 24px);
@@ -299,6 +313,8 @@ body{
     border-top-right-radius: 10px;
     border-top-left-radius: 10px;
     padding:0px;
+
+
 }
 .axd_img:hover {
     border: solid 1px gray;
@@ -482,4 +498,5 @@ html, body {
 		transform: translateX(0)
 	}
 }
+
 </style>

@@ -145,7 +145,11 @@ const setProductRoute = (product, route) => {
 };
 
 const close_preview = () => {
-  pre.value=false;
+  $('#preview_box').fadeOut();
+  setTimeout(() => {
+    pre.value=false;
+    }, 400); 
+  
 }
 const setTag = (product, tagGroupName, tag) => {
   if (!product.Tags[tagGroupName]) {
@@ -177,6 +181,9 @@ const tagListByProduct = (product) => {
   return JSON.parse(JSON.stringify(tagList));
 };
 
+const myiframe = ref(null);
+
+
 // 保存产品
 const saveProduct = async (updateData) => {
   const payload = {
@@ -190,7 +197,10 @@ const saveProduct = async (updateData) => {
 
 const preview=(id)=>{
   console.log(id)
-  pre.value = !pre.value
+  $('#preview_box').fadeIn();
+  if (myiframe.value) {
+    myiframe.value.contentWindow.postMessage('Hello from parent', "*");
+  }
 }
 
 const deleteProduct = async () => {
@@ -609,17 +619,17 @@ onMounted(() => {
     </div>
 </div>
 <!-- preview -->
-<transition name="fade">
-<div v-if="pre" style="position: fixed; width: 100%; height: 100%; top: 0px; left: 0px; z-index: 2147483647; background: rgba(0, 0, 0, 0.5); transform: none;">
+<!-- <transition name="fade"> -->
+<div id="preview_box" style="position: fixed; width: 100%; height: 100%; top: 0px; left: 0px; z-index: 2147483647; background: rgba(0, 0, 0, 0.5); transform: none; display: none;">
   <div id="inffits_cblock" style='z-index:60;display:block;position: absolute;top:0;bottom:0;left:0;right:0;margin:auto;'>
-      <div id="tryon"><iframe id="inffits_tryon_window" style=" width:100%; height:100%; visibility:visible; position:relative; border:none; outline:none;  z-index:14;border-radius:10px;box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 8px;" :src="iframeSrc"></iframe></div>
+      <div id="tryon"><iframe ref="myiframe" id="inffits_tryon_window" style=" width:100%; height:100%; visibility:visible; position:relative; border:none; outline:none;  z-index:14;border-radius:10px;box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 8px;" :src="iframeSrc"></iframe></div>
       <div id="inf_close" @click="close_preview()" style="cursor: pointer;position:absolute;top: -5px;z-index: 10000009;right: -10px;padding: 5px;height: 25px;width: 25px;border-radius: 50%;box-shadow: rgb(54 62 81 / 15%) 0px 0.0625rem 0.125rem 0.0625rem;background: white; opacity:1">
         <img src="https://inffits.com/webDesign/HTML/img/cancel.png" style="position:absolute;top:0;bottom:0;right:0;left:0;width:10px;margin:auto;">
       </div>
 
     </div>
 </div>
-</transition>
+<!-- </transition> -->
     </SectionMain>
 </LayoutAuthenticated>
 </template>
@@ -630,6 +640,7 @@ onMounted(() => {
 @import url('@/css/css-in/frame.css');
 @import url('@/css/css-in/style.css');
 @import url('@/css/css-in/style.min.css');
+
 #inffits_tryon_window {
   @import url('@/css/css-in/iframe_style.min.css') !important;
 
@@ -728,12 +739,6 @@ html body .font-bold{
   }
 }
 
-.fade-enter-active, .fade-leave-active {
-  transition: opacity 0.5s;
-}
-.fade-enter, .fade-leave-to {
-  opacity: 0;
-}
 
 
 </style>
