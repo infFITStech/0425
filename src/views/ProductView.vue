@@ -258,7 +258,7 @@ onMounted(() => {
                 <div class="row d-flex align-items-center py-4">
                     <!-- img -->
                     <div class="col-2 col-md-1 flex-grow-0 mb-4 mb-md-0 px-3">
-                        <div class="profile-img m-0">
+                        <div class="profile-img m-0" style="border-style:none;  box-shadow : rgba(0,0,0,0.15) 0 2px 8px;">
                             <div class="img-circle-wrapper">
                                 <div class="img-circle img-fluid bg-gray-light"
                                      :class="product.Imgsrc ? '' : 'd-none'"></div>

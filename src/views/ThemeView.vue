@@ -11,7 +11,11 @@
              :key="groupIdx"
              class="row mb-3">
             <h4 class="col-12 font-bold mb-2">
-                {{group.group}}
+                <div class=" h5 font-bold px-4 bg-white border d-flex align-items-center justify-content-center rounded-pill cursor-pointer" 
+                style="max-width:max-content; box-shadow : rgba(0,0,0,0.15) 0 2px 8px; padding-top: 3px;padding-bottom: 3px"
+                @click="updateThemeName(group.group)">
+                    {{group.group}}
+                </div>
             </h4>
             <!-- ADD NEW -->
             <div class="col-lg-3 col-md-4 col-sm-12 col-12 mb-3">
@@ -248,6 +252,67 @@
             </div>
         </div>
     </div>
+
+    <!-- updateModal -->
+    <div class="modal fade"
+         id="updateModal"
+         tabindex="-1"
+         role="dialog"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered"
+             role="document">
+            <div class="modal-content">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title">更新主題名稱</h5>
+                    <button type="button"
+                            class="close"
+                            data-dismiss="modal"
+                            aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- form -->
+                    <form id="form-edit"
+                          class="d-flex align-items-start">
+                      
+                        <div class="w-75 container-fluid">
+                            <!-- 主題名稱 -->
+                            <div class="d-flex align-items-center mb-2">
+                                <label class="pr-2 flex-shrink-0">主題名稱</label>
+                                <input type="text"
+                                       name="TagGroup"
+                                       v-model="editTag.TagGroup" disabled
+                                       class="form-control">
+                            </div>
+                            
+                            <!-- new theme name -->
+                            <div class="d-flex align-items-center mb-2">
+                                <label class="pr-2 flex-shrink-0">新主題名稱</label>
+                                <input type="text"
+                                       name="Description"
+                                       v-model="new_group_name" 
+                                       class="form-control">
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer flex-column align-items-end border-0">
+                    <div id="hint-edit"
+                         class="d-none text-right text-danger mb-1">請填寫完整資訊</div>
+                    <div>
+                        <button type="button"
+                                class="btn btn-secondary mr-2"
+                                data-dismiss="modal">取消編輯</button>
+                        <button type="button"
+                                class="btn btn-primary"
+                                @click="update_themeName(editTag.TagGroup)">存檔</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     </SectionMain>
 </LayoutAuthenticated>
 </template>
@@ -263,11 +328,16 @@ import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
 import SectionMain from '@/components/SectionMain.vue'
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue';
 import { mdiAccount } from '@mdi/js';
+import { LambdaClient, InvokeCommand } from "@aws-sdk/client-lambda";
+import { CognitoIdentityClient, GetIdCommand, GetCredentialsForIdentityCommand } from "@aws-sdk/client-cognito-identity";
+import { fromCognitoIdentityPool } from "@aws-sdk/credential-provider-cognito-identity";
 const rawList = ref([]);
 const tagGroupList = ref([]);
 const editTag = ref({});
+const new_group_name = ref('');
 
  // https://s3.ap-northeast-2.amazonaws.com/inffitsmanager.assets/tmp/tmp/115-300x400.jpg
+
 
 const uploadImg=(event)=> {
 
@@ -346,6 +416,56 @@ img.onload = () => {
 
 
 // };
+const updateThemeName=(old_name)=>{
+    setEditTag({TagGroup:old_name}, true, 'updateModal');
+}
+
+const update_themeName = async(old_name) =>{
+    if (typeof AWS === 'undefined') {
+    const region = 'ap-northeast-1';
+    const identityPoolId = 'ap-northeast-1:ec9d0f5d-ae3e-4ff2-986f-2025ddbedf1a';
+
+    const credentials = fromCognitoIdentityPool({
+      client: new CognitoIdentityClient({ region }),
+      identityPoolId,
+    });
+
+    const lambdaClient = new LambdaClient({ region, credentials });
+
+    const brand = "INFS";
+    const preTagGroup = old_name;
+    const postTagGroup = new_group_name.value;
+
+    const payload = JSON.stringify({
+      Brand: brand,
+      pre_taggroup: preTagGroup,
+      post_taggroup: postTagGroup,
+    });
+
+    const params = {
+      FunctionName: 'mkt_extensions_rename_proc',
+      InvocationType: 'RequestResponse',
+      LogType: 'Tail',
+      Payload: payload,
+    };
+
+    try {
+      const command = new InvokeCommand(params);
+      const response = await lambdaClient.send(command);
+      console.log(response);
+
+      getTagGroupList()
+      setEditTag({}, true, 'updateModal');
+      new_group_name.value = '';
+    } catch (error) {
+      console.error(error);
+    }
+  }
+  //////////////////
+
+}
+
+
 const getTagGroupList=()=> {
             // Key: 主題名稱
             // Tag: 標籤ID, 
