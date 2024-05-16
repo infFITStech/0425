@@ -11,10 +11,11 @@
              :key="groupIdx"
              class="row mb-3">
             <h4 class="col-12 font-bold mb-2">
-                <div class=" h5 font-bold px-4 bg-white border d-flex align-items-center justify-content-center rounded-pill cursor-pointer" 
+                <div class=" h5 font-bold pl-4 bg-white border d-flex align-items-center justify-content-center rounded-pill cursor-pointer" 
                 style="max-width:max-content; box-shadow : rgba(0,0,0,0.15) 0 2px 8px; padding-top: 3px;padding-bottom: 3px"
                 @click="updateThemeName(group.group)">
                     {{group.group}}
+                    <BaseIcon :path="mdiPencilOutline" class="mx-2" />
                 </div>
             </h4>
             <!-- ADD NEW -->
@@ -81,7 +82,7 @@
                             <div class="dropdown-menu dropdown-menu-right"
                                  aria-labelledby="dropdownMenuButton">
                                 <a class="dropdown-item"
-                                   @click="setEditTag(tag, true, 'editModal')">Edit</a>
+                                   @click="setEditTag(tag, true, 'editModal', Key='edit')">Edit</a>
                                 <a class="dropdown-item"
                                    @click="setEditTag(tag, true, 'deleteModal')">Delete</a>
                             </div>
@@ -171,7 +172,7 @@
              role="document">
             <div class="modal-content">
                 <div class="modal-header border-0">
-                    <h5 class="modal-title">{{editTag.Key ? '編輯' : '新增'}}標籤</h5>
+                    <h5 class="modal-title">{{editTag.Key=="edit" ? '編輯' : '新增'}}標籤</h5>
                     <button type="button"
                             class="close"
                             data-dismiss="modal"
@@ -184,7 +185,7 @@
                     <form id="form-edit"
                           class="d-flex align-items-start">
                         <label class="d-block w-25">
-                            <label class="d-flex flex-column w-75 mx-auto cursor-pointer">
+                            <label class="d-flex flex-column w-75 mx-auto cursor-pointer image-container">
                                 <div class="img-circle-wrapper mb-2">
                                     <img v-if="editTag.Imgsrc"
                                          class="img-circle img-fluid"
@@ -193,13 +194,19 @@
                                          alt="">
                                     <div v-else
                                          class="img-circle img-fluid bg-gray-light"></div>
+                                        <!-- 上傳照片 -->
+                                        <svg viewBox="0 0 24 24" class="inline-block image-edit-icon" style="color: white;">
+                                            <path fill="currentColor" :d="mdiImage" />
+                                          </svg>
                                 </div>
                                 <input type="file"
                                        class="d-none"
                                        @change="uploadImg"
                                        accept="image/*">
                             </label>
+                            <div class="w-100" style="text-align: center; font-size: 13px">上傳圖片</div>
                         </label>
+                        
                         <div class="w-75 container-fluid">
                             <!-- 主題名稱 -->
                             <div class="d-flex align-items-center mb-2">
@@ -331,6 +338,8 @@ import { mdiAccount } from '@mdi/js';
 import { LambdaClient, InvokeCommand } from "@aws-sdk/client-lambda";
 import { CognitoIdentityClient, GetIdCommand, GetCredentialsForIdentityCommand } from "@aws-sdk/client-cognito-identity";
 import { fromCognitoIdentityPool } from "@aws-sdk/credential-provider-cognito-identity";
+import { mdiPencilOutline, mdiImage } from '@mdi/js';
+import BaseIcon from '@/components/BaseIcon.vue';
 const rawList = ref([]);
 const tagGroupList = ref([]);
 const editTag = ref({});
@@ -493,8 +502,9 @@ const getTagGroupList=()=> {
             })
         };
 
-const setEditTag = (tag = { TagGroup: '', Tag: String(new Date().getTime()), Name: '', Imgsrc: '', Description: '' }, toToggleModal = true, toggleModalName = 'editModal') => {
+const setEditTag = (tag = { TagGroup: '', Tag: String(new Date().getTime()), Name: '', Imgsrc: '', Description: '' }, toToggleModal = true, toggleModalName = 'editModal', Key='') => {
   editTag.value = Object.assign({ TagGroup: '', Tag: String(new Date().getTime()), Name: '', Imgsrc: '', Description: '' }, JSON.parse(JSON.stringify(tag)));
+  editTag.value.Key = Key
   if (toToggleModal) {
     toggleModal(toggleModalName);
   }
@@ -538,4 +548,20 @@ onMounted(() => {
 @import url('@/css/css-in/style.css');
 @import url('@/css/css-in/style.min.css');
 
+.image-edit-icon {
+    position: absolute;
+    top: 50%;      
+    left: 50%;
+    transform: translate(-50%, -50%);
+    fill: #fff;   
+    opacity: 0;     
+    transition: opacity 0.3s;
+    pointer-events: none;  
+    width: 48px;    
+    height: 48px;
+}
+
+.image-container:hover .image-edit-icon {
+    opacity: 0.8;     
+}
 </style>

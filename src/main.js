@@ -23,7 +23,7 @@ if(parts[parts.length-1]!=="iframe-container")
 {
   const authStore = useAuthStore();
   await authStore.initializeAuthState();
-  import('./css/main.css'); 
+  await import('./css/main.css'); 
 }
 
 

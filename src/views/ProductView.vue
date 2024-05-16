@@ -36,6 +36,7 @@ window.addEventListener('resize', () => {
     tagNum_row.value = 4;
   }
 });
+
 const getTagGroupList = async () => {
     // Key: 主題名稱
     // Tag: 標籤ID, 
@@ -237,7 +238,10 @@ onMounted(() => {
     tagNum_row.value = 4;
   }
 
+
+
 });
+
 
 </script>
 
@@ -303,38 +307,57 @@ onMounted(() => {
 
                     <div class="col-12 px-md-0 col-md flex-shrink-0 flex-grow-1 d-flex flex-column flex-md-row align-items-center" >
                         <!-- route -->
-                        <div class="dropdown mr-md-1 mr-lg-1 mb-1 mb-md-0 ml-1 w100-max768">
-                            <button class="w-100 btn border dropdown-toggle rounded-pill"
-                                    type="button"
-                                    data-toggle="dropdown"
-                                    aria-expanded="false"
-                                    style="color: gray;">
-                                {{getRouteName(product.Routes) || '動線規劃'}}
-                                
+                      
+                        <div class="dropdown mr-md-1 mr-lg-1 mb-1 mb-md-0 ml-md-1 w100-max768 px-0 border rounded-pill btn"
+                        style="color: gray; text-align: left">
+                        <span class="w-100"
+                        type="button"
+                          data-toggle="dropdown"
+                            aria-expanded="false">
+                            
+                            <button class="pl-2"
+                            style="color: gray; white-space: nowrap; overflow-x: scroll; -ms-overflow-style: none; scrollbar-width: none; width: calc(100% - 1em);">
+                                {{(product.Routes.length)?getRouteName(product.Routes):'選擇動線'}}
                             </button>
-                            <div class="dropdown-menu">
-                                <div class="dropdown-item"
-                                     disabled>
-                                    選擇欲顯示的詢問動線
-                                </div>
-                                <div v-for="(route,idx) in routeList"
-                                     :key="route.Route"
-                                     class="dropdown-item"
-                                     @click="setProductRoute(product, route)">
-                                    {{route.Name}} ({{route.TagGroups_order.join(' - ')}})
-                                </div>
-                            </div>
-                        </div>
+                            <button class="dropdown-toggle">
+                            </button>
+                        </span>
 
+                        <div class="dropdown-menu" id="route-menu">
+                          <div class="dropdown-item"
+                               disabled>
+                              選擇欲顯示的詢問動線
+                          </div>
+                          <div v-for="(route,idx) in routeList"
+                               :key="route.Route"
+                               class="dropdown-item"
+                               @click="setProductRoute(product, route)">
+                              {{route.Name}} ({{route.TagGroups_order.join(' - ')}})
+                          </div>
+                      </div>
+
+                        </div>   
+                        
+                  
+                       
+
+                     
                         <!-- tag group -->
-                        <div class="dropdown mr-md-1 mb-1 mb-md-0 w100-max768">
-                            <button class="w-100 btn border dropdown-toggle"
-                                    type="button"
-                                    data-toggle="dropdown"
-                                    aria-expanded="false"
-                                    style="color: gray;">
+                        <div class="dropdown mr-md-1 mb-1 mb-md-0 w100-max768 px-0 border btn"
+                        style="border-radius: 0.25rem ; color: gray; text-align: left">
+                        <span class="w-100"
+                             type="button"
+                            data-toggle="dropdown"
+                            aria-expanded="false">
+                            <button class="pl-2"
+                            style="color: gray; white-space: nowrap; overflow-x: scroll; -ms-overflow-style: none; scrollbar-width: none;  width: calc(100% - 1em);">
                                 {{'新增標籤'}}
                             </button>
+
+                            <button class="dropdown-toggle ">
+
+                            </button>
+                          </span>
                             <div :id="`tagDropdownMenu${productIdx}`"
                                  class="dropdown-menu p-2"
                                  style="min-width: 400px;"
@@ -423,10 +446,12 @@ onMounted(() => {
                                 </div>
                             </div>
 
-                        </div>
+                          </div>
+
+                          
 
                         <!-- tags -->
-                        <div class="container-fluid px-0 mr-md-2 border py-1 px-2 " style="border-radius: 13px; ">
+                        <div class="container-fluid px-0 mr-md-2 border py-1 px-2" style="border-radius: 13px; min-height:39px">
                             <div class="row m-0">
                                 <div v-for="tagObj in JSON.parse(JSON.stringify(tagListByProduct(product))).slice(0, tagNum_row)"
                                      :key="tagObj"
@@ -764,6 +789,13 @@ html body .font-bold{
   }
 
 }
+@media (min-width: 768px) {
+  .w100-max768{
+    flex: 0 0 13.666667%;
+    max-width: 13.666667%;
+  }
+
+}
 
 @media (min-width: 768px) {
   .col-md-3{
@@ -790,7 +822,17 @@ html body .font-bold{
 }
 
 
-
-
+.dropdown-toggle::after{
+  display: inline-block;
+  width: 0;
+  height: 0;
+  margin-left: 0em; 
+  vertical-align: middle;
+  content: "";
+  border-top: .3em solid;
+  border-right: .3em solid transparent;
+  border-bottom: 0;
+  border-left: .3em solid transparent;
+}
 
 </style>
