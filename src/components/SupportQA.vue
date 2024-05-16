@@ -1,5 +1,9 @@
 <template>
-    <div :class="{'hover:bg-gray-100 dark:hover:bg-slate-700':hasDropdown, 'has-dropdown': hasDropdown}" class=" py-3 w-full cursor-pointer bg-gray-50 dark:bg-slate-800 item" @click="clickDrop">
+    <div :class="{ 'has-dropdown': hasDropdown, 'shadow': hasDropdown&&isDropdownActive, 'mb-1':hasDropdown}" class="py-3 w-full cursor-pointer bg-white  item" 
+    @click="clickDrop"
+   >
+   <!--     :style="{ boxShadow: hasDropdown ? 'rgba(0, 0, 0, 0.15) 0 2px 8px' : '' }"
+  style="box-shadow: rgba(0, 0, 0, 0.15) 0 2px 8px" -->
         <BaseIcon
         v-if="hasDropdown"
         :path="mdiViewList"
@@ -9,7 +13,10 @@
       />
       <span
       :class="{ 'pl-12': !hasDropdown }"
+      :style="{fontSize:hasDropdown?'18px':'16px'}"
+      style=""
         class="grow text-ellipsis line-clamp-1 inline-block "
+
         >{{ item.title }}</span
       >
       <span v-if="item.ans"
@@ -25,7 +32,9 @@
       />
         
     </div>
-    <div v-if="isDropdownActive" class="pl-2" >
+    <transition name="slide">
+
+    <div v-if="isDropdownActive" class="pl-2 mb-1">
         <SupportQA
         
         v-for="(a, index) in item.menu"
@@ -33,6 +42,8 @@
         :item="a"
       />
     </div>
+  </transition>
+
 
     <hr
     v-if="hasDropdown"
@@ -67,10 +78,22 @@ const props = defineProps({
 
 <style scoped>
 .item:nth-child(odd):not(.has-dropdown) {
-    background-color: #fdfbfbf3; /* 淺灰色 */
+    background-color: white; /* 淺灰色 */
   }
   .item:nth-child(even):not(.has-dropdown) {
     background-color: #ffffff; /* 白色 */
   }
+.has-dropdown:hover{
+  filter: brightness(98%);
+}
+
+.slide-enter-active, .slide-leave-active {
+  transition: all 0.3s ease;
+}
+.slide-enter, .slide-leave-to {
+  transform: translateY(-20px);
+  opacity: 0;
+}
+
 
 </style>

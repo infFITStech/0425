@@ -25,45 +25,45 @@ const QA=[
         title:"商品管理",
         menu:[
             {
-                title:"QQ1",
+                title:"如何設定動線",
                 ans:"AA1"
             },
             {
-                title:"QQ2",
+                title:"新增商品標籤",
                 ans:"AA2"
-            },
-            {
-                title:"QQ3",
-                ans:"AA3"
             }
+            // {
+            //     title:"QQ3",
+            //     ans:"AA3"
+            // }
 
         ]
         
     },
     {
-        title:"About Q2",
+        title:"購物動線規劃",
         menu:[
             {
-                title:"QQ1",
+                title:"新增主題至動線",
                 ans:"AA1"
             },
             {
-                title:"QQ2",
+                title:"調整動線主題順序",
                 ans:"AA2"
-            },
-            {
-                title:"QQ3",
-                ans:"AA3"
             }
+            // {
+            //     title:"QQ3",
+            //     ans:"AA3"
+            // }
 
         ]
         
     },
     {
-        title:"About Q3",
+        title:"主題及標籤",
         menu:[
             {
-                title:"About QQ1",
+                title:"新增主題內的標籤及相關內容",
                 menu:[
                     {
                         title:"QQQ1",
@@ -81,13 +81,10 @@ const QA=[
                 ]
             },
             {
-                title:"QQ2",
+                title:"調整主題名稱及描述",
                 ans:"AA2"
-            },
-            {
-                title:"QQ3",
-                ans:"AA3"
             }
+
 
         ]
         

@@ -10,7 +10,9 @@ import SectionMain from '@/components/SectionMain.vue'
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue';
 import { mdiAccount } from '@mdi/js';
 import { useRouter } from 'vue-router';
+import { useAuthStore } from '@/stores/userStore';
 
+const authStore = useAuthStore();
 const router = useRouter();
 const iframeSrc = router.resolve({ name: 'IframeContainer'}).href;
 
@@ -20,6 +22,7 @@ const rawList = ref([]);
 const tagGroupList = ref([]);
 const routeList = ref([]);
 const productList = ref([]);
+const brandList=ref([{name:authStore.MainConfig.BrandName, Imgsrc: authStore.MainConfig.Logo, Routes:[]}]);
 const editProduct = ref({
   Route: '',
   Tags: {}
@@ -248,9 +251,132 @@ onMounted(() => {
 <template>
 <LayoutAuthenticated>
   <SectionMain>
-    <SectionTitleLineWithButton :icon="mdiAccount" title="產品管理" main>
+    <SectionTitleLineWithButton :icon="mdiAccount" title="管理" main>
       &nbsp;
   </SectionTitleLineWithButton>
+  <div class="container-fluid pb-3">
+    
+    <div v-for="(b,bIdx) in brandList"
+         :key="bIdx"
+         class="row mb-3">
+        <!-- render tags -->
+        <div class="col-12">
+            <div class="h-100 flex-grow-1 bg-white rounded container-fluid">
+                <div class="row d-flex align-items-center py-4">
+                    <!-- img -->
+                    <div class="col-2 col-md-1 flex-grow-0 mb-4 mb-md-0 px-3">
+                        <div class="profile-img m-0" style="border-style:none;  box-shadow : rgba(0,0,0,0.15) 0 2px 8px;">
+                            <div class="img-circle-wrapper">
+                                <div class="img-circle img-fluid bg-gray-light"
+                                     :class="b.Imgsrc ? '' : 'd-none'"></div>
+                                <img class="img-circle img-fluid"
+                                     :class="b.Imgsrc ? '' : 'd-none'"
+                                     :src="b.Imgsrc"
+                                     alt="">
+                            </div>
+                        </div>
+                    </div>
+                    
+                <div class="col-7 col-md-4 text-body font-bold mb-4 mb-md-0 px-0 " style="white-space: nowrap; overflow-x: scroll; -ms-overflow-style: none; scrollbar-width: none; text-align:center">
+                  {{b.name}}
+                </div>
+
+                  <div class="col-3 d-flex d-md-none text-right align-items-center mb-4" style="justify-content:flex-end">
+                    <!-- preview -->
+                    <div class="d-flex d-md-none mx-3" >
+                      <div class="flex-shrink-0 mr-1" style="display:inline-flex">
+                
+                        <button class="btn h4 mb-0 pl-2 bg-white border d-flex align-items-center justify-content-center rounded-pill rounded-md-circle"
+                                type="button"
+                                @click="preview(b.id)"
+                                style="  box-shadow : rgba(0,0,0,0.15) 0 2px 8px; font-size:12px
+                                "
+                                >
+                              <img src="@/img/inffits_f_black.png" alt="f" class="m-1" style="height: 10px; width:auto; vertical-align: middle; margin-right: 3px; "> 預覽
+                        </button>
+                        </div>
+                    </div>
+
+                  </div>
+
+                    
+
+                  <div class="col-12 px-md-0 col-md flex-shrink-0 flex-grow-1 d-flex flex-column flex-md-row align-items-center " style="justify-content: start;" >
+                    <!-- route -->
+                  
+                    <div class="dropdown mr-md-1 mr-lg-1 mb-1 mb-md-0 ml-md-1 px-0 border rounded-pill btn brand-route-choose"
+                    style="color: gray; text-align: left;">
+                    <span class="w-100"
+                    type="button"
+                      data-toggle="dropdown"
+                        aria-expanded="false">
+                        
+                        <button class="pl-2"
+                        style="color: gray; white-space: nowrap; overflow-x: scroll; -ms-overflow-style: none; scrollbar-width: none; width: calc(100% - 1em);">
+                            {{(b.Routes.length)?getRouteName(b.Routes):'選擇動線'}}
+                        </button>
+                        <button class="dropdown-toggle">
+                        </button>
+                    </span>
+
+                    <div class="dropdown-menu" id="route-menu">
+                      <div class="dropdown-item"
+                           disabled>
+                          選擇欲顯示的詢問動線
+                      </div>
+                      <div v-for="(route,idx) in routeList"
+                           :key="route.Route"
+                           class="dropdown-item"
+                           @click="setBrandRoute(b, route)">
+                          {{route.Name}} ({{route.TagGroups_order.join(' - ')}})
+                      </div>
+                  </div>
+
+                    </div>   
+
+                      
+
+                </div>
+
+                    <!-- delete -->
+                    <div class="d-none d-md-flex col-auto text-right pr-2 pl-0 align-items-center">
+                        <!-- preview tag button-->
+                         <div class="flex-shrink-0 mr-1" style="display:inline-flex">
+                
+                        <button class="btn h4 mb-0 pl-2 bg-white border d-flex align-items-center justify-content-center rounded-pill rounded-md-circle"
+                                type="button"
+                                @click="preview(b.ClothID, b.Brand)"
+                                style="  box-shadow : rgba(0,0,0,0.15) 0 2px 8px; font-size:12px
+                                "
+                                >
+                              <img src="@/img/inffits_f_black.png" alt="f" class="m-1" style="height: 10px; width:auto; vertical-align: middle; margin-right: 3px; "> 預覽
+                        </button>
+                        </div>
+
+                        <div class="h3 text-danger d-inline-flex align-items-center cursor-pointer mb-0"
+                             @click="setEditBrand(b, true, 'deleteModal')">
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                 width="0.9em"
+                                 height="0.9em"
+                                 viewBox="0 0 24 24">
+                                <path fill="currentColor"
+                                      d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6zM19 4h-3.5l-1-1h-5l-1 1H5v2h14z" />
+                            </svg>
+                        </div>
+                         
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+  <SectionTitleLineWithButton  title="商品管理" > &emsp;</SectionTitleLineWithButton>
+
   <div class="container-fluid pb-3">
     
     <div v-for="(product,productIdx) in productList"
@@ -835,6 +961,18 @@ html body .font-bold{
   border-right: .3em solid transparent;
   border-bottom: 0;
   border-left: .3em solid transparent;
+}
+@media (min-width: 768px) {
+.brand-route-choose{
+  width: 25%;
+}
+}
+
+@media (max-width: 768px) {
+  .brand-route-choose{
+    width: 100%;
+  }
+
 }
 
 </style>
