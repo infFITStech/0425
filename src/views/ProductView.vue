@@ -411,7 +411,8 @@ onMounted(() => {
                                                         </svg>
                                                     </div>
                                                     <div class="w-100 text-center d-inline-flex align-items-center px-3 px-md-4 py-1 py-md-1" style="line-height: 1.5; ">
-                                                        <div class="profile-img mr-1"
+
+                                                        <div class="profile-img m-1 "
                                                              style="border: none; width: 20px; min-width: 20px;">
                                                             <div class="img-circle-wrapper">
                                                                 <div class="img-circle img-fluid"
@@ -422,6 +423,7 @@ onMounted(() => {
                                                                      alt="">
                                                             </div>
                                                         </div>
+
                                                         <div style="white-space: nowrap; overflow-x: scroll; -ms-overflow-style: none; scrollbar-width: none;">{{tag.Name}}</div>
                                                     </div>
                                                     <div v-if="hasTag(product, tagGroup.group, tag)"

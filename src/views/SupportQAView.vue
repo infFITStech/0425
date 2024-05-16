@@ -22,7 +22,7 @@ import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.
 import { mdiAccount } from '@mdi/js';
 const QA=[
     {
-        title:"About Q1",
+        title:"商品管理",
         menu:[
             {
                 title:"QQ1",

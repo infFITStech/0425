@@ -21,17 +21,8 @@
                             <div class="h5 font-bold text-body mb-3">{{route.Name}}</div>
 
                             <div>
-                                <a class="text-danger d-inline-flex align-items-center cursor-pointer mr-4"
-                                   @click="setEditRoute(route, true, 'deleteModal')">
-                                    <svg xmlns="http://www.w3.org/2000/svg"
-                                         width="1em"
-                                         height="1em"
-                                         viewBox="0 0 24 24">
-                                        <path fill="currentColor"
-                                              d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6zM19 4h-3.5l-1-1h-5l-1 1H5v2h14z" />
-                                    </svg>
-                                    刪除</a>
-                                <a class="d-inline-flex align-items-center cursor-pointer"
+                    
+                                <a class="d-inline-flex align-items-center cursor-pointer mr-4"
                                    @click="setEditRoute(route, true, 'editModal')">
                                     <svg xmlns="http://www.w3.org/2000/svg"
                                          width="1em"
@@ -41,6 +32,17 @@
                                               d="M3 21v-4.25L16.2 3.575q.3-.275.663-.425t.762-.15q.4 0 .775.15t.65.45L20.425 5q.3.275.438.65T21 6.4q0 .4-.137.763t-.438.662L7.25 21zM17.6 7.8L19 6.4L17.6 5l-1.4 1.4z" />
                                     </svg>
                                     編輯</a>
+
+                                    <a class="text-danger d-inline-flex align-items-center cursor-pointer"
+                                    @click="setEditRoute(route, true, 'deleteModal')">
+                                     <svg xmlns="http://www.w3.org/2000/svg"
+                                          width="1em"
+                                          height="1em"
+                                          viewBox="0 0 24 24">
+                                         <path fill="currentColor"
+                                               d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6zM19 4h-3.5l-1-1h-5l-1 1H5v2h14z" />
+                                     </svg>
+                                     刪除</a>
                             </div>
 
                         </div>

@@ -11,8 +11,8 @@
              :key="groupIdx"
              class="row mb-3">
             <h4 class="col-12 font-bold mb-2">
-                <div class=" h5 font-bold pl-4 bg-white border d-flex align-items-center justify-content-center rounded-pill cursor-pointer" 
-                style="max-width:max-content; box-shadow : rgba(0,0,0,0.15) 0 2px 8px; padding-top: 3px;padding-bottom: 3px"
+                <div class=" h5 pl-4 bg-white border d-flex align-items-center justify-content-center rounded-pill cursor-pointer tag-title " 
+                style="max-width:max-content; box-shadow : rgba(0,0,0,0.15) 0 2px 8px; padding-top: 3px;padding-bottom: 3px;  font-weight: 600; "
                 @click="updateThemeName(group.group)">
                     {{group.group}}
                     <BaseIcon :path="mdiPencilOutline" class="mx-2" />
@@ -55,7 +55,7 @@
                                      :class="tag.Imgsrc ? '' : 'd-none'"></div>
                                 <img class="img-circle img-fluid"
                                      :class="tag.Imgsrc ? '' : 'd-none'"
-                                     :src="tag.Imgsrc"
+                                     :src="tag.Imgsrc? tag.Imgsrc : defaultImg"
                                      alt="">
                             </div>
                         </div>
@@ -187,13 +187,15 @@
                         <label class="d-block w-25">
                             <label class="d-flex flex-column w-75 mx-auto cursor-pointer image-container">
                                 <div class="img-circle-wrapper mb-2">
-                                    <img v-if="editTag.Imgsrc"
+                                    <!-- v-if="editTag.Imgsrc" -->
+                                    <img
                                          class="img-circle img-fluid"
                                          id="img-edit"
-                                         :src="editTag.Imgsrc"
+                                         :src="editTag.Imgsrc?editTag.Imgsrc:defaultImg"
                                          alt="">
-                                    <div v-else
-                                         class="img-circle img-fluid bg-gray-light"></div>
+                                    <!-- <div v-else
+                                         class="img-circle img-fluid bg-gray-light">
+                                    </div> -->
                                         <!-- 上傳照片 -->
                                         <svg viewBox="0 0 24 24" class="inline-block image-edit-icon" style="color: white;">
                                             <path fill="currentColor" :d="mdiImage" />
@@ -344,7 +346,7 @@ const rawList = ref([]);
 const tagGroupList = ref([]);
 const editTag = ref({});
 const new_group_name = ref('');
-
+const defaultImg='default.png'
  // https://s3.ap-northeast-2.amazonaws.com/inffitsmanager.assets/tmp/tmp/115-300x400.jpg
 
 
@@ -563,5 +565,11 @@ onMounted(() => {
 
 .image-container:hover .image-edit-icon {
     opacity: 0.8;     
+}
+.image-container:hover #img-edit{
+    filter: brightness(70%);
+}
+.tag-title:hover {
+    color: #9c9c9c;
 }
 </style>
