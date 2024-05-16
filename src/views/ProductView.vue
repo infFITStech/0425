@@ -16,13 +16,15 @@ const authStore = useAuthStore();
 const router = useRouter();
 const iframeSrc = router.resolve({ name: 'IframeContainer'}).href;
 
+const userBrand=ref(authStore.MainConfig.Brand)
+
 const tagNum_row=ref(4);
 const pre = ref(false)
 const rawList = ref([]);
 const tagGroupList = ref([]);
 const routeList = ref([]);
 const productList = ref([]);
-const brandList=ref([{name:authStore.MainConfig.BrandName, Imgsrc: authStore.MainConfig.Logo, Routes:[]}]);
+const brandList=ref([]);
 const editProduct = ref({
   Route: '',
   Tags: {}
@@ -46,7 +48,8 @@ const getTagGroupList = async () => {
     // Name: 標籤名稱, 
     // Imgsrc: 圖片url, 
     // TagGroup:主題
-  const response = await axios.get('https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/get_tags?Brand=INFS&Per_Page=100&Page=1');
+    // userBrand.value ㄚㄚㄚㄚ 
+  const response = await axios.get('https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/get_tags?Brand='+'INFS'+'&Per_Page=100&Page=1');
   const tagGroupMap = {};
   response.data.models.forEach(tag => {
     if (!tagGroupMap[tag.TagGroup]) {
@@ -74,14 +77,29 @@ const getRouteList = async () => {
             //     "版型"
             //   ]
             // },
-  const response = await axios.get('https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/get_routes?Brand=INFS&Per_Page=100&Page=1');
+  const response = await axios.get('https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/get_routes?Brand='+'INFS'+'&Per_Page=100&Page=1');
   routeList.value = [...response.data.models];
 };
 
+
+
 const getProductList = async () => {
-  const response = await axios.get('https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/get_products?Brand=INFS&Per_Page=100&Page=1');
+  const response = await axios.get('https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/get_products?Brand='+'INFS'+'&Per_Page=100&Page=1');
   rawList.value = response.data.models;
   productList.value = [...response.data.models];
+  console.log("bye",productList.value[5] )
+  //getBrandList
+  brandList.value=[]
+  productList.value = productList.value.filter(product => {
+    if (product.ClothID.endsWith("_All")) {
+        brandList.value.push(product);
+        return false;
+    }
+    // 返回 true 表示保留在原列表中
+    return true;
+});
+
+
 };
 
 // const setEditRouteProduct = (group) =>{
@@ -202,6 +220,7 @@ const myiframe = ref(null);
 const saveProduct = async (updateData) => {
   const payload = {
     Brand: 'INFS',
+    // Brand: userBrand.value
     ...updateData,
   };
   const response = await axios.post('https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/update_product', payload);
@@ -221,7 +240,7 @@ const preview=(id, brand)=>{
 }
 
 const deleteProduct = async () => {
-    const response = await axios.delete(`https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/del_product?Brand=INFS&id=${editProduct.value.id}`);
+    const response = await axios.delete(`https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/del_product?Brand=`+`INFS`+`&id=${editProduct.value.id}`);
     console.log(response);
   getProductList();
   setEditProduct({}, true, 'deleteModal');
@@ -278,7 +297,7 @@ onMounted(() => {
                     </div>
                     
                 <div class="col-7 col-md-4 text-body font-bold mb-4 mb-md-0 px-0 " style="white-space: nowrap; overflow-x: scroll; -ms-overflow-style: none; scrollbar-width: none; text-align:center">
-                  {{b.name}}
+                  {{b.ItemName}}
                 </div>
 
                   <div class="col-3 d-flex d-md-none text-right align-items-center mb-4" style="justify-content:flex-end">
@@ -288,7 +307,7 @@ onMounted(() => {
                 
                         <button class="btn h4 mb-0 pl-2 bg-white border d-flex align-items-center justify-content-center rounded-pill rounded-md-circle"
                                 type="button"
-                                @click="preview(b.id)"
+                                @click="preview(b.ClothID, b.Brand)"
                                 style="  box-shadow : rgba(0,0,0,0.15) 0 2px 8px; font-size:12px
                                 "
                                 >
@@ -319,7 +338,7 @@ onMounted(() => {
                         </button>
                     </span>
 
-                    <div class="dropdown-menu" id="route-menu">
+                    <div class="dropdown-menu" id="brand-route-menu" >
                       <div class="dropdown-item"
                            disabled>
                           選擇欲顯示的詢問動線
@@ -327,7 +346,7 @@ onMounted(() => {
                       <div v-for="(route,idx) in routeList"
                            :key="route.Route"
                            class="dropdown-item"
-                           @click="setBrandRoute(b, route)">
+                           @click="setProductRoute(b, route)">
                           {{route.Name}} ({{route.TagGroups_order.join(' - ')}})
                       </div>
                   </div>
@@ -353,7 +372,7 @@ onMounted(() => {
                         </button>
                         </div>
 
-                        <div class="h3 text-danger d-inline-flex align-items-center cursor-pointer mb-0"
+                        <!-- <div class="h3 text-danger d-inline-flex align-items-center cursor-pointer mb-0"
                              @click="setEditBrand(b, true, 'deleteModal')">
                             <svg xmlns="http://www.w3.org/2000/svg"
                                  width="0.9em"
@@ -362,7 +381,7 @@ onMounted(() => {
                                 <path fill="currentColor"
                                       d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6zM19 4h-3.5l-1-1h-5l-1 1H5v2h14z" />
                             </svg>
-                        </div>
+                        </div> -->
                          
 
                     </div>
@@ -408,7 +427,7 @@ onMounted(() => {
                 
                         <button class="btn h4 mb-0 pl-2 bg-white border d-flex align-items-center justify-content-center rounded-pill rounded-md-circle"
                                 type="button"
-                                @click="preview(product.ClothID)"
+                                @click="preview(product.ClothID, product.Brand)"
                                 style="  box-shadow : rgba(0,0,0,0.15) 0 2px 8px; font-size:12px
                                 "
                                 >
@@ -975,4 +994,10 @@ html body .font-bold{
 
 }
 
+@media (min-width: 768px) and (max-width: 1050px) {
+#brand-route-menu{
+  left: -100px !important;
+}
+}
 </style>
+

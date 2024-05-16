@@ -34,8 +34,8 @@
 import $ from 'jquery';
 import {onMounted, ref, reactive} from 'vue'
 var reset;
-const ClothID=ref('INFS_20240222MT09292040');
-const Brand=ref('INFS');
+const ClothID=ref('');
+const Brand=ref('');
 let tags_chosen = reactive({});
 
 const Initial=()=>{
@@ -202,7 +202,7 @@ let options = {
     method: 'POST',
     headers: {accept: 'application/json', 'content-type': 'application/json'},
     body: JSON.stringify({
-        Brand: 'INFS',
+        Brand: Brand.value,
         Tags: tags_chosen
     })
     };

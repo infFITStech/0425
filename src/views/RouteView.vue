@@ -325,6 +325,11 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
 import SectionMain from '@/components/SectionMain.vue'
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue';
+import { useAuthStore } from '@/stores/userStore';
+const authStore = useAuthStore();
+
+const userBrand=ref(authStore.MainConfig.Brand);
+
 export default defineComponent({
   components: {
     draggable,
@@ -350,7 +355,7 @@ export default defineComponent({
             // Name: 標籤名稱, 
             // Imgsrc: 圖片url, 
             // TagGroup:主題
-      axios.get('https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/get_tags?Brand=INFS&Per_Page=100&Page=1').then(response => {
+      axios.get('https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/get_tags?Brand='+'INFS'+'&Per_Page=100&Page=1').then(response => {
         const tagGroupMap = {};
         response.data.models.forEach(tag => {
           if (!tagGroupMap[tag.TagGroup]) {
@@ -380,7 +385,7 @@ export default defineComponent({
             //     "版型"
             //   ]
             // },
-      axios.get('https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/get_routes?Brand=INFS&Per_Page=100&Page=1').then(response => {
+      axios.get('https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/get_routes?Brand='+'INFS'+'&Per_Page=100&Page=1').then(response => {
         state.rawList = response.data.models;
         state.routeList = [...response.data.models];
       });
@@ -451,7 +456,7 @@ export default defineComponent({
         };
 
         const deleteRoute=()=> {
-            axios.delete(`https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/del_route?Brand=INFS&Route=${state.editRoute.Route}`).then(response => {
+            axios.delete(`https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/del_route?Brand=`+`INFS`+`&Route=${state.editRoute.Route}`).then(response => {
                 console.log(response)
                 getRouteList()
                 setEditRoute({}, true, 'deleteModal')

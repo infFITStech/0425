@@ -342,6 +342,9 @@ import { CognitoIdentityClient, GetIdCommand, GetCredentialsForIdentityCommand }
 import { fromCognitoIdentityPool } from "@aws-sdk/credential-provider-cognito-identity";
 import { mdiPencilOutline, mdiImage } from '@mdi/js';
 import BaseIcon from '@/components/BaseIcon.vue';
+import { useAuthStore } from '@/stores/userStore';
+const authStore = useAuthStore();
+const userBrand =ref(authStore.MainConfig.Brand)
 const rawList = ref([]);
 const tagGroupList = ref([]);
 const editTag = ref({});
@@ -483,7 +486,7 @@ const getTagGroupList=()=> {
             // Name: 標籤名稱, 
             // Imgsrc: 圖片url, 
             // TagGroup:主題
-            axios.get('https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/get_tags?Brand=INFS&Per_Page=100&Page=1').then(response => {
+            axios.get('https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/get_tags?Brand='+'INFS'+'&Per_Page=100&Page=1').then(response => {
                 const tagGroupMap = {}
                 rawList.value = response.data.models
                 response.data.models.forEach(tag => {
@@ -530,7 +533,7 @@ const saveTag=() =>{
 
 
 const deleteTag=()=> {
-            axios.delete(`https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/del_tag?Brand=INFS&Tag=${editTag.value.Tag}`).then(response => {
+            axios.delete(`https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/del_tag?Brand=`+`INFS`+`&Tag=${editTag.value.Tag}`).then(response => {
                 console.log(response)
                 getTagGroupList()
                 setEditTag({}, true, 'deleteModal')
