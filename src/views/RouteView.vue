@@ -23,7 +23,7 @@
                             <div>
                     
                                 <a class="d-inline-flex align-items-center cursor-pointer mr-4"
-                                   @click="setEditRoute(route, true, 'editModal')">
+                                   @click="setEditRoute(route, true, 'editModal', editRoute=true)">
                                     <svg xmlns="http://www.w3.org/2000/svg"
                                          width="1em"
                                          height="1em"
@@ -191,7 +191,7 @@
              role="document">
             <div class="modal-content">
                 <div class="modal-header border-0">
-                    <h5 class="modal-title">{{editRoute.Route ? '編輯' : '新增'}}動線</h5>
+                    <h5 class="modal-title">{{editRoute.isEditRoute ? '編輯' : '新增'}}動線</h5>
                     <button type="button"
                             class="close"
                             data-dismiss="modal"
@@ -300,9 +300,12 @@
                         <button type="button"
                                 class="btn btn-secondary mr-2"
                                 data-dismiss="modal">取消編輯</button>
-                        <button type="button"
+                        <button :v-tooltip="tooltipText"
+                                type="button"
                                 class="btn btn-primary"
-                                @click="saveRoute()">存檔</button>
+                                @click="saveRoute()"
+                                :disabled="editRoute.editingTagGroups.length==0||editRoute.Description==''||editRoute.Name==''" >存檔</button>
+                                
                     </div>
                 </div>
             </div>
@@ -326,6 +329,7 @@ import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
 import SectionMain from '@/components/SectionMain.vue'
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue';
 import { useAuthStore } from '@/stores/userStore';
+
 const authStore = useAuthStore();
 
 const userBrand=ref(authStore.MainConfig.Brand);
@@ -336,6 +340,7 @@ export default defineComponent({
     LayoutAuthenticated,
     SectionMain,
     SectionTitleLineWithButton,
+    
 
   },
   setup() {
@@ -410,7 +415,7 @@ export default defineComponent({
             editingTagGroups: []
         },
             toToggleModal = true,
-            toggleModalName = 'editModal') => {
+            toggleModalName = 'editModal', isEditRoute=false) => {
 
             state.editRoute = Object.assign({
                 Description: '',
@@ -418,7 +423,8 @@ export default defineComponent({
                 Name: '',
                 Route: String(new Date().getTime()),
                 TagGroups_order: [],
-                editingTagGroups: []
+                editingTagGroups: [],
+                isEditRoute: false
             },
                 JSON.parse(JSON.stringify(route)),
                 {
@@ -427,6 +433,7 @@ export default defineComponent({
                     })
                         : []
                 })
+            state.editRoute.isEditRoute = isEditRoute
 
             console.log(state.editRoute)
             if (toToggleModal) {
@@ -462,6 +469,7 @@ export default defineComponent({
                 setEditRoute({}, true, 'deleteModal')
             })
         }
+    const tooltipText="請填寫完整資訊"
 
     onMounted(() => {
       getTagGroupList();
@@ -477,7 +485,8 @@ export default defineComponent({
       toggleModal,
       saveRoute,
       deleteRoute,
-      mdiAccount
+      mdiAccount,
+      tooltipText
     };
   }
 });
@@ -490,5 +499,27 @@ export default defineComponent({
 @import url('@/css/css-in/style.css');
 @import url('@/css/css-in/style.min.css');
 
-
+.tooltip-disabled {
+    position: relative;
+  }
+  
+  .tooltip-disabled::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #525252;
+    color: #fff;
+    padding: 5px;
+    border-radius: 3px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+  }
+  
+  .tooltip-disabled:hover::after {
+    opacity: 1;
+  }
 </style>

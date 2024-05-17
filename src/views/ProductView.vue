@@ -13,6 +13,7 @@ import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/userStore';
 import BaseIcon from '@/components/BaseIcon.vue';
 
+const tooltipText="請選擇動線"
 const authStore = useAuthStore();
 const router = useRouter();
 // const iframeSrc = router.resolve({ name: 'IframeContainer'}).href;
@@ -311,6 +312,8 @@ onMounted(() => {
                                 @click="preview(b.ClothID, b.Brand)"
                                 style="  box-shadow : rgba(0,0,0,0.15) 0 2px 8px; font-size:12px
                                 "
+                                v-tooltip="tooltipText"
+                                :disabled="b.Routes.length==0"
                                 >
                               <img src="@/img/inffits_f_black.png" alt="f" class="m-1" style="height: 10px; width:auto; vertical-align: middle; margin-right: 3px; "> 預覽
                         </button>
@@ -366,8 +369,9 @@ onMounted(() => {
                         <button class="btn h4 mb-0 pl-2 bg-white border d-flex align-items-center justify-content-center rounded-pill rounded-md-circle"
                                 type="button"
                                 @click="preview(b.ClothID, b.Brand)"
-                                style="  box-shadow : rgba(0,0,0,0.15) 0 2px 8px; font-size:12px
-                                "
+                                style="  box-shadow : rgba(0,0,0,0.15) 0 2px 8px; font-size:12px"
+                                v-tooltip="tooltipText"
+                                :disabled="b.Routes.length==0"
                                 >
                               <img src="@/img/inffits_f_black.png" alt="f" class="m-1" style="height: 10px; width:auto; vertical-align: middle; margin-right: 3px; "> 預覽
                         </button>
@@ -439,6 +443,8 @@ onMounted(() => {
                                 @click="preview(product.ClothID, product.Brand)"
                                 style="  box-shadow : rgba(0,0,0,0.15) 0 2px 8px; font-size:12px
                                 "
+                                v-tooltip="tooltipText"
+                                :disabled="product.Routes.length==0"
                                 >
                               <img src="@/img/inffits_f_black.png" alt="f" class="m-1" style="height: 10px; width:auto; vertical-align: middle; margin-right: 3px; "> 預覽
                         </button>
@@ -446,7 +452,7 @@ onMounted(() => {
                     </div>
                     <!-- delete -->
                     <div class="d-flex d-md-none text-left">
-                        <div class="h3 mb-0 text-danger d-inline-flex align-items-center cursor-pointer "
+                        <!-- <div class="h3 mb-0 text-danger d-inline-flex align-items-center cursor-pointer "
                              @click="setEditProduct(product, true, 'deleteModal')">
                             <svg xmlns="http://www.w3.org/2000/svg"
                                  width="1em"
@@ -455,7 +461,16 @@ onMounted(() => {
                                 <path fill="currentColor"
                                       d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6zM19 4h-3.5l-1-1h-5l-1 1H5v2h14z" />
                             </svg>
-                        </div>
+                        </div> -->
+                        <label class="h3 text-danger d-inline-flex align-items-center cursor-pointer mb-0"
+                             >
+                            
+                            <input type="checkbox" value="" class="sr-only peer" checked>
+                            <div class="toggle-switch relative h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"
+                                  style="">
+                            </div>
+                      </label>
+
                     </div>
                   </div>
 
@@ -514,7 +529,7 @@ onMounted(() => {
                           </span>
                             <div :id="`tagDropdownMenu${productIdx}`"
                                  class="dropdown-menu p-2"
-                                 style="min-width: 400px;"
+                                 style="min-width: 400px; max-height: 500px; overflow-y: scroll; scrollbar-width: thin;"
                                  onclick="event.stopPropagation()">
                                 <div class="text-right">
                                     <button type="button"
@@ -546,9 +561,10 @@ onMounted(() => {
                                                  class="col-4 p-0 px-1 mb-2">
                                                 <div class="w-100 cursor-pointer d-flex align-items-center border
                                      position-relative"
-                                                     :class="hasTag(product, tagGroup.group, tag) ? 'bg-secondary text-white' : 'bg-white text-secondary'"
+                                                     :class="hasTag(product, tagGroup.group, tag) ? 'bg-secondary text-white' : ' text-secondary'"
+                                                     :style="hasTag(product, tagGroup.group, tag) ? '':'backgroundColor: rgb(243,243,243);'"
                                                      @click.stop="setTag(product, tagGroup.group, tag)"
-                                                     style="line-height: 1; border-radius: 6px;box-shadow : rgba(0,0,0,0.15) 0 2px 8px;">
+                                                     style="line-height: 1; border-radius: 6px;">
                                                     <div v-if="!hasTag(product, tagGroup.group, tag)"
                                                          class="position-absolute left-0"
                                                          style="top: 50%; transform: translate(50%, -50%);">
@@ -632,7 +648,8 @@ onMounted(() => {
                                                 </g>
                                             </svg>
                                         </div>
-                                        <div class="w-100 text-center d-inline-flex align-items-center px-3 pr-md-4 py-1  border" style="border-radius: 6px; box-shadow : rgba(0,0,0,0.15) 0 2px 8px; ">
+                                        <div class="w-100 text-center d-inline-flex align-items-center px-3 pr-md-4 py-1  border hint-group" style="border-radius: 6px; background-color: rgb(243,243,243);"
+                                        :hint-group="tagObj.group" >
                                             <div class="profile-img mr-1 ml-0"
                                                  style="border: none; width: 20px; min-width: 20px;">
                                                 <div class="img-circle-wrapper">
@@ -715,7 +732,8 @@ onMounted(() => {
                                         <!-- <span class="w-100 text-center d-inline-block px-3 px-md-4 py-1 py-md-2">
                                             {{tagObj.tag?.Name}}
                                         </span> -->
-                                        <div class="w-100 text-center d-inline-flex align-items-center px-3 pr-md-4 py-1 border " style="border-radius: 6px; box-shadow : rgba(0,0,0,0.15) 0 2px 8px; ">
+                                        <div class="w-100 text-center d-inline-flex align-items-center px-3 pr-md-4 py-1 border hint-group" style="border-radius: 6px; background-color: rgb(243,243,243); "
+                                        :hint-group="tagObj.group">
                                             <div class="profile-img mr-1 ml-0"
                                                  style="border: none; width: 20px; min-width: 20px;">
                                                 <div class="img-circle-wrapper">
@@ -770,21 +788,33 @@ onMounted(() => {
                                 @click="preview(product.ClothID, product.Brand)"
                                 style="  box-shadow : rgba(0,0,0,0.15) 0 2px 8px; font-size:12px
                                 "
+                                v-tooltip="tooltipText"
+                                :disabled="product.Routes.length==0"
                                 >
                               <img src="@/img/inffits_f_black.png" alt="f" class="m-1" style="height: 10px; width:auto; vertical-align: middle; margin-right: 3px; "> 預覽
                         </button>
                         </div>
-
-                        <div class="h3 text-danger d-inline-flex align-items-center cursor-pointer mb-0"
-                             @click="setEditProduct(product, true, 'deleteModal')">
-                            <svg xmlns="http://www.w3.org/2000/svg"
+                        <!-- delete button -->
+                        <label class="h3 text-danger d-inline-flex align-items-center cursor-pointer mb-0"
+                             >
+                            
+                            <input type="checkbox" value="" class="sr-only peer" checked>
+                            <div class="toggle-switch relative h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"
+                                  style="">
+                            </div>
+                      </label>
+                         <!-- @click="setEditProduct(product, true, 'deleteModal')" -->
+                            <!-- <svg xmlns="http://www.w3.org/2000/svg"
                                  width="0.9em"
                                  height="0.9em"
                                  viewBox="0 0 24 24">
                                 <path fill="currentColor"
                                       d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6zM19 4h-3.5l-1-1h-5l-1 1H5v2h14z" />
-                            </svg>
-                        </div>
+                            </svg> -->
+                        <!-- <label class="inline-flex items-center cursor-pointer">
+                          <input type="checkbox" value="" class="sr-only peer">
+                          <div class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                        </label> -->
                          
 
                     </div>
@@ -1009,7 +1039,119 @@ html body .font-bold{
 }
 }
 
-.ItemName-width{
+.dropdown-menu {
+  transform: translate3d(0, 0, 0) !important;
+  top: 100% !important;
+  left: 0 !important;
+  will-change: transform !important;
+}
+
+.peer + .toggle-switch::before {
+  content: 'OFF';
+  position: absolute;
+  right: 3px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 10px;
+  color: rgb(52 52 52);
+  font-weight: 800;
+}
+.peer:checked + .toggle-switch {
+  background-color: rgb(52 52 52);
+}
+.peer:checked + .toggle-switch::before {
+  content: 'ON';
+  left: 3px;
+  right: auto;
+  color: #fff;
+  font-size: 10px;
+
+}
+.peer + .toggle-switch::after {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  background-color: #fff;
+  border-radius: 50%;
+  top: 2px;
+  left: 2px;
+  transition: transform 0.3s;
+}
+.peer:checked + .toggle-switch::after {
+  transform: translateX(20px);
+}
+
+.toggle-switch{
+  background: white ;
+  border: 1.8px solid rgb(52 52 52);
+  width:3.1rem;
+}
+.peer:checked + .toggle-switch::after{
+  background-color: white;
+  left: 2px;
+}
+.peer +.toggle-switch::after{
+  border: none;
+  background: rgb(52 52 52);
+  top:1px;
+  left:1px;
+}
+/* 移除蓝色框 */
+.peer:focus + .toggle-switch,
+.peer:active + .toggle-switch {
+    outline: none;
+    box-shadow: none;
+}
+
+.hint-group{
+  position: relative;
+}
+
+.hint-group::after {
+  content: attr(hint-group);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #979797;
+  color: #fff;
+  padding: 5px;
+  border-radius: 3px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+
+.hint-group:hover::after {
+  opacity: 1;
+}
+
+
+
+.tooltip-disabled {
+  position: relative;
+}
+
+.tooltip-disabled::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #525252;
+  color: #fff;
+  padding: 5px;
+  border-radius: 3px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+
+.tooltip-disabled:hover::after {
+  opacity: 1;
 }
 </style>
 

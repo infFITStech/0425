@@ -61,6 +61,8 @@ else{
 }
 console.log('Message received from parent:', event.data);
 
+
+
 });
 
 const fetchData = async () => {
@@ -193,7 +195,6 @@ const fetchData = async () => {
 
 
 onMounted(() => {
-fetchData();
 });
 
 const get_recom_res = () =>{

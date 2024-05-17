@@ -5,6 +5,7 @@ import App from './App.vue'
 import router from './router'
 import { useMainStore } from '@/stores/main.js'
 import { useAuthStore } from '@/stores/userStore.js';
+import vTooltip from '@/v-tooltip.js';
 
 // import './css/main.css'
 
@@ -27,6 +28,7 @@ const initApp = async () => {
   }
 
   app.use(router)
+  app.directive('tooltip', vTooltip);
   app.mount('#app')
 
   // Init main store

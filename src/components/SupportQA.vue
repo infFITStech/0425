@@ -1,6 +1,7 @@
 <template>
-    <div :class="{ 'has-dropdown': hasDropdown, 'shadow': hasDropdown&&isDropdownActive, 'mb-1':hasDropdown}" class="py-3 w-full cursor-pointer bg-white  item" 
-    :style="{ borderBottom: item.ans ? '2px solid rgb(239, 239, 246)': '' }"
+    <div :class="{ 'has-dropdown': hasDropdown, 'shadow': hasDropdown&&isDropdownActive, 'mb-1':hasDropdown, 'flex-col':!hasDropdown}" class="py-3 w-full cursor-pointer bg-white  item" 
+    :style="{ borderBottom: item.ans ? '2px solid rgb(239, 239, 246)': '' , alignItems:item.ans?'flex-start':'center'}"
+    style="display: flex;"
     @click="clickDrop"
    >
    <!--     :style="{ boxShadow: hasDropdown ? 'rgba(0, 0, 0, 0.15) 0 2px 8px' : '' }"
@@ -35,7 +36,7 @@
     </div>
     <transition name="slide">
 
-    <div v-if="isDropdownActive" class="pl-2 mb-1">
+    <div v-if="isDropdownActive" class="pl-2 mb-1" >
         <SupportQA
         
         v-for="(a, index) in item.menu"

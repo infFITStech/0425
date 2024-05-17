@@ -253,9 +253,11 @@
                         <button type="button"
                                 class="btn btn-secondary mr-2"
                                 data-dismiss="modal">取消編輯</button>
-                        <button type="button"
+                        <button v-tooltip="tooltipText"
+                                type="button"
                                 class="btn btn-primary"
-                                @click="saveTag()">存檔</button>
+                                @click="saveTag()"
+                                :disabled="!editTag.TagGroup || !editTag.Name || !editTag.Description">存檔</button>
                     </div>
                 </div>
             </div>
@@ -349,8 +351,9 @@ const rawList = ref([]);
 const tagGroupList = ref([]);
 const editTag = ref({});
 const new_group_name = ref('');
-const defaultImg='default.png'
+const defaultImg='https://s3.ap-northeast-1.amazonaws.com/inffits.com/mkt/img/empty.jpg'
  // https://s3.ap-northeast-2.amazonaws.com/inffitsmanager.assets/tmp/tmp/115-300x400.jpg
+const tooltipText="請填寫完整資訊"
 
 
 const uploadImg=(event)=> {
@@ -575,4 +578,28 @@ onMounted(() => {
 .tag-title:hover {
     color: #9c9c9c;
 }
+
+.tooltip-disabled {
+    position: relative;
+  }
+  
+  .tooltip-disabled::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #525252;
+    color: #fff;
+    padding: 5px;
+    border-radius: 3px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+  }
+  
+  .tooltip-disabled:hover::after {
+    opacity: 1;
+  }
 </style>
