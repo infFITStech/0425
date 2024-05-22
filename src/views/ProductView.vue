@@ -8,7 +8,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
 import SectionMain from '@/components/SectionMain.vue'
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue';
-import { mdiAccount, mdiLogout } from '@mdi/js';
+import { mdiAccount, mdiLogout, mdiStoreCogOutline } from '@mdi/js';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/userStore';
 import BaseIcon from '@/components/BaseIcon.vue';
@@ -130,7 +130,9 @@ const toggleModal = (modalId) => {
   }
 
   const getRouteName = (routes) => {
+  if (!routeList.value.includes(routes?.[0].Name)) return "選擇動線"
   return routes?.[0].Name || null
+
 };
 
 const getTagGroupByRoute = (routeKey) => {
@@ -272,7 +274,7 @@ onMounted(() => {
 <template>
 <LayoutAuthenticated>
   <SectionMain>
-    <SectionTitleLineWithButton :icon="mdiAccount" title="管理" main>
+    <SectionTitleLineWithButton :icon="mdiStoreCogOutline" title="官網及商品管理" main>
       &nbsp;
   </SectionTitleLineWithButton>
   <div class="container-fluid pb-3">
@@ -281,7 +283,7 @@ onMounted(() => {
          :key="bIdx"
          class="row mb-3">
         <!-- render tags -->
-        <div class="col-12">
+        <div class="col-12 ">
             <div class="h-100 flex-grow-1 bg-white rounded container-fluid">
                 <div class="row d-flex align-items-center py-4">
                     <!-- img -->
@@ -298,9 +300,15 @@ onMounted(() => {
                         </div>
                     </div>
                     
-                <div class="col-7 col-md-4 text-body font-bold mb-4 mb-md-0 px-0 " style="white-space: nowrap; overflow-x: scroll; -ms-overflow-style: none; scrollbar-width: none; text-align:center">
-                  {{authStore.MainConfig.BrandName}}
-                </div>
+                    <div class="flex-row col-7 col-md-2 text-body font-bold mb-4 mb-md-0 px-0" style="white-space: nowrap; overflow-x: scroll; -ms-overflow-style: none; scrollbar-width: none; display:flex; " >
+                      <span class="ItemName-width" style="white-space: nowrap; overflow-x: scroll; -ms-overflow-style: none; scrollbar-width: none; display:flex; width:calc(100% - 16px)">{{authStore.MainConfig.BrandName}}</span>
+                      <!-- url -->
+                      <a href="product.Link" target="_blank" style="display:flex; padding-left: 4px; ">
+                      <svg viewBox="0 0 24 24" width="16px" height="16px" class="inline-block">
+                        <path fill="currentColor" :d="mdiLogout" />
+                      </svg>
+                      </a>
+                    </div>
 
                   <div class="col-3 d-flex d-md-none text-right align-items-center mb-4" style="justify-content:flex-end">
                     <!-- preview -->
@@ -649,7 +657,7 @@ onMounted(() => {
                                             </svg>
                                         </div>
                                         <div class="w-100 text-center d-inline-flex align-items-center px-3 pr-md-4 py-1  border hint-group" style="border-radius: 6px; background-color: rgb(243,243,243);"
-                                        :hint-group="tagObj.group" >
+                                        :hint-group="'主題: '+tagObj.group" >
                                             <div class="profile-img mr-1 ml-0"
                                                  style="border: none; width: 20px; min-width: 20px;">
                                                 <div class="img-circle-wrapper">
@@ -733,7 +741,7 @@ onMounted(() => {
                                             {{tagObj.tag?.Name}}
                                         </span> -->
                                         <div class="w-100 text-center d-inline-flex align-items-center px-3 pr-md-4 py-1 border hint-group" style="border-radius: 6px; background-color: rgb(243,243,243); "
-                                        :hint-group="tagObj.group">
+                                        :hint-group="'主題: '+tagObj.group">
                                             <div class="profile-img mr-1 ml-0"
                                                  style="border: none; width: 20px; min-width: 20px;">
                                                 <div class="img-circle-wrapper">

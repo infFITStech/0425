@@ -66,12 +66,12 @@ const submitPass = async () => {
         &nbsp;
       </SectionTitleLineWithButton>
       
-      <BreadCrumb>
-      </BreadCrumb>
+      <!-- <BreadCrumb>
+      </BreadCrumb> -->
 
       
 
-      
+    <div style="padding-left: 15px; padding-right: 15px;">
       <UserCard class="mb-6" /> 
       <!-- user img and inform -->
 
@@ -115,7 +115,7 @@ const submitPass = async () => {
         <!-- change password -->
         <CardBox is-form @submit.prevent="submitPass">
 
-          <label class="block font-bold mb-2 text-lg">更改密碼</label>
+          <label class="block font-bold mb-2 text-lg" >更改密碼</label>
 
           <BaseDivider />
 
@@ -163,7 +163,7 @@ const submitPass = async () => {
 
         <!-- 品牌帳單資訊 -->
         <CardBox>
-          <label class="block font-bold mb-2 text-lg">品牌帳單資訊</label>
+          <label class="block font-bold mb-2 text-lg"  >品牌帳單資訊</label>
           <BaseDivider />
 
           <label v-if="!billingInform.length" class="block mb-2 text-lg">沒有服務費用</label>
@@ -202,7 +202,7 @@ const submitPass = async () => {
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <!-- 線下匯款 -->
         <CardBox>
-          <label class="block font-bold mb-2 text-lg">線下匯款</label>
+          <label class="block font-bold mb-2 text-lg" >線下匯款</label>
           <BaseDivider />
 
           <FormField label="付款指示" >
@@ -260,12 +260,13 @@ const submitPass = async () => {
 
         </CardBox>
         <!-- 品牌帳單資訊 -->
-        <CardBox>
+        <!-- 本期訂閱.下期訂閱.擴充功能.購買方案... -->
+        <!-- <CardBox>
           <TabCard :tabs="tabsForChild">
           </TabCard>
-        </CardBox>
+        </CardBox> -->
       </div>
-
+    </div>
     </SectionMain>
   </LayoutAuthenticated>
 </template>

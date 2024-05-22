@@ -16,7 +16,7 @@ const userName = authStore.cognitoUser ?authStore.cognitoUser.username:'';
 
 <template>
   <CardBox>
-    <label class="block font-bold mb-0 text-lg">品牌基本資訊 及 方案時間</label>
+    <label class="block font-bold mb-0 text-lg"  >品牌基本資訊 及 方案時間</label>
     <BaseDivider />
     <BaseLevel type="justify-around lg:justify-center">
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">

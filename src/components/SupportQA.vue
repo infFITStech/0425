@@ -9,6 +9,7 @@
         <BaseIcon
         v-if="hasDropdown"
         :path="mdiViewList"
+        style="padding-left: 12px; justify-content: flex-start; "
         class="flex-none"
         w="w-16"
         :size="18"

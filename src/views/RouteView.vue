@@ -1,7 +1,7 @@
 <template>
 <LayoutAuthenticated>
 <SectionMain>
-    <SectionTitleLineWithButton :icon="mdiAccount" title="動線管理" main>
+    <SectionTitleLineWithButton :icon="mdiMulticast" title="動線管理" main>
         &nbsp;
     </SectionTitleLineWithButton>
     <div class="container pb-3">
@@ -320,7 +320,7 @@
 import { defineComponent, onMounted, reactive, toRefs, ref } from 'vue';
 import axios from 'axios';
 import draggable from 'vuedraggable';
-import { mdiAccount } from '@mdi/js';
+import { mdiMulticast } from '@mdi/js';
 import $ from 'jquery';
 import 'popper.js';
 import 'bootstrap';
@@ -485,7 +485,7 @@ export default defineComponent({
       toggleModal,
       saveRoute,
       deleteRoute,
-      mdiAccount,
+      mdiMulticast,
       tooltipText
     };
   }

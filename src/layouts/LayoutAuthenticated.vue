@@ -54,6 +54,7 @@ const menuClick = (event, item) => {
     :class="{
       'overflow-hidden lg:overflow-visible': isAsideMobileExpanded
     }"
+    
   >
     <div
       :class="[layoutAsidePadding, { 'ml-60 xl:ml-0': isAsideMobileExpanded }]"
@@ -95,8 +96,12 @@ const menuClick = (event, item) => {
       </PopUp>
       <SideNotify v-if="mainStore.IsNotify.state">
       </SideNotify>
-      <slot />
-      <div style="background-color: white;">
+      
+      <div class="content">
+        <slot />
+      </div>
+
+      <div style="background-color: white;"  >
       <FooterBar>
         <!-- Get more with
         <a href="https://tailwind-vue.justboil.me/" target="_blank" class="text-blue-600"
@@ -108,6 +113,13 @@ const menuClick = (event, item) => {
         
       </FooterBar>
       </div>
+
     </div>
   </div>
 </template>
+
+<style>
+.content{
+  min-height: calc(100vh - 93px)
+}
+</style>

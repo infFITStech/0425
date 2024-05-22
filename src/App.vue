@@ -13,8 +13,17 @@ if(parts[parts.length-1]!=="iframe-container")
   <RouterView />
 </template>
 
-<!-- <style>
-@import './css/global.scss'
 
+<!-- 解決modal 都會跳到最上層 -->
+<style>
+body.modal-open {
+  overflow:visible !important;
+  padding-right: 0px !important;
 
-</style> -->
+}
+
+.modal{
+  padding-right: 0px !important;
+}
+
+</style>

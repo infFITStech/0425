@@ -111,8 +111,9 @@ onBeforeUnmount(() => {
     :is="is"
     v-else
     ref="root"
-    class="block flex items-center relative cursor-pointer"
-    :class="componentClass"
+    class="block flex items-center relative"
+    :class="[{ 'cursor-pointer': item.menu }, componentClass]"
+    :style="{ 'color': item.menu ? '' : 'black' }"
     :to="item.to ?? null"
     :href="item.href ?? null"
     :target="item.target ?? null"

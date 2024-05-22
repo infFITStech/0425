@@ -2,14 +2,16 @@
 
     <LayoutAuthenticated>
 <SectionMain>
-    <SectionTitleLineWithButton :icon="mdiAccount" title="支援" main>
+    <SectionTitleLineWithButton :icon="mdiHelpCircleOutline" title="支援" main>
         &nbsp;
     </SectionTitleLineWithButton>
+    <div style="padding-left: 15px; padding-right: 15px;">
         <SupportQA
         v-for="(item, index) in QA"
         :key="index"
         :item="item"
       />
+    </div>
 </SectionMain>
     </LayoutAuthenticated>
 </template>
@@ -19,7 +21,7 @@ import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
 import SupportQA from '@/components/SupportQA.vue';
 import SectionMain from '@/components/SectionMain.vue'
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue';
-import { mdiAccount } from '@mdi/js';
+import {  mdiHelpCircleOutline } from '@mdi/js';
 const QA=[
     {
         title:"商品管理",
@@ -93,3 +95,6 @@ const QA=[
 </script>
 
 
+<style>
+
+</style>

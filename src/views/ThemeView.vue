@@ -1,7 +1,7 @@
 <template>
 <LayoutAuthenticated>
     <SectionMain>
-        <SectionTitleLineWithButton :icon="mdiAccount" title="主題標籤管理" main>
+        <SectionTitleLineWithButton :icon="mdiTagOutline" title="主題標籤管理" main>
             &nbsp;
         </SectionTitleLineWithButton>
     <div class="container pb-3">
@@ -338,7 +338,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
 import SectionMain from '@/components/SectionMain.vue'
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue';
-import { mdiAccount } from '@mdi/js';
+import { mdiAccount, mdiTagOutline } from '@mdi/js';
 import { LambdaClient, InvokeCommand } from "@aws-sdk/client-lambda";
 import { CognitoIdentityClient, GetIdCommand, GetCredentialsForIdentityCommand } from "@aws-sdk/client-cognito-identity";
 import { fromCognitoIdentityPool } from "@aws-sdk/credential-provider-cognito-identity";
@@ -556,6 +556,8 @@ onMounted(() => {
 @import url('@/css/css-in/style.css');
 @import url('@/css/css-in/style.min.css');
 
+
+
 .image-edit-icon {
     position: absolute;
     top: 50%;      
@@ -602,4 +604,5 @@ onMounted(() => {
   .tooltip-disabled:hover::after {
     opacity: 1;
   }
+
 </style>

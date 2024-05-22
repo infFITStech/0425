@@ -1,8 +1,11 @@
 import {
   mdiAccountCircle,
   mdiMonitor,
-  mdiLock,
-  mdiAlertCircle,
+  mdiStoreCogOutline,
+  mdiTag,
+  mdiEmail ,
+  mdiHelpCircle,
+  mdiMulticast,
 } from '@mdi/js'
 
 export default [
@@ -17,18 +20,18 @@ export default [
  
   {
     to: '/product',
-    label: '商品管理',
-    icon: mdiAlertCircle
+    label: '官網及商品管理',
+    icon: mdiStoreCogOutline
   },
   {
     to: '/route',
-    label: '購物動線規劃',
-    icon: mdiAlertCircle
+    label: '動線規劃',
+    icon: mdiMulticast
   },
   {
     to: '/theme',
     label: '主題及標籤',
-    icon: mdiAlertCircle
+    icon: mdiTag
   },
   {
     to: '/profile',
@@ -38,12 +41,12 @@ export default [
   {
     to: '/contact',
     label: '聯絡我們',
-    icon: mdiAlertCircle
+    icon: mdiEmail
   },
   {
     to: '/supportQA',
     label: '支援',
-    icon: mdiAlertCircle
+    icon: mdiHelpCircle
   },
   // {
   //   label: 'Dropdown',

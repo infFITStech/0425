@@ -5,9 +5,14 @@
 <!-- wrapper  -->
 <!-- ============================================================== -->
 <div class="">
+    <SectionTitleLineWithButton :icon="mdiEmailOutline" title="聯絡我們" main>
+        &nbsp;
+        
+    </SectionTitleLineWithButton>
+
     <!-- class="dashboard-wrapper" -->
     <div class="dashboard-ecommerce">
-        <div class="container-fluid dashboard-content ">
+        <div class="container-fluid dashboard-content pt-0" >
 
     <!-- ============================================================== -->
     <!-- Upload Form -->
@@ -15,7 +20,7 @@
     <div class="row">
                     <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                         <div class="section-block" id="basicform">
-                            <h3 class="section-title" style="font-size:1.75rem"><span class='lang-en'>Contact Us</span><span class='lang-tw'>聯絡我們</span></h3>
+                            <!-- <h3 class="section-title" style="font-size:1.75rem"><span class='lang-en'>Contact Us</span><span class='lang-tw'>聯絡我們</span></h3> -->
                             <p style="margin-bottom: 1rem;"><span class='lang-en'>Got a question? We'd love to hear from you. Send us a message and we'll respond as soon as possible.</span><span class='lang-tw'>如果有任何問題，歡迎隨時與我們聯絡，將儘快回覆您。</span></p>
                         <div id='afterChangingPassword' style='display:none;'><span class='lang-en'>Your message has been sent.</span><span class='lang-tw'>您的訊息已送出。</span></div>
                         </div>
@@ -51,7 +56,8 @@
 <!-- end wrapper  -->
 <!-- ============================================================== -->
 </div>
-</div>
+    </div>
+
 </div>
 <!-- Optional JavaScript -->
 
@@ -68,6 +74,9 @@ import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses";
 
 import { useAuthStore } from '@/stores/userStore.js'
 import { useCognito } from '@/components/new/useCognito.js';
+import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue';
+import {  mdiEmailOutline } from '@mdi/js';
+
 const name = ref("")
 const email = ref("")
 const message = ref("")
