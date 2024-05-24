@@ -157,7 +157,7 @@ const submitPass = async () => {
 
           <template #footer>
             <BaseButtons>
-              <BaseButton type="submit" color="info" label="Submit" />
+              <BaseButton type="submit" color="contrast" label="Submit" />
             </BaseButtons>
           </template>
         </CardBox>
@@ -207,7 +207,8 @@ const submitPass = async () => {
           <BaseDivider />
 
           <FormField label="付款指示" >
-            <div class="grid grid-cols-1 md:grid-cols-3 lg:gap-6">
+          
+            <div class="grid grid-cols-1 md:grid-cols-3 lg:gap-6 mt-3">
 
               <div class="md:col-span-1"> 
                 <label class="block  mb-2 text-sm">【戶名】</label>

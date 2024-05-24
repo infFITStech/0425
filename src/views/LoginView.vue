@@ -481,10 +481,10 @@ input{
 
 }
 form{
-    height:220px
+    min-height:220px
 }
 .card-body{
-    height: 272px;
+    min-height: 272px;
 }
 .splash-container {
     width: 100%;

@@ -23,7 +23,9 @@ export const useAuthStore = defineStore('auth', () => {
 
       console.log("Logged in as", cognitoUser.value);
     } catch (error) {
+      
       console.error('Login failed:', error);
+      
     }
   }
 

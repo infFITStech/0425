@@ -22,7 +22,8 @@
 
                             <div>
                     
-                                <a class="d-inline-flex align-items-center cursor-pointer mr-4"
+                                <a class="d-inline-flex align-items-center cursor-pointer mr-4 edit-btn"
+                                
                                    @click="setEditRoute(route, true, 'editModal', editRoute=true)">
                                     <svg xmlns="http://www.w3.org/2000/svg"
                                          width="1em"
@@ -541,6 +542,10 @@ export default defineComponent({
 @import url('@/css/css-in/frame.css');
 @import url('@/css/css-in/style.css');
 @import url('@/css/css-in/style.min.css');
+
+.edit-btn:hover{
+    color: #3a3a3a !important;
+}
 
 .tooltip-disabled {
     position: relative;

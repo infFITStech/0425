@@ -97,7 +97,7 @@ const menuClick = (event, item) => {
       <SideNotify v-if="mainStore.IsNotify.state">
       </SideNotify>
       
-      <div class="content" >
+      <div class="" >
         <slot />
       </div>
 

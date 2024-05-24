@@ -106,7 +106,7 @@ const routes = [
 ]
 // createWebHashHistory(),
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHashHistory(import.meta.env.BASE_URL),
   routes,
   scrollBehavior(to, from, savedPosition) {
     return savedPosition || { top: 0 }

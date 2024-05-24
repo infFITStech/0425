@@ -76,17 +76,24 @@ export function useCognito() {
             await getCognitoIdentityCredentials(idToken);
             // console.log('Credentials:', credentials);
 
+          
     
             //redirect
             //try本來在這
             //ouo ??
             // window.location.href = '/';
             logMessage('Logged in!');
-            router.replace('/')
+
+            const redirectRoute = router.currentRoute.value.query.redirect || '/';
+            router.replace(redirectRoute);
+            // router.replace('/')
         } catch (e) {
             console.log('Login failed:', e);
+            
+
             $('#logintext').show();
             $("#loader").hide();
+            throw e; 
         }
 
         // cognitoUser.value.authenticateUser(authenticationDetails, {
@@ -191,7 +198,11 @@ const Initial=async (c)=>{
         MainConfig=pullResults;
 
         authStore.setMainConfig(pullResults);
-    
+
+        if(!pullResults.mkt){
+            throw new Error('MKT is false, login aborted');
+        }
+
         return pullResults;
       } catch (error) {
         console.error(error);
@@ -210,7 +221,8 @@ const Initial=async (c)=>{
             $("#loader").hide();
         }
         // window.location.href = '/#/login';
-        router.replace('/login')
+        // router.replace('/login')
+        router.replace({ path: '/login', query: { redirect: window.location.hash.slice(1) } });
     };
 
     const switchToLogInView=()=> {

@@ -3,7 +3,7 @@ import { containerMaxW } from '@/config.js'
 </script>
 
 <template>
-  <section class="p-6 padding-custom " :class="containerMaxW" style="overflow-y:scroll; -ms-overflow-style: none; scrollbar-width: none;">
+  <section class="p-6 padding-custom content " :class="containerMaxW" style="overflow-y:scroll; -ms-overflow-style: none; scrollbar-width: none;">
     <slot />
   </section>
 </template>
