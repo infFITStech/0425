@@ -37,7 +37,7 @@ const tabsForChild = ref([
 
 const submitPass = async () => {
   if (passwordForm.value.password !== passwordForm.value.password_confirmation) {
-    alert("New passwords do not match.");
+    alert("請確認兩次輸入的新密碼相同");
     return;
   }
   
@@ -47,7 +47,7 @@ const submitPass = async () => {
       alert(err.message || JSON.stringify(err));
       return;
     }
-    alert("Password changed successfully!");
+    alert("密碼已修改成功");
     passwordForm.value = {
       password_current: '',
       password: '',
@@ -119,7 +119,8 @@ const submitPass = async () => {
 
           <BaseDivider />
 
-          <FormField label="Current password" help="Required. Your current password">
+          <!-- help="請輸入密碼" -->
+          <FormField label="現在密碼" >
             <FormControl
               v-model="passwordForm.password_current"
               :icon="mdiAsterisk"
@@ -132,7 +133,7 @@ const submitPass = async () => {
 
           <BaseDivider />
 
-          <FormField label="New password" help="Required. New password">
+          <FormField label="更新密碼" >
             <FormControl
               v-model="passwordForm.password"
               :icon="mdiFormTextboxPassword"
@@ -143,7 +144,7 @@ const submitPass = async () => {
             />
           </FormField>
 
-          <FormField label="Confirm password" help="Required. New password one more time">
+          <FormField label="確認更新密碼" >
             <FormControl
               v-model="passwordForm.password_confirmation"
               :icon="mdiFormTextboxPassword"
@@ -202,46 +203,46 @@ const submitPass = async () => {
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <!-- 線下匯款 -->
         <CardBox>
-          <label class="block font-bold mb-2 text-lg" >線下匯款</label>
+          <label class="block font-bold mb-2 text-lg" >轉帳匯款</label>
           <BaseDivider />
 
           <FormField label="付款指示" >
             <div class="grid grid-cols-1 md:grid-cols-3 lg:gap-6">
 
               <div class="md:col-span-1"> 
-                <label class="block  mb-2 text-sm">帳戶:</label>
+                <label class="block  mb-2 text-sm">【戶名】</label>
               </div>
               <div class="md:col-span-2"> 
-                <label class="block  mb-2 text-sm">123</label>
+                <label class="block  mb-2 text-sm">飛德科技有限公司</label>
               </div>
               <div class="md:col-span-1"> 
 
-                <label class="block  mb-2 text-sm">銀行:</label>
+                <label class="block  mb-2 text-sm">【銀行】</label>
               </div>
               <div class="md:col-span-2"> 
-                <label class="block  mb-2 text-sm">123</label>
+                <label class="block  mb-2 text-sm">中國信託商業銀行</label>
               </div>
               <div class="md:col-span-1"> 
 
-                <label class="block  mb-2 text-sm">分行代碼:</label>
+                <label class="block  mb-2 text-sm">【分行代碼】</label>
               </div>
               <div class="md:col-span-2"> 
-                <label class="block  mb-2 text-sm">123</label>
+                <label class="block  mb-2 text-sm">3267</label>
               </div>
               <div class="md:col-span-1"> 
 
-                <label class="block  mb-2 text-sm">銀行代碼:</label>
+                <label class="block  mb-2 text-sm">【銀行代碼】</label>
               </div>
               <div class="md:col-span-2"> 
-                <label class="block  mb-2 text-sm">123</label>
+                <label class="block  mb-2 text-sm">822</label>
               </div>
               <div class="md:col-span-1"> 
 
-                <label class="block  mb-2 text-sm">帳戶號碼:</label>
+                <label class="block  mb-2 text-sm">【帳號】</label>
 
               </div>
               <div class="md:col-span-2"> 
-                <label class="block  mb-2 text-sm">123</label>
+                <label class="block  mb-2 text-sm">495540641709</label>
               </div>
             
 
@@ -249,8 +250,7 @@ const submitPass = async () => {
           </FormField>
 
           <FormField label="付款完成後" >
-            <label class="block  mb-2 text-sm">請通知線上顧問後五碼，或以電子郵件方式回覆至，<a href="mailto:example@example.com">example@example.com</a>
-              我們會為您確認款項。</label>
+            <label class="block  mb-2 text-sm">請通知相關窗口，或以電子郵件回覆至 <a href="mailto:contact@inffits.com">contact@inffits.com</a> 我們將盡快為您確認款項。</label>
 
           </FormField>
 

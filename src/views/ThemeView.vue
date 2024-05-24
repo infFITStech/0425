@@ -346,7 +346,7 @@ import { mdiPencilOutline, mdiImage } from '@mdi/js';
 import BaseIcon from '@/components/BaseIcon.vue';
 import { useAuthStore } from '@/stores/userStore';
 const authStore = useAuthStore();
-const userBrand =ref(authStore.MainConfig.Brand)
+const userBrand =ref(authStore.MainConfig.BRAND)
 const rawList = ref([]);
 const tagGroupList = ref([]);
 const editTag = ref({});
@@ -449,7 +449,7 @@ const update_themeName = async(old_name) =>{
 
     const lambdaClient = new LambdaClient({ region, credentials });
 
-    const brand = "INFS";
+    const brand = userBrand.value;
     const preTagGroup = old_name;
     const postTagGroup = new_group_name.value;
 
@@ -489,7 +489,7 @@ const getTagGroupList=()=> {
             // Name: 標籤名稱, 
             // Imgsrc: 圖片url, 
             // TagGroup:主題
-            axios.get('https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/get_tags?Brand='+'INFS'+'&Per_Page=100&Page=1').then(response => {
+            axios.get('https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/get_tags?Brand='+userBrand.value+'&Per_Page=100&Page=1').then(response => {
                 const tagGroupMap = {}
                 rawList.value = response.data.models
                 response.data.models.forEach(tag => {
@@ -508,6 +508,7 @@ const getTagGroupList=()=> {
                     })
                 }
             })
+            
         };
 
 const setEditTag = (tag = { TagGroup: '', Tag: String(new Date().getTime()), Name: '', Imgsrc: '', Description: '' }, toToggleModal = true, toggleModalName = 'editModal', Key='') => {
@@ -525,7 +526,7 @@ const toggleModal = (modalId) => {
 
 const saveTag=() =>{
             axios.post('https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/update_tag', {
-                Brand: 'INFS',
+                Brand: userBrand.value,
                 Data: editTag.value
             }).then(response => {
                 console.log(response)
@@ -536,7 +537,7 @@ const saveTag=() =>{
 
 
 const deleteTag=()=> {
-            axios.delete(`https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/del_tag?Brand=`+`INFS`+`&Tag=${editTag.value.Tag}`).then(response => {
+            axios.delete(`https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/del_tag?Brand=`+userBrand.value+`&Tag=${editTag.value.Tag}`).then(response => {
                 console.log(response)
                 getTagGroupList()
                 setEditTag({}, true, 'deleteModal')
@@ -544,8 +545,9 @@ const deleteTag=()=> {
         }
 
 onMounted(() => {
-  getTagGroupList();
+  
 });
+getTagGroupList();
 </script>
 
 

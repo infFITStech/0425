@@ -8,7 +8,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
 import SectionMain from '@/components/SectionMain.vue'
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue';
-import { mdiAccount, mdiLogout, mdiStoreCogOutline } from '@mdi/js';
+import { mdiAccount, mdiOpenInNew, mdiStoreCogOutline } from '@mdi/js';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/userStore';
 import BaseIcon from '@/components/BaseIcon.vue';
@@ -16,9 +16,9 @@ import BaseIcon from '@/components/BaseIcon.vue';
 const tooltipText="請選擇動線"
 const authStore = useAuthStore();
 const router = useRouter();
-// const iframeSrc = router.resolve({ name: 'IframeContainer'}).href;
-const iframeSrc=ref('http://127.0.0.1:5501/iframe_container_module.html')
-const userBrand=ref(authStore.MainConfig.Brand)
+const iframeSrc = router.resolve({ name: 'IframeContainer'}).href;
+// const iframeSrc=ref('http://127.0.0.1:5501/iframe_container_module.html')
+const userBrand=ref(authStore.MainConfig.BRAND)
 
 const tagNum_row=ref(4);
 const pre = ref(false)
@@ -51,7 +51,7 @@ const getTagGroupList = async () => {
     // Imgsrc: 圖片url, 
     // TagGroup:主題
     // userBrand.value ㄚㄚㄚㄚ 
-  const response = await axios.get('https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/get_tags?Brand='+'INFS'+'&Per_Page=100&Page=1');
+  const response = await axios.get('https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/get_tags?Brand='+userBrand.value+'&Per_Page=100&Page=1');
   const tagGroupMap = {};
   response.data.models.forEach(tag => {
     if (!tagGroupMap[tag.TagGroup]) {
@@ -66,6 +66,7 @@ const getTagGroupList = async () => {
     group: key,
     tags: tagGroupMap[key]
   }));
+  console.log("hiiiiiiiiii",tagGroupList.value);
 };
 
 const getRouteList = async () => {
@@ -79,17 +80,17 @@ const getRouteList = async () => {
             //     "版型"
             //   ]
             // },
-  const response = await axios.get('https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/get_routes?Brand='+'INFS'+'&Per_Page=100&Page=1');
+  const response = await axios.get('https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/get_routes?Brand='+userBrand.value+'&Per_Page=100&Page=1');
   routeList.value = [...response.data.models];
 };
 
 
 
 const getProductList = async () => {
-  const response = await axios.get('https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/get_products?Brand='+'INFS'+'&Per_Page=100&Page=1');
+  const response = await axios.get('https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/get_products?Brand='+userBrand.value+'&Per_Page=100&Page=1');
   rawList.value = response.data.models;
   productList.value = [...response.data.models];
-  console.log("bye",productList.value[5] )
+  console.log("bye",productList.value)
   //getBrandList
   brandList.value=[]
   productList.value = productList.value.filter(product => {
@@ -129,9 +130,27 @@ const toggleModal = (modalId) => {
     
   }
 
-  const getRouteName = (routes) => {
-  if (!routeList.value.includes(routes?.[0].Name)) return "選擇動線"
-  return routes?.[0].Name || null
+
+
+  const getRouteName = (routes, product) => {
+  console.log(routes, "hoooooooooooooooooooooo")
+  if (!routeList.value.find(item => item.Route === routes?.[0].Route))  
+  {
+    //remove route
+    routes.shift();
+    // console.log(routeList.value, "aaaaaaaaaaaa");
+    saveProduct({
+    Routes: [],
+    Tags: product.Tags,
+    id: product.id,
+  });
+    return null
+  }
+  else
+  {
+    return routeList.value.find(item => item.Route === routes?.[0].Route).Name || null
+
+  }
 
 };
 
@@ -164,17 +183,72 @@ const removeTag = (product, tagGroupName, tag) => {
 
 // };
 
+const getTagName = (tagObj) => {
+  try{
+    const groupTags= tagGroupList.value.find(item => item.group === tagObj.group)
+    const targetTag = tagObj.tag.Tag
+    const foundTagObj = groupTags.tags.find(tagObj => tagObj.Tag === targetTag);
+    return foundTagObj.Name
+  }
+  catch(err)
+  {
+    return "deleted"
+  }
+  
+}
+
+const tagExist=(groupName, product, tagObj)=>
+{
+
+  if(tagGroupList.value.some(group => group.group === groupName) )
+  { 
+    
+      
+      const groupTags= tagGroupList.value.find(item => item.group === groupName)
+      const targetTag = tagObj.tag.Tag
+      const foundTagObj = groupTags.tags.find(tagObj => tagObj.Tag === targetTag);
+      if(foundTagObj){
+        return true
+      }
+      else
+      {
+        //remove tag
+        removeTag(product, groupName, tagObj.tag)
+
+        return true
+      }      
+    
+    
+  } 
+  else
+  {
+    //remove all tags of groupName
+    delete product.Tags[groupName];
+      saveProduct({
+        Routes: product.Routes,
+        Tags: product.Tags,
+        id: product.id,
+      });
+    
+
+    return false
+  }
+
+
+  
+}
+
 const closeDropdown=(selector)=> {
 
 $(selector).dropdown('hide')
 
 };
 
-const setProductRoute = (product, route) => {
+const setProductRoute = async(product, route) => {
   product.Routes = [route];
   // product.Tags = {};
 
-  saveProduct({
+  await saveProduct({
     Routes: product.Routes,
     Tags: product.Tags,
     id: product.id,
@@ -223,36 +297,37 @@ const myiframe = ref(null);
 
 const saveProduct = async (updateData) => {
   const payload = {
-    Brand: 'INFS',
-    // Brand: userBrand.value
+    Brand: userBrand.value,
     ...updateData,
   };
   const response = await axios.post('https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/update_product', payload);
-  console.log(response);
+  console.log(response,"saveproduct!!!!!!!!!!!!!1");
   getProductList();
 };
 
-const preview=(id, brand)=>{
+const preview=async(product)=>{
+  //每次preview再設一次route給product(更改route的taggroup之後，並未同步更新商品內的資訊)
+  const foundObject = routeList.value.find(item => item.Route === product.Routes[0].Route);
+  console.log(foundObject, "pppp")
+  await setProductRoute(product, foundObject);
+  
   $('#preview_box').fadeIn();
   var iframe_preview_obj={};
-  iframe_preview_obj['id']=id;
+  iframe_preview_obj['id']=product.ClothID;
   iframe_preview_obj['header']='from_preview';
-  iframe_preview_obj['brand']=brand
+  iframe_preview_obj['brand']=product.Brand;
   if (myiframe.value) {
     myiframe.value.contentWindow.postMessage(iframe_preview_obj, "*");
   }
 }
 
 const deleteProduct = async () => {
-    const response = await axios.delete(`https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/del_product?Brand=`+`INFS`+`&id=${editProduct.value.id}`);
+    const response = await axios.delete(`https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/del_product?Brand=`+userBrand.value+`&id=${editProduct.value.id}`);
     console.log(response);
   getProductList();
   setEditProduct({}, true, 'deleteModal');
 };
 onMounted(() => {
-  getTagGroupList();
-  getRouteList();
-  getProductList();
 
   if (window.innerWidth < 990) {
     tagNum_row.value = 2;
@@ -267,6 +342,9 @@ onMounted(() => {
 
 
 });
+getTagGroupList();
+  getRouteList();
+  getProductList();
 
 
 </script>
@@ -303,9 +381,9 @@ onMounted(() => {
                     <div class="flex-row col-7 col-md-2 text-body font-bold mb-4 mb-md-0 px-0" style="white-space: nowrap; overflow-x: scroll; -ms-overflow-style: none; scrollbar-width: none; display:flex; " >
                       <span class="ItemName-width" style="white-space: nowrap; overflow-x: scroll; -ms-overflow-style: none; scrollbar-width: none; display:flex; width:calc(100% - 16px)">{{authStore.MainConfig.BrandName}}</span>
                       <!-- url -->
-                      <a href="product.Link" target="_blank" style="display:flex; padding-left: 4px; ">
-                      <svg viewBox="0 0 24 24" width="16px" height="16px" class="inline-block">
-                        <path fill="currentColor" :d="mdiLogout" />
+                      <a href="product.Link" target="_blank" style="display:flex; padding-left: 3px; ">
+                      <svg viewBox="0 0 24 24" width="20px" height="20px" class="inline-block">
+                        <path fill="currentColor" :d="mdiOpenInNew" />
                       </svg>
                       </a>
                     </div>
@@ -317,7 +395,7 @@ onMounted(() => {
                 
                         <button class="btn h4 mb-0 pl-2 bg-white border d-flex align-items-center justify-content-center rounded-pill rounded-md-circle"
                                 type="button"
-                                @click="preview(b.ClothID, b.Brand)"
+                                @click="()=>{preview( b);}"
                                 style="  box-shadow : rgba(0,0,0,0.15) 0 2px 8px; font-size:12px
                                 "
                                 v-tooltip="tooltipText"
@@ -344,7 +422,7 @@ onMounted(() => {
                         
                         <button class="pl-2"
                         style="color: gray; white-space: nowrap; overflow-x: scroll; -ms-overflow-style: none; scrollbar-width: none; width: calc(100% - 1em);">
-                            {{(b.Routes.length)?getRouteName(b.Routes):'選擇動線'}}
+                            {{(b.Routes.length)?getRouteName(b.Routes, b):'選擇動線'}}
                         </button>
                         <button class="dropdown-toggle">
                         </button>
@@ -368,7 +446,6 @@ onMounted(() => {
                       
 
                 </div>
-
                     <!-- delete -->
                     <div class="d-none d-md-flex col-auto text-right pr-2 pl-0 align-items-center">
                         <!-- preview tag button-->
@@ -376,7 +453,7 @@ onMounted(() => {
                 
                         <button class="btn h4 mb-0 pl-2 bg-white border d-flex align-items-center justify-content-center rounded-pill rounded-md-circle"
                                 type="button"
-                                @click="preview(b.ClothID, b.Brand)"
+                                @click="()=>{preview( b);}"
                                 style="  box-shadow : rgba(0,0,0,0.15) 0 2px 8px; font-size:12px"
                                 v-tooltip="tooltipText"
                                 :disabled="b.Routes.length==0"
@@ -434,9 +511,9 @@ onMounted(() => {
                     <div class="flex-row col-7 col-md-2 text-body font-bold mb-4 mb-md-0 px-0" style="white-space: nowrap; overflow-x: scroll; -ms-overflow-style: none; scrollbar-width: none; display:flex; " >
                       <span class="ItemName-width" style="white-space: nowrap; overflow-x: scroll; -ms-overflow-style: none; scrollbar-width: none; display:flex; width:calc(100% - 16px)">{{product.ItemName}}</span>
                       <!-- url -->
-                      <a :href="product.Link" target="_blank" style="display:flex; padding-left: 4px; ">
-                      <svg viewBox="0 0 24 24" width="16px" height="16px" class="inline-block">
-                        <path fill="currentColor" :d="mdiLogout" />
+                      <a :href="product.Link" target="_blank" style="display:flex; padding-left: 3px; ">
+                      <svg viewBox="0 0 24 24" width="20px" height="20px" class="inline-block">
+                        <path fill="currentColor" :d="mdiOpenInNew" />
                       </svg>
                       </a>
                     </div>
@@ -448,7 +525,7 @@ onMounted(() => {
                 
                         <button class="btn h4 mb-0 pl-2 bg-white border d-flex align-items-center justify-content-center rounded-pill rounded-md-circle"
                                 type="button"
-                                @click="preview(product.ClothID, product.Brand)"
+                                @click="preview( product)"
                                 style="  box-shadow : rgba(0,0,0,0.15) 0 2px 8px; font-size:12px
                                 "
                                 v-tooltip="tooltipText"
@@ -470,10 +547,10 @@ onMounted(() => {
                                       d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6zM19 4h-3.5l-1-1h-5l-1 1H5v2h14z" />
                             </svg>
                         </div> -->
+                        
                         <label class="h3 text-danger d-inline-flex align-items-center cursor-pointer mb-0"
                              >
-                            
-                            <input type="checkbox" value="" class="sr-only peer" checked>
+                            <input type="checkbox" value="" class="sr-only peer" :checked="product.Routes.length>0" >
                             <div class="toggle-switch relative h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"
                                   style="">
                             </div>
@@ -494,7 +571,7 @@ onMounted(() => {
                             
                             <button class="pl-2"
                             style="color: gray; white-space: nowrap; overflow-x: scroll; -ms-overflow-style: none; scrollbar-width: none; width: calc(100% - 1em);">
-                                {{(product.Routes.length)?getRouteName(product.Routes):'選擇動線'}}
+                                {{(product.Routes.length)?getRouteName(product.Routes, product):'選擇動線'}}
                             </button>
                             <button class="dropdown-toggle">
                             </button>
@@ -636,10 +713,15 @@ onMounted(() => {
                                 <div v-for="tagObj in JSON.parse(JSON.stringify(tagListByProduct(product))).slice(0, tagNum_row)"
                                      :key="tagObj"
                                      class="col-12 col-md-3 p-0 px-1 mb-1 mb-md-0">
-                                    <div class="w-100 d-flex align-items-center
-                                     position-relative"
-                                         :class="true ? 'bg-white text-gray' : 'bg-white text-secondary'"
+                                     <!-- const userBrand=ref(authStore.MainConfig.BRAND);
+ -->
+                                    <div 
+                                        
+                                        class="w-100 d-flex align-items-center
+                                         position-relative"                                       
+                                         :class="true ? 'bg-white text-gray' : 'bg-white text-secondary'"                                        
                                          style="cursor: default;"
+                                         
                                         >
                                         <div v-if="!true"
                                              class="position-absolute left-0"
@@ -670,7 +752,7 @@ onMounted(() => {
                                                 </div>
                                             </div>
                                             <div style="white-space: nowrap; overflow-x: scroll; -ms-overflow-style: none; scrollbar-width: none;"> 
-                                            {{tagObj.tag?.Name}}
+                                            {{getTagName(tagObj)}}
                                             </div>
                                         </div>
                                         <div v-if="true"
@@ -718,7 +800,9 @@ onMounted(() => {
                                      :key="tagObj"
                                      class="col-12 col-md-3 p-0 px-1 mb-1 mb-md-1"
                                      >
-                                    <div class="w-100 d-flex align-items-center 
+                                     <!-- const userBrand=ref(authStore.MainConfig.BRAND); -->
+                                    <div
+                                        class="w-100 d-flex align-items-center 
                                       position-relative"
                                          :class="true ? 'bg-white text-gray' : 'bg-white text-secondary'"
                                          style="cursor: default;">
@@ -793,7 +877,7 @@ onMounted(() => {
                 
                         <button class="btn h4 mb-0 pl-2 bg-white border d-flex align-items-center justify-content-center rounded-pill rounded-md-circle"
                                 type="button"
-                                @click="preview(product.ClothID, product.Brand)"
+                                @click="preview(product)"
                                 style="  box-shadow : rgba(0,0,0,0.15) 0 2px 8px; font-size:12px
                                 "
                                 v-tooltip="tooltipText"
@@ -806,7 +890,7 @@ onMounted(() => {
                         <label class="h3 text-danger d-inline-flex align-items-center cursor-pointer mb-0"
                              >
                             
-                            <input type="checkbox" value="" class="sr-only peer" checked>
+                            <input type="checkbox" value="" class="sr-only peer"  :checked="product.Routes.length>0">
                             <div class="toggle-switch relative h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"
                                   style="">
                             </div>
@@ -878,7 +962,11 @@ onMounted(() => {
     </SectionMain>
 </LayoutAuthenticated>
 </template>
+<!-- 會報錯??? -->
+<!-- #inffits_tryon_window {
+  @import url('@/css/css-in/iframe_style.min.css') !important;
 
+}   -->
 <style scoped>
 @import url('@/css/css-in/bootstrap-variables.css');
 @import url('@/css/css-in/bootstrap.min.css');
@@ -886,10 +974,7 @@ onMounted(() => {
 @import url('@/css/css-in/style.css');
 @import url('@/css/css-in/style.min.css');
 
-#inffits_tryon_window {
-  @import url('@/css/css-in/iframe_style.min.css') !important;
 
-}  
 .collapse{
   visibility: visible;
 }

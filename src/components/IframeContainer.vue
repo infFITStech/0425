@@ -84,6 +84,7 @@ const fetchData = async () => {
             // let idx = all_Route.indexOf(item.TagGroup.S)
             Route_in_frame[item.TagGroup.S].push(item)
         }
+        
         for (var r in Route_in_frame){
             console.log('TagGroup : '+r)
             document.getElementById('pback').insertAdjacentHTML('beforebegin',  

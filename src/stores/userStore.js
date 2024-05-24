@@ -40,7 +40,7 @@ export const useAuthStore = defineStore('auth', () => {
       localStorage.removeItem('idToken');
       localStorage.removeItem('cognitoUser');
       localStorage.removeItem('UserName');
-      console.log('Logged out');
+      console.log('Logged out', MainConfig.value);
     } catch (error) {
       console.error('Logout failed:', error);
     }

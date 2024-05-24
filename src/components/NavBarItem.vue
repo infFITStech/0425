@@ -50,7 +50,8 @@ const componentClass = computed(() => {
 })
 
 const itemLabel = computed(() =>{
-  if(props.item.isCurrentUser&&authStore.cognitoUser) return authStore.cognitoUser.username ;
+  if(props.item.isCurrentUser&&authStore.cognitoUser) return "";
+  //return authStore.cognitoUser.username ;
   else if(props.item.title) return props.item.title
   else return props.item.label
 }

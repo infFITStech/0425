@@ -39,14 +39,15 @@ const initApp = async () => {
   mainStore.fetchSampleHistory()
 
   // Default title tag
-  const defaultDocumentTitle = 'Dashboard'
+  const defaultDocumentTitle = "infFITS Manager"
 
   // Set document title from route meta
   router.afterEach((to) => {
     document.title = to.meta?.title
-      ? `${to.meta.title} — ${defaultDocumentTitle}`
+      ? `${defaultDocumentTitle} — ${to.meta.title}`
       : defaultDocumentTitle
   })
+
 }
 
 

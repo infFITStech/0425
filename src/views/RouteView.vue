@@ -46,9 +46,12 @@
                             </div>
 
                         </div>
+
                         <small v-if="route.Description"
                                class="text-break text-truncate mb-3">{{route.Description}}</small>
                         <p class="mb-0">{{route.TagGroups_order.join(' - ')}}</p>
+                        {{console.log(route,tagGroupList,  "routtttttttte")}}
+                      
                     </div>
                     <!-- <div class="card-body">
                         動線名稱
@@ -332,7 +335,6 @@ import { useAuthStore } from '@/stores/userStore';
 
 const authStore = useAuthStore();
 
-const userBrand=ref(authStore.MainConfig.Brand);
 
 export default defineComponent({
   components: {
@@ -344,6 +346,8 @@ export default defineComponent({
 
   },
   setup() {
+    const userBrand=ref(authStore.MainConfig.BRAND);
+
     const state = reactive({
       rawList: [],
       tagGroupList: [],
@@ -354,13 +358,15 @@ export default defineComponent({
       }
     });
 
-    const getTagGroupList = () => {
+    const getTagGroupList = async() => {
         // Key: 主題名稱
-            // Tag: 標籤ID, 
-            // Name: 標籤名稱, 
-            // Imgsrc: 圖片url, 
-            // TagGroup:主題
-      axios.get('https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/get_tags?Brand='+'INFS'+'&Per_Page=100&Page=1').then(response => {
+        // Tag: 標籤ID, 
+        // Name: 標籤名稱, 
+        // Imgsrc: 圖片url, 
+        // TagGroup:主題
+        console.log(userBrand.value, "getTagGroupList");
+
+      await axios.get('https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/get_tags?Brand='+userBrand.value+'&Per_Page=100&Page=1').then(response => {
         const tagGroupMap = {};
         response.data.models.forEach(tag => {
           if (!tagGroupMap[tag.TagGroup]) {
@@ -390,7 +396,7 @@ export default defineComponent({
             //     "版型"
             //   ]
             // },
-      axios.get('https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/get_routes?Brand='+'INFS'+'&Per_Page=100&Page=1').then(response => {
+      axios.get('https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/get_routes?Brand='+userBrand.value+'&Per_Page=100&Page=1').then(response => {
         state.rawList = response.data.models;
         state.routeList = [...response.data.models];
       });
@@ -405,7 +411,38 @@ export default defineComponent({
                 state.editRoute.editingTagGroups = state.editRoute.editingTagGroups.filter(item => item.group !== group)
             }
         };
-    
+
+        
+    const updateTagGroups=(route)=>
+    {
+        // const validGroups =  state.tagGroupList.map(groupObj => groupObj.group);
+        
+        // const filteredTaglist =  route.TagGroups_order.filter(tag => validGroups.includes(tag));
+        // console.log(validGroups, filteredTaglist, "aaaaaaaaaaaaaaaaaaaaaaaa")
+
+
+        // const payload = {
+        //         Brand: 'INFS',
+        //         Data: {
+        //             Description: route.Description,
+        //             Imgsrc: route.Imgsrc,
+        //             Name: route.Name,
+        //             Route: route.Route,
+        //             TagGroups_order: filteredTaglist
+        //         }
+        //     }
+        //     axios.post('https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/update_route', payload).then(response => {
+        //         console.log(response)
+        //         getRouteList()
+        //         setEditRoute({}, false, 'editModal')
+        //     })
+        
+
+        // return filteredTaglist
+       
+
+    }
+
     const setEditRoute= (route = {
             Description: '',
             Imgsrc: '',
@@ -446,7 +483,7 @@ export default defineComponent({
 
         const saveRoute=()=> {
             const payload = {
-                Brand: 'INFS',
+                Brand: userBrand.value,
                 Data: {
                     Description: state.editRoute.Description,
                     Imgsrc: state.editRoute.Imgsrc,
@@ -463,7 +500,7 @@ export default defineComponent({
         };
 
         const deleteRoute=()=> {
-            axios.delete(`https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/del_route?Brand=`+`INFS`+`&Route=${state.editRoute.Route}`).then(response => {
+            axios.delete(`https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/del_route?Brand=`+userBrand.value+`&Route=${state.editRoute.Route}`).then(response => {
                 console.log(response)
                 getRouteList()
                 setEditRoute({}, true, 'deleteModal')
@@ -471,10 +508,15 @@ export default defineComponent({
         }
     const tooltipText="請填寫完整資訊"
 
-    onMounted(() => {
-      getTagGroupList();
-      getRouteList();
+    
+      
+    onMounted(async() => {
+        getTagGroupList();
+    getRouteList();
+      
     });
+
+   
 
     return {
       ...toRefs(state),
@@ -486,7 +528,8 @@ export default defineComponent({
       saveRoute,
       deleteRoute,
       mdiMulticast,
-      tooltipText
+      tooltipText,
+      updateTagGroups
     };
   }
 });
