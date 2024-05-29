@@ -87,7 +87,7 @@
                                     </svg>
                                 </div>
                             </div>
-                            <p class="h5 font-bold text-balck-50 mb-1">ADD NEW ROUTE</p>
+                            <p class="h5 font-bold text-balck-50 mb-1">新增動線</p>
                         </div>
                     </div>
                 </div>

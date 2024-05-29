@@ -16,8 +16,8 @@
       />
       <span
       :class="{ 'pl-12': !hasDropdown }"
-      :style="{fontSize:hasDropdown?'18px':'16px'}"
-      style=""
+      :style="{fontSize:hasDropdown?'1.125rem':'1.125rem'}"
+      style="font-weight: 600;"
         class="grow text-ellipsis line-clamp-1 inline-block "
 
         >{{ item.title }}</span
@@ -25,6 +25,7 @@
       <span v-if="item.ans"
       :class="{ 'pl-12': !hasDropdown }"
         class="grow text-ellipsis line-clamp-1  "
+        style="font-size: 1rem;"
         >{{ item.ans }}</span
       >
         <BaseIcon

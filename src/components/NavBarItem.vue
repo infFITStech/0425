@@ -127,9 +127,10 @@ onBeforeUnmount(() => {
           item.menu
       }"
     >
-      <UserAvatarCurrentUser v-if="item.isCurrentUser" class="w-6 h-6 mr-3 inline-flex" />
+      <UserAvatarCurrentUser v-if="item.isCurrentUser" class="w-12 h-12 inline-flex" :class="{ 'mr-3': item.menu}" />
       <BaseIcon v-if="item.icon" :path="item.icon" class="transition-colors" />
       <span
+        v-if="itemLabel"
         class="px-2 transition-colors"
         :class="{ 'hidden': item.isDesktopNoLabel && item.icon }"
         

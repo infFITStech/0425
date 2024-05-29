@@ -36,7 +36,7 @@
                                     </svg>
                                 </div>
                             </div>
-                            <p class="h5 font-bold text-balck-50 mb-1">ADD NEW</p>
+                            <p class="h5 font-bold text-balck-50 mb-1" >新增</p>
                         </div>
                     </div>
                 </div>
@@ -121,7 +121,7 @@
                                     </svg>
                                 </div>
                             </div>
-                            <p class="h5 font-bold text-balck-50 mb-1">ADD NEW THEME</p>
+                            <p class="h5 font-bold text-balck-50 mb-1">新增主題或標籤</p>
                         </div>
                     </div>
                 </div>

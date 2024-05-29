@@ -16,7 +16,7 @@ const userName = authStore.cognitoUser ?authStore.cognitoUser.username:'';
 
 <template>
   <CardBox>
-    <label class="block font-bold mb-0 text-lg"  >品牌基本資訊 及 方案時間</label>
+    <label class="block font-bold mb-0 text-lg"  >基本資訊</label>
     <BaseDivider />
     <BaseLevel type="justify-around lg:justify-center">
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -26,7 +26,7 @@ const userName = authStore.cognitoUser ?authStore.cognitoUser.username:'';
             <UserAvatarCurrentUser class="lg:mx-12" />
         </div>
 
-        <div class="lg:col-span-1"> 
+        <div class="lg:col-span-1" style="place-items: center;display: grid;"> 
           <div class="space-y-3 text-center md:text-left lg:mx-12">
             <!-- <div class="flex justify-center md:block">
               <FormCheckRadio

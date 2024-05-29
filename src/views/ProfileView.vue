@@ -206,44 +206,44 @@ const submitPass = async () => {
           <label class="block font-bold mb-2 text-lg" >轉帳匯款</label>
           <BaseDivider />
 
-          <FormField label="付款指示" >
+          <FormField >
           
             <div class="grid grid-cols-1 md:grid-cols-3 lg:gap-6 mt-3">
 
               <div class="md:col-span-1"> 
-                <label class="block  mb-2 text-sm">【戶名】</label>
+                <label class="block  mb-2 text-pay">【戶名】</label>
               </div>
               <div class="md:col-span-2"> 
-                <label class="block  mb-2 text-sm">飛德科技有限公司</label>
+                <label class="block  mb-2 text-pay">飛德科技有限公司</label>
               </div>
               <div class="md:col-span-1"> 
 
-                <label class="block  mb-2 text-sm">【銀行】</label>
+                <label class="block  mb-2 text-pay">【銀行】</label>
               </div>
               <div class="md:col-span-2"> 
-                <label class="block  mb-2 text-sm">中國信託商業銀行</label>
+                <label class="block  mb-2 text-pay">中國信託商業銀行</label>
               </div>
               <div class="md:col-span-1"> 
 
-                <label class="block  mb-2 text-sm">【分行代碼】</label>
+                <label class="block  mb-2 text-pay">【分行代碼】</label>
               </div>
               <div class="md:col-span-2"> 
-                <label class="block  mb-2 text-sm">3267</label>
+                <label class="block  mb-2 text-pay">3267</label>
               </div>
               <div class="md:col-span-1"> 
 
-                <label class="block  mb-2 text-sm">【銀行代碼】</label>
+                <label class="block  mb-2 text-pay">【銀行代碼】</label>
               </div>
               <div class="md:col-span-2"> 
-                <label class="block  mb-2 text-sm">822</label>
+                <label class="block  mb-2 text-pay">822</label>
               </div>
               <div class="md:col-span-1"> 
 
-                <label class="block  mb-2 text-sm">【帳號】</label>
+                <label class="block  mb-2 text-pay">【帳號】</label>
 
               </div>
               <div class="md:col-span-2"> 
-                <label class="block  mb-2 text-sm">495540641709</label>
+                <label class="block  mb-2 text-pay">495540641709</label>
               </div>
             
 
@@ -251,7 +251,7 @@ const submitPass = async () => {
           </FormField>
 
           <FormField label="付款完成後" >
-            <label class="block  mb-2 text-sm">請通知相關窗口，或以電子郵件回覆至 <a href="mailto:contact@inffits.com">contact@inffits.com</a> 我們將盡快為您確認款項。</label>
+            <label class="block  mb-2" style="font-size: 1rem; line-height: 1.25rem;">請通知相關窗口，或以電子郵件回覆至 <a href="mailto:contact@inffits.com">contact@inffits.com</a> 我們將盡快為您確認款項。</label>
 
           </FormField>
 
@@ -273,5 +273,8 @@ const submitPass = async () => {
 </template>
 
 <style scoped>
-
+.text-pay{
+  font-size: 1rem;
+  line-height: 1rem;
+}
 </style>
