@@ -62,6 +62,7 @@
                         <div class="h4 font-bold text-body mb-1">{{tag.Name}}</div>
                         <small class="text-break text-truncate" style="white-space: wrap;">{{tag.Description}}</small>
 
+
                         <div class="position-absolute top-0 right-0 dropdown p-3">
                             <div class="cursor-pointer"
                                  type="button"
@@ -348,6 +349,7 @@ import { useAuthStore } from '@/stores/userStore';
 const authStore = useAuthStore();
 const userBrand =ref(authStore.MainConfig.BRAND)
 const rawList = ref([]);
+const routeList = ref([]);
 const tagGroupList = ref([]);
 const editTag = ref({});
 const new_group_name = ref('');
@@ -430,7 +432,11 @@ img.onload = () => {
 
 // const reader = new FileReader()
 
-
+const getRouteList = () => {
+    axios.get('https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/get_routes?Brand='+userBrand.value+'&Per_Page=100&Page=1').then(response => {
+    routeList.value = [...response.data.models];
+    });
+};
 
 // };
 const updateThemeName=(old_name)=>{
@@ -483,13 +489,13 @@ const update_themeName = async(old_name) =>{
 }
 
 
-const getTagGroupList=()=> {
+const getTagGroupList=async()=> {
             // Key: 主題名稱
             // Tag: 標籤ID, 
             // Name: 標籤名稱, 
             // Imgsrc: 圖片url, 
             // TagGroup:主題
-            axios.get('https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/get_tags?Brand='+userBrand.value+'&Per_Page=100&Page=1').then(response => {
+            await axios.get('https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/get_tags?Brand='+userBrand.value+'&Per_Page=100&Page=1').then(response => {
                 const tagGroupMap = {}
                 rawList.value = response.data.models
                 response.data.models.forEach(tag => {
@@ -536,18 +542,66 @@ const saveTag=() =>{
         };
 
 
-const deleteTag=()=> {
-            axios.delete(`https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/del_tag?Brand=`+userBrand.value+`&Tag=${editTag.value.Tag}`).then(response => {
+
+const deleteTag=async()=> {
+    const deletedTagGroup = editTag.value.TagGroup
+   
+    
+    await axios.delete(`https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/del_tag?Brand=`+userBrand.value+`&Tag=${editTag.value.Tag}`).then(async(response) => {
+        console.log(response)
+        await getTagGroupList()
+
+        
+        setEditTag({}, true, 'deleteModal')
+    })
+    
+    if(!tagGroupList.value.some(item => item.group === deletedTagGroup)) //刪掉某tag後，此taggroup也不存在
+    {
+        updateRoutes(deletedTagGroup)
+    }
+
+
+            
+}
+
+const updateRoutes=(deletedTagGroup)=>{
+    console.log("group deleted")
+
+        const filteredList = routeList.value.filter(item => item.TagGroups_order.includes(deletedTagGroup));
+        const updatedList = filteredList.map(item => {
+            item.TagGroups_order = item.TagGroups_order.filter(tag => tag !== deletedTagGroup);
+            return item;
+        });
+
+        updatedList.forEach(updatedRoute => {
+            const payload = {
+            Brand: userBrand.value,
+            Data: {
+                Description: updatedRoute.Description,
+                Imgsrc: updatedRoute.Imgsrc,
+                Name: updatedRoute.Name,
+                Route: updatedRoute.Route,
+                TagGroups_order: updatedRoute.TagGroups_order
+            }
+            };
+
+            
+
+            axios.post('https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/update_route', payload)
+            .then(response => {
                 console.log(response)
-                getTagGroupList()
-                setEditTag({}, true, 'deleteModal')
             })
-        }
+            
+        });
+
+        getRouteList()
+}
 
 onMounted(() => {
   
 });
 getTagGroupList();
+getRouteList();
 </script>
 
 

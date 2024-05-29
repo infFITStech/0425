@@ -51,7 +51,6 @@
                         <small v-if="route.Description"
                                class="text-break text-truncate mb-3">{{route.Description}}</small>
                         <p class="mb-0">{{route.TagGroups_order.join(' - ')}}</p>
-                        {{console.log(route,tagGroupList,  "routtttttttte")}}
                       
                     </div>
                     <!-- <div class="card-body">
@@ -348,7 +347,7 @@ export default defineComponent({
   },
   setup() {
     const userBrand=ref(authStore.MainConfig.BRAND);
-
+    const productList= ref([])
     const state = reactive({
       rawList: [],
       tagGroupList: [],
@@ -359,6 +358,12 @@ export default defineComponent({
       }
     });
 
+    const getProductList = async () => {
+        const response = await axios.get('https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/get_products?Brand='+userBrand.value+'&Per_Page=100&Page=1');
+        productList.value = [...response.data.models];
+        console.log("bye",productList.value)
+
+    };
     const getTagGroupList = async() => {
         // Key: 主題名稱
         // Tag: 標籤ID, 
@@ -388,15 +393,7 @@ export default defineComponent({
 
     const getRouteList = () => {
      // {
-            //   "Imgsrc": "https://shoplineimg.com/614d51f4e46907003ed5765f/64d9f64f37fff70016ceed19/2000x.png?",
-            //   "Description": "",
-            //   "Route": "id_T_123456",
-            //   "Name": "行銷動線B",
-            //   "TagGroups_order": [
-            //     "風格",
-            //     "版型"
-            //   ]
-            // },
+    
       axios.get('https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/get_routes?Brand='+userBrand.value+'&Per_Page=100&Page=1').then(response => {
         state.rawList = response.data.models;
         state.routeList = [...response.data.models];
@@ -501,12 +498,70 @@ export default defineComponent({
         };
 
         const deleteRoute=()=> {
+            const deletedRoute=state.editRoute.Route
+           
+
             axios.delete(`https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/del_route?Brand=`+userBrand.value+`&Route=${state.editRoute.Route}`).then(response => {
                 console.log(response)
                 getRouteList()
                 setEditRoute({}, true, 'deleteModal')
             })
+            
+            updateProducts(deletedRoute)
         }
+
+        const updateProducts = (deletedRoute) => {
+            const filteredList = productList.value.filter(item => (item.Routes[0]?.Route===(deletedRoute)));
+            console.log(filteredList, "aaaaaaaaaaaaaaa")
+
+            filteredList.forEach(filteredProduct => {
+                if(filteredProduct.mktOnline) updateMktOnline(false, filteredProduct.id)
+                setProductRoute(filteredProduct, {})
+            })
+            getProductList()
+        }
+
+        const updateMktOnline=(newMktOnline, id)=> {
+            const requestBody = {Brand: userBrand.value , id: id,Resource:'Extensions_Product_Tag' }
+            let updateData = {
+                mktOnline: newMktOnline,
+            };
+            requestBody.update_data = updateData;
+
+            const options = {
+                method: 'POST',
+                headers: {accept: 'application/json', 'content-type': 'application/json'},
+                body: JSON.stringify(requestBody)
+            };
+
+            fetch('https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/update_status', options)
+                .then(response => response.json())
+                .then(response => console.log(response))
+                .catch(err => console.error(err));
+
+};
+
+const setProductRoute = async(product, route) => {
+  product.Routes = [route];
+  // product.Tags = {};
+
+  await saveProduct({
+    Routes: product.Routes,
+    Tags: product.Tags,
+    id: product.id,
+  });
+};
+
+const saveProduct = async (updateData) => {
+  const payload = {
+    Brand: userBrand.value,
+    ...updateData,
+  };
+  const response = await axios.post('https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/update_product', payload);
+  console.log(response,"saveproduct!!!!!!!!!!!!!1");
+  getProductList();
+};
+
     const tooltipText="請填寫完整資訊"
 
     
@@ -514,6 +569,7 @@ export default defineComponent({
     onMounted(async() => {
         getTagGroupList();
     getRouteList();
+    getProductList();
       
     });
 

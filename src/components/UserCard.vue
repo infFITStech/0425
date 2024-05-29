@@ -42,6 +42,8 @@ const userName = authStore.cognitoUser ?authStore.cognitoUser.username:'';
             <br/>
              <label v-if="authStore.MainConfig" class="text-sm"> {{ authStore.MainConfig.BrandName }}</label>
             </h1>
+            
+            <label v-if="authStore.MainConfig" class="text-sm mt-0"> {{authStore.MainConfig.Subscription?authStore.MainConfig.Subscription:'未訂閱'}}</label>
 
             <div class="flex justify-center md:block">
               <PillTag label="啟用中" color="success" :icon="mdiCheckDecagram" />
@@ -52,3 +54,5 @@ const userName = authStore.cognitoUser ?authStore.cognitoUser.username:'';
     </BaseLevel>
   </CardBox>
 </template>
+
+

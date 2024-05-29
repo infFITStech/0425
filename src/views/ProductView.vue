@@ -90,10 +90,9 @@ const getProductList = async () => {
   const response = await axios.get('https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/get_products?Brand='+userBrand.value+'&Per_Page=100&Page=1');
   rawList.value = response.data.models;
   productList.value = [...response.data.models];
-  console.log("bye",productList.value)
   //getBrandList
   brandList.value=[]
-  productList.value = productList.value.filter(product => {
+  productList.value = await productList.value.filter(product => {
     if (product.ClothID.endsWith("_All")) {
         brandList.value.push(product);
         return false;
@@ -101,6 +100,8 @@ const getProductList = async () => {
     // 返回 true 表示保留在原列表中
     return true;
 });
+console.log("bye",productList.value)
+
 
 
 };
@@ -133,24 +134,11 @@ const toggleModal = (modalId) => {
 
 
   const getRouteName = (routes, product) => {
-  console.log(routes, "hoooooooooooooooooooooo")
-  if (!routeList.value.find(item => item.Route === routes?.[0].Route))  
-  {
-    //remove route
-    routes.shift();
-    // console.log(routeList.value, "aaaaaaaaaaaa");
-    saveProduct({
-    Routes: [],
-    Tags: product.Tags,
-    id: product.id,
-  });
-    return null
-  }
-  else
-  {
+
+
     return routeList.value.find(item => item.Route === routes?.[0].Route).Name || null
 
-  }
+  
 
 };
 
@@ -321,6 +309,26 @@ const preview=async(product)=>{
   }
 }
 
+const updateMktOnline=(newMktOnline, id)=> {
+   const requestBody = {Brand: userBrand.value , id: id,Resource:'Extensions_Product_Tag' }
+  let updateData = {
+      mktOnline: newMktOnline,
+  };
+  requestBody.update_data = updateData;
+
+  const options = {
+    method: 'POST',
+    headers: {accept: 'application/json', 'content-type': 'application/json'},
+    body: JSON.stringify(requestBody)
+  };
+
+  fetch('https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/update_status', options)
+    .then(response => response.json())
+    .then(response => console.log(response))
+    .catch(err => console.error(err));
+
+};
+
 const deleteProduct = async () => {
     const response = await axios.delete(`https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/del_product?Brand=`+userBrand.value+`&id=${editProduct.value.id}`);
     console.log(response);
@@ -422,7 +430,7 @@ getTagGroupList();
                         
                         <button class="pl-2"
                         style="color: gray; white-space: nowrap; overflow-x: scroll; -ms-overflow-style: none; scrollbar-width: none; width: calc(100% - 1em);">
-                            {{(b.Routes.length)?getRouteName(b.Routes, b):'選擇動線'}}
+                            {{(b.Routes[0]&&Object.keys(b.Routes[0]).length !== 0)?getRouteName(b.Routes, b):'選擇動線'}}
                         </button>
                         <button class="dropdown-toggle">
                         </button>
@@ -550,10 +558,11 @@ getTagGroupList();
                         
                         <label class="h3 text-danger d-inline-flex align-items-center cursor-pointer mb-0"
                              >
-                            <input type="checkbox" value="" class="sr-only peer" :checked="product.Routes.length>0" >
+                            <input type="checkbox" value="" :disabled="(product.Routes[0]&&Object.keys(product.Routes[0]).length !== 0)" class="sr-only peer" v-model="product.mktOnline" @change="updateMktOnline(product.mktOnline, product.id) ">
                             <div class="toggle-switch relative h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"
                                   style="">
                             </div>
+                            <!-- {{ console.log(product, "aaaaaaaaaaaaaaaaaaa") }} -->
                       </label>
 
                     </div>
@@ -571,7 +580,7 @@ getTagGroupList();
                             
                             <button class="pl-2"
                             style="color: gray; white-space: nowrap; overflow-x: scroll; -ms-overflow-style: none; scrollbar-width: none; width: calc(100% - 1em);">
-                                {{(product.Routes.length)?getRouteName(product.Routes, product):'選擇動線'}}
+                                {{(product.Routes[0]&&Object.keys(product.Routes[0]).length !== 0)?getRouteName(product.Routes, product):'選擇動線'}}
                             </button>
                             <button class="dropdown-toggle">
                             </button>
@@ -890,7 +899,7 @@ getTagGroupList();
                         <label class="h3 text-danger d-inline-flex align-items-center cursor-pointer mb-0"
                              >
                             
-                            <input type="checkbox" value="" class="sr-only peer"  :checked="product.Routes.length>0">
+                            <input type="checkbox" value="" :disabled="(product.Routes[0]&&Object.keys(product.Routes[0]).length !== 0)"  class="sr-only peer" v-model="product.mktOnline" @change="updateMktOnline(product.mktOnline, product.id)">
                             <div class="toggle-switch relative h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"
                                   style="">
                             </div>
