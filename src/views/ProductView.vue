@@ -407,7 +407,7 @@ getTagGroupList();
                                 style="  box-shadow : rgba(0,0,0,0.15) 0 2px 8px; font-size:12px
                                 "
                                 v-tooltip="tooltipText"
-                                :disabled="b.Routes.length==0"
+                                :disabled="(b.Routes[0]&&Object.keys(b.Routes[0]).length === 0)"
                                 >
                               <img src="@/img/inffits_f_black.png" alt="f" class="m-1" style="height: 10px; width:auto; vertical-align: middle; margin-right: 3px; "> 預覽
                         </button>
@@ -464,7 +464,7 @@ getTagGroupList();
                                 @click="()=>{preview( b);}"
                                 style="  box-shadow : rgba(0,0,0,0.15) 0 2px 8px; font-size:12px"
                                 v-tooltip="tooltipText"
-                                :disabled="b.Routes.length==0"
+                                :disabled="(b.Routes[0]&&Object.keys(b.Routes[0]).length === 0)"
                                 >
                               <img src="@/img/inffits_f_black.png" alt="f" class="m-1" style="height: 10px; width:auto; vertical-align: middle; margin-right: 3px; "> 預覽
                         </button>
@@ -537,14 +537,14 @@ getTagGroupList();
                                 style="  box-shadow : rgba(0,0,0,0.15) 0 2px 8px; font-size:12px
                                 "
                                 v-tooltip="tooltipText"
-                                :disabled="product.Routes.length==0"
+                                :disabled="(product.Routes[0]&&Object.keys(product.Routes[0]).length === 0)"
                                 >
                               <img src="@/img/inffits_f_black.png" alt="f" class="m-1" style="height: 10px; width:auto; vertical-align: middle; margin-right: 3px; "> 預覽
                         </button>
                         </div>
                     </div>
                     <!-- delete -->
-                    <div class="d-flex d-md-none text-left">
+                    <div class="d-flex d-md-none text-left" >
                         <!-- <div class="h3 mb-0 text-danger d-inline-flex align-items-center cursor-pointer "
                              @click="setEditProduct(product, true, 'deleteModal')">
                             <svg xmlns="http://www.w3.org/2000/svg"
@@ -556,11 +556,13 @@ getTagGroupList();
                             </svg>
                         </div> -->
                         
-                        <label class="h3 text-danger d-inline-flex align-items-center cursor-pointer mb-0"
+                        <label class="h3 text-danger d-inline-flex align-items-center cursor-pointer mb-0" 
                              >
-                            <input type="checkbox" value="" :disabled="(product.Routes[0]&&Object.keys(product.Routes[0]).length !== 0)" class="sr-only peer" v-model="product.mktOnline" @change="updateMktOnline(product.mktOnline, product.id) ">
+                            <input :disabled="(product.Routes[0]&&Object.keys(product.Routes[0]).length === 0)" type="checkbox" value="" class="sr-only peer" v-model="product.mktOnline" @change="updateMktOnline(product.mktOnline, product.id) " >
                             <div class="toggle-switch relative h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"
-                                  style="">
+                                  style=""
+                                  :class="(product.Routes[0]&&Object.keys(product.Routes[0]).length === 0)? 'disabled' : ''"
+                                 >
                             </div>
                             <!-- {{ console.log(product, "aaaaaaaaaaaaaaaaaaa") }} -->
                       </label>
@@ -890,18 +892,20 @@ getTagGroupList();
                                 style="  box-shadow : rgba(0,0,0,0.15) 0 2px 8px; font-size:12px
                                 "
                                 v-tooltip="tooltipText"
-                                :disabled="product.Routes.length==0"
+                                :disabled="(product.Routes[0]&&Object.keys(product.Routes[0]).length === 0)"
                                 >
                               <img src="@/img/inffits_f_black.png" alt="f" class="m-1" style="height: 10px; width:auto; vertical-align: middle; margin-right: 3px; "> 預覽
                         </button>
                         </div>
                         <!-- delete button -->
-                        <label class="h3 text-danger d-inline-flex align-items-center cursor-pointer mb-0"
+                        <label class="h3 text-danger d-inline-flex align-items-center cursor-pointer mb-0" 
                              >
                             
-                            <input type="checkbox" value="" :disabled="(product.Routes[0]&&Object.keys(product.Routes[0]).length !== 0)"  class="sr-only peer" v-model="product.mktOnline" @change="updateMktOnline(product.mktOnline, product.id)">
+                            <input :disabled="(product.Routes[0]&&Object.keys(product.Routes[0]).length === 0)" type="checkbox" value="" class="sr-only peer" v-model="product.mktOnline" @change="updateMktOnline(product.mktOnline, product.id)">
                             <div class="toggle-switch relative h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"
-                                  style="">
+                                  style=""
+                                  :class="(product.Routes[0]&&Object.keys(product.Routes[0]).length === 0)? 'disabled' : ''"
+                                  >
                             </div>
                       </label>
                          <!-- @click="setEditProduct(product, true, 'deleteModal')" -->
@@ -1254,6 +1258,15 @@ html body .font-bold{
 
 .tooltip-disabled:hover::after {
   opacity: 1;
+}
+
+.disabled::before, .disabled::after, .disabled {
+  color: rgb(228, 228, 228) !important;
+  border-color: rgb(228, 228, 228) !important;
+
+}
+.disabled::after{
+  background-color: rgb(228, 228, 228) !important;
 }
 </style>
 
