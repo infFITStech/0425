@@ -8,11 +8,12 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
 import SectionMain from '@/components/SectionMain.vue'
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue';
-import { mdiAccount, mdiOpenInNew, mdiStoreCogOutline } from '@mdi/js';
+import { mdiOpenInNew, mdiStoreCogOutline } from '@mdi/js';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/userStore';
-import BaseIcon from '@/components/BaseIcon.vue';
-
+// import BaseIcon from '@/components/BaseIcon.vue';
+import { useApiStore } from '@/stores/apiFuncs.js';
+const api= useApiStore();
 const tooltipText="請選擇動線"
 const authStore = useAuthStore();
 const router = useRouter();
@@ -22,11 +23,7 @@ const userBrand=ref(authStore.MainConfig.BRAND)
 
 const tagNum_row=ref(4);
 const pre = ref(false)
-const rawList = ref([]);
-const tagGroupList = ref([]);
-const routeList = ref([]);
-const productList = ref([]);
-const brandList=ref([]);
+
 const editProduct = ref({
   Route: '',
   Tags: {}
@@ -44,67 +41,12 @@ window.addEventListener('resize', () => {
   }
 });
 
-const getTagGroupList = async () => {
-    // Key: 主題名稱
-    // Tag: 標籤ID, 
-    // Name: 標籤名稱, 
-    // Imgsrc: 圖片url, 
-    // TagGroup:主題
-    // userBrand.value ㄚㄚㄚㄚ 
-  const response = await axios.get('https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/get_tags?Brand='+userBrand.value+'&Per_Page=100&Page=1');
-  const tagGroupMap = {};
-  response.data.models.forEach(tag => {
-    if (!tagGroupMap[tag.TagGroup]) {
-      tagGroupMap[tag.TagGroup] = [];
-    }
-    tagGroupMap[tag.TagGroup].push(tag);
-  });
-
-  // clear this.tagGroupList
-  tagGroupList.value = [];
-  tagGroupList.value = Object.keys(tagGroupMap).map(key => ({
-    group: key,
-    tags: tagGroupMap[key]
-  }));
-  console.log("hiiiiiiiiii",tagGroupList.value);
-};
-
-const getRouteList = async () => {
-            // {
-            //   "Imgsrc": "https://shoplineimg.com/614d51f4e46907003ed5765f/64d9f64f37fff70016ceed19/2000x.png?",
-            //   "Description": "",
-            //   "Route": "id_T_123456",
-            //   "Name": "行銷動線B",
-            //   "TagGroups_order": [
-            //     "風格",
-            //     "版型"
-            //   ]
-            // },
-  const response = await axios.get('https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/get_routes?Brand='+userBrand.value+'&Per_Page=100&Page=1');
-  routeList.value = [...response.data.models];
-};
 
 
 
-const getProductList = async () => {
-  const response = await axios.get('https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/get_products?Brand='+userBrand.value+'&Per_Page=100&Page=1');
-  rawList.value = response.data.models;
-  productList.value = [...response.data.models];
-  //getBrandList
-  brandList.value=[]
-  productList.value = await productList.value.filter(product => {
-    if (product.ClothID.endsWith("_All")) {
-        brandList.value.push(product);
-        return false;
-    }
-    // 返回 true 表示保留在原列表中
-    return true;
-});
-console.log("bye",productList.value)
 
 
 
-};
 
 // const setEditRouteProduct = (group) =>{
 //   editProduct.value={...group}
@@ -136,18 +78,18 @@ const toggleModal = (modalId) => {
   const getRouteName = (routes, product) => {
 
 
-    return routeList.value.find(item => item.Route === routes?.[0].Route).Name || null
+    return api.routeList.find(item => item.Route === routes?.[0].Route).Name || null
 
   
 
 };
 
-const getTagGroupByRoute = (routeKey) => {
-  const route = routeList.value.find(r => r.Route === routeKey);
-  if (!route) return [];
+// const getTagGroupByRoute = (routeKey) => {
+//   const route = api.routeList.find(r => r.Route === routeKey);
+//   if (!route) return [];
 
-  return tagGroupList.value.filter(tagGroup => route.TagGroups_order.includes(tagGroup.group));
-};
+//   return tagGroupList.value.filter(tagGroup => route.TagGroups_order.includes(tagGroup.group));
+// };
 
 const hasTag = (product, tagGroupName, tag) => {
   return product.Tags[tagGroupName] && product.Tags[tagGroupName].some(t => t.Tag === tag.Tag);
@@ -157,7 +99,7 @@ const removeTag = (product, tagGroupName, tag) => {
   const index = product.Tags[tagGroupName].findIndex(t => t.Tag === tag.Tag);
   if (index !== -1) {
     product.Tags[tagGroupName].splice(index, 1);
-    saveProduct({
+    api.saveProduct({
       Routes: product.Routes,
       Tags: product.Tags,
       id: product.id,
@@ -169,59 +111,21 @@ const removeTag = (product, tagGroupName, tag) => {
 
 // $(selector).dropdown('hide')
 
-// };
+
 
 const getTagName = (tagObj) => {
   try{
+
     return tagObj.tag.Name
+
   }
   catch(err)
   {
-    return "error"
+    return err
   }
   
 }
 
-const tagExist=(groupName, product, tagObj)=>
-{
-
-  if(tagGroupList.value.some(group => group.group === groupName) )
-  { 
-    
-      
-      const groupTags= tagGroupList.value.find(item => item.group === groupName)
-      const targetTag = tagObj.tag.Tag
-      const foundTagObj = groupTags.tags.find(tagObj => tagObj.Tag === targetTag);
-      if(foundTagObj){
-        return true
-      }
-      else
-      {
-        //remove tag
-        removeTag(product, groupName, tagObj.tag)
-
-        return true
-      }      
-    
-    
-  } 
-  else
-  {
-    //remove all tags of groupName
-    delete product.Tags[groupName];
-      saveProduct({
-        Routes: product.Routes,
-        Tags: product.Tags,
-        id: product.id,
-      });
-    
-
-    return false
-  }
-
-
-  
-}
 
 const closeDropdown=(selector)=> {
 
@@ -233,7 +137,7 @@ const setProductRoute = async(product, route) => {
   product.Routes = [route];
   // product.Tags = {};
 
-  await saveProduct({
+  await api.saveProduct({
     Routes: product.Routes,
     Tags: product.Tags,
     id: product.id,
@@ -258,21 +162,37 @@ const setTag = (product, tagGroupName, tag) => {
     product.Tags[tagGroupName].splice(index, 1);
   }
 
-  saveProduct({
+  api.saveProduct({
     Product: product.Product,
     Tags: product.Tags,
     id: product.id,
   });
 };
+function findTagInData(targetTag) {
+  for (let group of api.tagGroupList) {
+        for (let tag of group.tags) {
+            if (tag.Tag == targetTag) {
+                return tag;
+            }
+        }
+    }
+    return null;
+   
+}
 
 // 根据产品列出标签
 const tagListByProduct = (product) => {
   const tagList = [];
   for (const key in product.Tags) {
-    product.Tags[key].forEach(tag => {
-      tagList.push({ tag, group: key });
+    product.Tags[key].forEach((tag) => {
+
+      const tagIn =  findTagInData(tag.Tag);
+      tagList.push({ tag: tagIn , group: key });
+      
     });
   }
+  console.log(tagList)
+  
 
   return JSON.parse(JSON.stringify(tagList));
 };
@@ -280,19 +200,10 @@ const tagListByProduct = (product) => {
 const myiframe = ref(null);
 
 
-const saveProduct = async (updateData) => {
-  const payload = {
-    Brand: userBrand.value,
-    ...updateData,
-  };
-  const response = await axios.post('https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/update_product', payload);
-  console.log(response,"saveproduct!!!!!!!!!!!!!1");
-  getProductList();
-};
 
 const preview=async(product)=>{
   //每次preview再設一次route給product(更改route的taggroup之後，並未同步更新商品內的資訊)
-  const foundObject = routeList.value.find(item => item.Route === product.Routes[0].Route);
+  const foundObject = api.routeList.find(item => item.Route === product.Routes[0].Route);
   console.log(foundObject, "pppp")
   await setProductRoute(product, foundObject);
   
@@ -329,7 +240,7 @@ const updateMktOnline=(newMktOnline, id)=> {
 const deleteProduct = async () => {
     const response = await axios.delete(`https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/del_product?Brand=`+userBrand.value+`&id=${editProduct.value.id}`);
     console.log(response);
-  getProductList();
+  api.getProductList();
   setEditProduct({}, true, 'deleteModal');
 };
 onMounted(() => {
@@ -347,9 +258,9 @@ onMounted(() => {
 
 
 });
-getTagGroupList();
-  getRouteList();
-  getProductList();
+api.getTagGroupList();
+  api.getRouteList();
+  api.getProductList();
 
 
 </script>
@@ -362,7 +273,7 @@ getTagGroupList();
   </SectionTitleLineWithButton>
   <div class="container-fluid pb-3">
     
-    <div v-for="(b,bIdx) in brandList"
+    <div v-for="(b,bIdx) in api.brandList"
          :key="bIdx"
          class="row mb-3">
         <!-- render tags -->
@@ -438,7 +349,7 @@ getTagGroupList();
                            disabled>
                           選擇欲顯示的詢問動線
                       </div>
-                      <div v-for="(route,idx) in routeList"
+                      <div v-for="(route,idx) in api.routeList"
                            :key="route.Route"
                            class="dropdown-item"
                            @click="setProductRoute(b, route)">
@@ -493,7 +404,7 @@ getTagGroupList();
 
   <div class="container-fluid pb-3">
     
-    <div v-for="(product,productIdx) in productList"
+    <div v-for="(product,productIdx) in api.productList"
          :key="productIdx"
          class="row mb-3">
         <!-- render tags -->
@@ -590,7 +501,7 @@ getTagGroupList();
                                disabled>
                               選擇欲顯示的詢問動線
                           </div>
-                          <div v-for="(route,idx) in routeList"
+                          <div v-for="(route,idx) in api.routeList"
                                :key="route.Route"
                                class="dropdown-item"
                                @click="setProductRoute(product, route)">
@@ -621,8 +532,8 @@ getTagGroupList();
                             </button>
                           </span>
                             <div :id="`tagDropdownMenu${productIdx}`"
-                                 class="dropdown-menu p-2"
-                                 style="min-width: 400px; max-height: 500px; overflow-y: scroll; scrollbar-width: thin;"
+                                 class="dropdown-menu p-2 "
+                                 style="min-width: 400px; max-height: 500px; overflow-y: scroll; scrollbar-width: thin; cursor:default;"
                                  onclick="event.stopPropagation()">
                                 <div class="text-right">
                                     <button type="button"
@@ -640,7 +551,7 @@ getTagGroupList();
                                         </svg>
                                     </button>
                                 </div>
-                                <div v-for="tagGroup in tagGroupList"
+                                <div v-for="tagGroup in api.tagGroupList"
                                      :key="tagGroup"
                                      class="d-flex flex-column mb-2">
 

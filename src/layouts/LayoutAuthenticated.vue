@@ -107,10 +107,10 @@ const menuClick = (event, item) => {
         <a href="https://tailwind-vue.justboil.me/" target="_blank" class="text-blue-600"
           >Premium version</a
         > -->
-        <a href="https://.me/" target="_blank" style="color: gray;">支援</a>
+      
+        <router-link to="/supportQA" style="color: gray;">支援</router-link>
         &nbsp;&nbsp;&nbsp;
-        <a href="https://.me/" target="_blank" style="color: gray;">聯絡我們</a>
-        
+        <router-link to="/contact" style="color: gray;">聯絡我們</router-link>
       </FooterBar>
       </div>
 

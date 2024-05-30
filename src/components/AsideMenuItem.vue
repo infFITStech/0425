@@ -86,35 +86,38 @@ function handleGlobalContextMenu(event) {
 
 
 
-onMounted(() => {
-  document.addEventListener('click', handleClickOutside);
-  document.addEventListener('contextmenu', handleGlobalContextMenu);
-});
+// onMounted(() => {
+//   document.addEventListener('click', handleClickOutside);
+//   document.addEventListener('contextmenu', handleGlobalContextMenu);
+// });
 
-onUnmounted(() => {
-  document.removeEventListener('click', handleClickOutside);
-  document.removeEventListener('contextmenu', handleGlobalContextMenu);
+// onUnmounted(() => {
+//   document.removeEventListener('click', handleClickOutside);
+//   document.removeEventListener('contextmenu', handleGlobalContextMenu);
 
-});
+// });
 </script>
 
 <template>
   <li class="purple">
-    <div ref="menu" :style="{ top: menuPosition.y + 'px', left: menuPosition.x + 'px' }" :class="ContextMenu&&mainStore.showContextMenu ? '' : 'd-none'" class="context-menu btn" @click.stop="openInNewTab(mainStore.path)"  >
+    <!-- <div ref="menu" :style="{ top: menuPosition.y + 'px', left: menuPosition.x + 'px' }" :class="ContextMenu&&mainStore.showContextMenu ? '' : 'd-none'" class="context-menu btn" @click.stop="openInNewTab(mainStore.path)"  >
       開新分頁
-    </div>
+    </div> -->
     <component
-      :is="item.to ? RouterLink : 'a'"
+      :is=" 'a'"
       v-slot="vSlot"
       :to="item.to ?? null"
-      :href="item.href ?? null"
+      :href="item.to?router.resolve({ path: item.to  }).href : null"
       :target="item.target ?? null"
       :data-to="item.to ?? null"  
       class="flex cursor-pointer isMenuItem"
       :class="componentClass"
       @click="menuClick"
-      @contextmenu.prevent="openContextMenu"
+      style="text-decoration: none;"
+
     >
+    <!-- @contextmenu.prevent="openContextMenu" -->
+
       <BaseIcon
         v-if="item.icon"
         :path="item.icon"

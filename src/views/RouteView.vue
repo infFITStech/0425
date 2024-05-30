@@ -10,7 +10,7 @@
         </div> -->
 
         <h3>設定提問動線</h3>
-        <div v-for="(route,routeIdx) in routeList"
+        <div v-for="(route,routeIdx) in api.routeList"
              :key="routeIdx"
              class="row mb-3">
             <!-- render tags -->
@@ -230,7 +230,7 @@
                             <div class="row mb-3">
                                 <h4 class="col-12 font-bold">01 請選擇要顯示的項目：</h4>
                                 <div class="col-12">
-                                    <div v-for="tagGroup in tagGroupList"
+                                    <div v-for="tagGroup in api.tagGroupList"
                                          :key="tagGroup.group"
                                          class="rounded-pill cursor-pointer d-inline-flex align-items-center border
                                          position-relative
@@ -332,7 +332,7 @@ import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
 import SectionMain from '@/components/SectionMain.vue'
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue';
 import { useAuthStore } from '@/stores/userStore';
-
+import { useApiStore } from '@/stores/apiFuncs';
 const authStore = useAuthStore();
 
 
@@ -347,58 +347,15 @@ export default defineComponent({
   },
   setup() {
     const userBrand=ref(authStore.MainConfig.BRAND);
-    const productList= ref([])
+    const api= useApiStore();
     const state = reactive({
-      rawList: [],
-      tagGroupList: [],
-      routeList: [],
       editRoute: {
         TagGroups_order: [],
         editingTagGroups: []
       }
     });
 
-    const getProductList = async () => {
-        const response = await axios.get('https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/get_products?Brand='+userBrand.value+'&Per_Page=100&Page=1');
-        productList.value = [...response.data.models];
-        console.log("bye",productList.value)
 
-    };
-    const getTagGroupList = async() => {
-        // Key: 主題名稱
-        // Tag: 標籤ID, 
-        // Name: 標籤名稱, 
-        // Imgsrc: 圖片url, 
-        // TagGroup:主題
-        console.log(userBrand.value, "getTagGroupList");
-
-      await axios.get('https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/get_tags?Brand='+userBrand.value+'&Per_Page=100&Page=1').then(response => {
-        const tagGroupMap = {};
-        response.data.models.forEach(tag => {
-          if (!tagGroupMap[tag.TagGroup]) {
-            tagGroupMap[tag.TagGroup] = [];
-          }
-          tagGroupMap[tag.TagGroup].push(tag);
-        });
-        // clear this.tagGroupList
-        state.tagGroupList = [];
-        for (const key in tagGroupMap) {
-          state.tagGroupList.push({
-            group: key,
-            tags: tagGroupMap[key]
-          });
-        }
-      });
-    };
-
-    const getRouteList = () => {
-     // {
-    
-      axios.get('https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/get_routes?Brand='+userBrand.value+'&Per_Page=100&Page=1').then(response => {
-        state.rawList = response.data.models;
-        state.routeList = [...response.data.models];
-      });
-    };
 
     const setEditRouteTag = (group) => {
             if (!state.editRoute.TagGroups_order.includes(group)) {
@@ -409,37 +366,6 @@ export default defineComponent({
                 state.editRoute.editingTagGroups = state.editRoute.editingTagGroups.filter(item => item.group !== group)
             }
         };
-
-        
-    const updateTagGroups=(route)=>
-    {
-        // const validGroups =  state.tagGroupList.map(groupObj => groupObj.group);
-        
-        // const filteredTaglist =  route.TagGroups_order.filter(tag => validGroups.includes(tag));
-        // console.log(validGroups, filteredTaglist, "aaaaaaaaaaaaaaaaaaaaaaaa")
-
-
-        // const payload = {
-        //         Brand: 'INFS',
-        //         Data: {
-        //             Description: route.Description,
-        //             Imgsrc: route.Imgsrc,
-        //             Name: route.Name,
-        //             Route: route.Route,
-        //             TagGroups_order: filteredTaglist
-        //         }
-        //     }
-        //     axios.post('https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/update_route', payload).then(response => {
-        //         console.log(response)
-        //         getRouteList()
-        //         setEditRoute({}, false, 'editModal')
-        //     })
-        
-
-        // return filteredTaglist
-       
-
-    }
 
     const setEditRoute= (route = {
             Description: '',
@@ -492,7 +418,7 @@ export default defineComponent({
             }
             axios.post('https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/update_route', payload).then(response => {
                 console.log(response)
-                getRouteList()
+                api.getRouteList()
                 setEditRoute({}, true, 'editModal')
             })
         };
@@ -503,7 +429,7 @@ export default defineComponent({
 
             axios.delete(`https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/del_route?Brand=`+userBrand.value+`&Route=${state.editRoute.Route}`).then(response => {
                 console.log(response)
-                getRouteList()
+                api.getRouteList()
                 setEditRoute({}, true, 'deleteModal')
             })
             
@@ -511,14 +437,23 @@ export default defineComponent({
         }
 
         const updateProducts = (deletedRoute) => {
-            const filteredList = productList.value.filter(item => (item.Routes[0]?.Route===(deletedRoute)));
+            
+            var filteredList = api.productList.filter(item => (item.Routes[0]?.Route===(deletedRoute)));
             console.log(filteredList, "aaaaaaaaaaaaaaa")
 
             filteredList.forEach(filteredProduct => {
                 if(filteredProduct.mktOnline) updateMktOnline(false, filteredProduct.id)
                 setProductRoute(filteredProduct, {})
             })
-            getProductList()
+            
+            filteredList = api.brandList.filter(item => (item.Routes[0]?.Route===(deletedRoute)));
+            console.log(filteredList, "aaaaaaaaaaaaaaa")
+            filteredList.forEach(filteredProduct => {
+                if(filteredProduct.mktOnline) updateMktOnline(false, filteredProduct.id)
+                setProductRoute(filteredProduct, {})
+            })
+
+            api.getProductList()
         }
 
         const updateMktOnline=(newMktOnline, id)=> {
@@ -545,31 +480,23 @@ const setProductRoute = async(product, route) => {
   product.Routes = [route];
   // product.Tags = {};
 
-  await saveProduct({
+  await api.saveProduct({
     Routes: product.Routes,
     Tags: product.Tags,
     id: product.id,
   });
 };
 
-const saveProduct = async (updateData) => {
-  const payload = {
-    Brand: userBrand.value,
-    ...updateData,
-  };
-  const response = await axios.post('https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/update_product', payload);
-  console.log(response,"saveproduct!!!!!!!!!!!!!1");
-  getProductList();
-};
+
 
     const tooltipText="請填寫完整資訊"
 
     
       
     onMounted(async() => {
-        getTagGroupList();
-    getRouteList();
-    getProductList();
+        api.getTagGroupList();
+    api.getRouteList();
+    api.getProductList();
       
     });
 
@@ -577,8 +504,6 @@ const saveProduct = async (updateData) => {
 
     return {
       ...toRefs(state),
-      getTagGroupList,
-      getRouteList,
       setEditRouteTag,
       setEditRoute,
       toggleModal,
@@ -586,7 +511,7 @@ const saveProduct = async (updateData) => {
       deleteRoute,
       mdiMulticast,
       tooltipText,
-      updateTagGroups
+      api
     };
   }
 });

@@ -7,7 +7,7 @@
     <div class="container pb-3">
         
 
-        <div v-for="(group,groupIdx) in tagGroupList"
+        <div v-for="(group,groupIdx) in api.tagGroupList"
              :key="groupIdx"
              class="row mb-3">
             <h4 class="col-12 font-bold mb-2">
@@ -339,19 +339,17 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
 import SectionMain from '@/components/SectionMain.vue'
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue';
-import { mdiAccount, mdiTagOutline } from '@mdi/js';
+import {  mdiTagOutline } from '@mdi/js';
 import { LambdaClient, InvokeCommand } from "@aws-sdk/client-lambda";
-import { CognitoIdentityClient, GetIdCommand, GetCredentialsForIdentityCommand } from "@aws-sdk/client-cognito-identity";
+import { CognitoIdentityClient } from "@aws-sdk/client-cognito-identity";
 import { fromCognitoIdentityPool } from "@aws-sdk/credential-provider-cognito-identity";
 import { mdiPencilOutline, mdiImage } from '@mdi/js';
 import BaseIcon from '@/components/BaseIcon.vue';
 import { useAuthStore } from '@/stores/userStore';
-const productList = ref([]);
+import { useApiStore } from '@/stores/apiFuncs';
+const api = useApiStore()
 const authStore = useAuthStore();
 const userBrand =ref(authStore.MainConfig.BRAND)
-const rawList = ref([]);
-const routeList = ref([]);
-const tagGroupList = ref([]);
 const editTag = ref({});
 const new_group_name = ref('');
 const defaultImg='https://s3.ap-northeast-1.amazonaws.com/inffits.com/mkt/img/empty.jpg'
@@ -433,11 +431,7 @@ img.onload = () => {
 
 // const reader = new FileReader()
 
-const getRouteList = () => {
-    axios.get('https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/get_routes?Brand='+userBrand.value+'&Per_Page=100&Page=1').then(response => {
-    routeList.value = [...response.data.models];
-    });
-};
+
 
 // };
 const updateThemeName=(old_name)=>{
@@ -478,7 +472,7 @@ const update_themeName = async(old_name) =>{
       const response = await lambdaClient.send(command);
       console.log(response);
 
-      getTagGroupList()
+      api.getTagGroupList()
       setEditTag({}, true, 'updateModal');
       new_group_name.value = '';
     } catch (error) {
@@ -490,33 +484,7 @@ const update_themeName = async(old_name) =>{
 }
 
 
-const getTagGroupList=async()=> {
-            // Key: 主題名稱
-            // Tag: 標籤ID, 
-            // Name: 標籤名稱, 
-            // Imgsrc: 圖片url, 
-            // TagGroup:主題
-            await axios.get('https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/get_tags?Brand='+userBrand.value+'&Per_Page=100&Page=1').then(response => {
-                const tagGroupMap = {}
-                rawList.value = response.data.models
-                response.data.models.forEach(tag => {
-                    if (!tagGroupMap[tag.TagGroup]) {
-                        tagGroupMap[tag.TagGroup] = []
-                    }
-                    tagGroupMap[tag.TagGroup].push(tag)
-                })
 
-                // clear this.tagGroupList
-                tagGroupList.value = []
-                for (const key in tagGroupMap) {
-                    tagGroupList.value.push({
-                        group: key,
-                        tags: tagGroupMap[key]
-                    })
-                }
-            })
-            
-        };
 
 const setEditTag = (tag = { TagGroup: '', Tag: String(new Date().getTime()), Name: '', Imgsrc: '', Description: '' }, toToggleModal = true, toggleModalName = 'editModal', Key='') => {
   editTag.value = Object.assign({ TagGroup: '', Tag: String(new Date().getTime()), Name: '', Imgsrc: '', Description: '' }, JSON.parse(JSON.stringify(tag)));
@@ -540,7 +508,7 @@ const saveTag=() =>{
                 Data: editTag.value
             }).then(response => {
                 console.log(response)
-                getTagGroupList()
+                api.getTagGroupList()
                 setEditTag({}, true, 'editModal')
             })
         };
@@ -553,13 +521,13 @@ const deleteTag=async()=> {
     
     await axios.delete(`https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/del_tag?Brand=`+userBrand.value+`&Tag=${editTag.value.Tag}`).then(async(response) => {
         console.log(response)
-        await getTagGroupList()
+        await api.getTagGroupList()
 
         
         setEditTag({}, true, 'deleteModal')
     })
     
-    if(!tagGroupList.value.some(item => item.group === deletedTagGroup)) //刪掉某tag後，此taggroup也不存在
+    if(!api.tagGroupList.some(item => item.group === deletedTagGroup)) //刪掉某tag後，此taggroup也不存在
     {
         updateRoutes(deletedTagGroup)
     }
@@ -569,20 +537,12 @@ const deleteTag=async()=> {
 
             
 }
-const saveProduct = async (updateData) => {
-  const payload = {
-    Brand: userBrand.value,
-    ...updateData,
-  };
-  const response = await axios.post('https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/update_product', payload);
-  console.log(response,"saveproduct!!!!!!!!!!!!!1");
-  getProductList();
-};
+
 
 const updateProducts=(deletedTagGroup, deletedTag)=>{
     console.log("update products")
     
-    productList.value.forEach(product => {
+    api.productList.forEach(product => {
     // 檢查目標 TagGroup 是否存在
     if (product.Tags && product.Tags[deletedTagGroup]) {
 
@@ -594,7 +554,7 @@ const updateProducts=(deletedTagGroup, deletedTag)=>{
             delete product.Tags[deletedTagGroup];
         }
 
-        saveProduct({
+        api.saveProduct({
             Tags: product.Tags,
             id: product.id,
         });
@@ -605,7 +565,7 @@ const updateProducts=(deletedTagGroup, deletedTag)=>{
 const updateRoutes=(deletedTagGroup)=>{
     console.log("group deleted")
 
-        const filteredList = routeList.value.filter(item => item.TagGroups_order.includes(deletedTagGroup));
+        const filteredList = api.routeList.filter(item => item.TagGroups_order.includes(deletedTagGroup));
         const updatedList = filteredList.map(item => {
             item.TagGroups_order = item.TagGroups_order.filter(tag => tag !== deletedTagGroup);
             return item;
@@ -632,33 +592,17 @@ const updateRoutes=(deletedTagGroup)=>{
             
         });
 
-        getRouteList()
+        api.getRouteList()
 }
 
-const getProductList = async () => {
-  const response = await axios.get('https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/get_products?Brand='+userBrand.value+'&Per_Page=100&Page=1');
-  rawList.value = response.data.models;
-  productList.value = [...response.data.models];
-  //getBrandList
-  productList.value = await productList.value.filter(product => {
-    if (product.ClothID.endsWith("_All")) {
-        return false;
-    }
-    // 返回 true 表示保留在原列表中
-    return true;
-});
-console.log("bye",productList.value)
 
-
-
-};
 
 onMounted(() => {
   
 });
-getTagGroupList();
-getRouteList();
-getProductList();
+api.getTagGroupList();
+api.getRouteList();
+api.getProductList();
 </script>
 
 
