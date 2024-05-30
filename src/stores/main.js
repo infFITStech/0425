@@ -9,16 +9,26 @@ export const useMainStore = defineStore('main', () => {
   
 
   const isFieldFocusRegistered = ref(false)
-
+  const showContextMenu = ref(false)
   const clients = ref([])
   const history = ref([])
   //有沒有在顯示announce
+  const path=ref("")
   const IsAnnounce=ref({state:false, title:""})
   const IsNotify=ref({state:false, title:""})
   function setIsAnnounce(state, title){
     IsAnnounce.value.state=state
     IsAnnounce.value.title=title
 
+  }
+
+  function setPath(state){
+    path.value=state
+  }
+
+  function setShowContextMenu(state)
+  {
+    showContextMenu.value=state
   }
 
   function setIsNotify(state, title){
@@ -59,6 +69,10 @@ export const useMainStore = defineStore('main', () => {
     setIsAnnounce,
     IsAnnounce,
     IsNotify,
-    setIsNotify
+    setIsNotify,
+    showContextMenu,
+    setShowContextMenu,
+    setPath,
+    path
   }
 })

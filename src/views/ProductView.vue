@@ -173,14 +173,11 @@ const removeTag = (product, tagGroupName, tag) => {
 
 const getTagName = (tagObj) => {
   try{
-    const groupTags= tagGroupList.value.find(item => item.group === tagObj.group)
-    const targetTag = tagObj.tag.Tag
-    const foundTagObj = groupTags.tags.find(tagObj => tagObj.Tag === targetTag);
-    return foundTagObj.Name
+    return tagObj.tag.Name
   }
   catch(err)
   {
-    return "deleted"
+    return "error"
   }
   
 }
@@ -849,7 +846,7 @@ getTagGroupList();
                                                 </div>
                                             </div>
                                             <div style="white-space: nowrap; overflow-x: scroll; -ms-overflow-style: none; scrollbar-width: none;"> 
-                                              {{tagObj.tag?.Name}}
+                                              {{getTagName(tagObj)}}
                                             </div>
 
                                         </div>
@@ -1263,6 +1260,7 @@ html body .font-bold{
 .disabled::before, .disabled::after, .disabled {
   color: rgb(228, 228, 228) !important;
   border-color: rgb(228, 228, 228) !important;
+  cursor: default;
 
 }
 .disabled::after{

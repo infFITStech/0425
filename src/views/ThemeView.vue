@@ -346,6 +346,7 @@ import { fromCognitoIdentityPool } from "@aws-sdk/credential-provider-cognito-id
 import { mdiPencilOutline, mdiImage } from '@mdi/js';
 import BaseIcon from '@/components/BaseIcon.vue';
 import { useAuthStore } from '@/stores/userStore';
+const productList = ref([]);
 const authStore = useAuthStore();
 const userBrand =ref(authStore.MainConfig.BRAND)
 const rawList = ref([]);
@@ -531,6 +532,9 @@ const toggleModal = (modalId) => {
   }
 
 const saveTag=() =>{
+    if(!editTag.value.Imgsrc){
+        editTag.value.Imgsrc = defaultImg
+    }
             axios.post('https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/update_tag', {
                 Brand: userBrand.value,
                 Data: editTag.value
@@ -545,7 +549,7 @@ const saveTag=() =>{
 
 const deleteTag=async()=> {
     const deletedTagGroup = editTag.value.TagGroup
-   
+    const deletedTag=editTag.value.Tag
     
     await axios.delete(`https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/del_tag?Brand=`+userBrand.value+`&Tag=${editTag.value.Tag}`).then(async(response) => {
         console.log(response)
@@ -560,8 +564,42 @@ const deleteTag=async()=> {
         updateRoutes(deletedTagGroup)
     }
 
+    updateProducts(deletedTagGroup, deletedTag)
+
 
             
+}
+const saveProduct = async (updateData) => {
+  const payload = {
+    Brand: userBrand.value,
+    ...updateData,
+  };
+  const response = await axios.post('https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/update_product', payload);
+  console.log(response,"saveproduct!!!!!!!!!!!!!1");
+  getProductList();
+};
+
+const updateProducts=(deletedTagGroup, deletedTag)=>{
+    console.log("update products")
+    
+    productList.value.forEach(product => {
+    // 檢查目標 TagGroup 是否存在
+    if (product.Tags && product.Tags[deletedTagGroup]) {
+
+        // 過濾掉要刪除的 Tag
+        product.Tags[deletedTagGroup] = product.Tags[deletedTagGroup].filter(tag => tag.Tag !== deletedTag);
+
+        // 如果 TagGroup 變為空陣列，可以刪除整個 TagGroup
+        if (product.Tags[deletedTagGroup].length === 0) {
+            delete product.Tags[deletedTagGroup];
+        }
+
+        saveProduct({
+            Tags: product.Tags,
+            id: product.id,
+        });
+    }
+});
 }
 
 const updateRoutes=(deletedTagGroup)=>{
@@ -597,11 +635,30 @@ const updateRoutes=(deletedTagGroup)=>{
         getRouteList()
 }
 
+const getProductList = async () => {
+  const response = await axios.get('https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/get_products?Brand='+userBrand.value+'&Per_Page=100&Page=1');
+  rawList.value = response.data.models;
+  productList.value = [...response.data.models];
+  //getBrandList
+  productList.value = await productList.value.filter(product => {
+    if (product.ClothID.endsWith("_All")) {
+        return false;
+    }
+    // 返回 true 表示保留在原列表中
+    return true;
+});
+console.log("bye",productList.value)
+
+
+
+};
+
 onMounted(() => {
   
 });
 getTagGroupList();
 getRouteList();
+getProductList();
 </script>
 
 
