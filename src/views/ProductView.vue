@@ -32,16 +32,35 @@ const filteredProducts = computed(() => {
     );
 });
 
+// 指搜尋標籤
+// const filteredTagGroups = computed(() => {
+//     if (!searchTags.value) {
+//         return api.tagGroupList;
+//     }
+//     return api.tagGroupList.map(group => ({
+//         group: group.group,
+//         tags: group.tags.filter(tag => tag.Name.toLowerCase().includes(searchTags.value.toLowerCase()))
+//     })).filter(group => group.tags.length > 0);
+// });
+
+//標籤和標籤主題都搜尋
 const filteredTagGroups = computed(() => {
     if (!searchTags.value) {
         return api.tagGroupList;
     }
-    return api.tagGroupList.map(group => ({
-        group: group.group,
-        tags: group.tags.filter(tag => tag.Name.toLowerCase().includes(searchTags.value.toLowerCase()))
-    })).filter(group => group.tags.length > 0);
+    const searchLower = searchTags.value.toLowerCase();
+    return api.tagGroupList.reduce((filteredGroups, group) => {
+        const matchesGroup = group.group.toLowerCase().includes(searchLower);
+        const filteredTags = group.tags.filter(tag => tag.Name.toLowerCase().includes(searchLower));
+        if (matchesGroup || filteredTags.length > 0) {
+            filteredGroups.push({
+                ...group,
+                tags: matchesGroup ? group.tags : filteredTags
+            });
+        }
+        return filteredGroups;
+    }, []);
 });
-
 
 const tagNum_row=ref(4);
 const pre = ref(false)
@@ -1003,7 +1022,7 @@ api.getTagGroupList();
         <div class="modal-dialog modal-dialog-centered"
              role="document"
              style="max-width: 800px; max-height: 800px">
-            <div class="modal-content">
+            <div class="modal-content batch">
                 <div class="modal-header border-0">
                     <h5 class="modal-title">批量新增標籤</h5>
                     <button type="button"
@@ -1498,6 +1517,11 @@ html body .font-bold{
 .custom-dropdown select:focus {
   outline: none;
   border-color: #666;
+}
+
+.modal-content.batch{
+  max-height:600px;
+  overflow-y: scroll; -ms-overflow-style: none; scrollbar-width: none; 
 }
 </style>
 
