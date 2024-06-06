@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import axios from 'axios';
 import $ from 'jquery';
 import 'popper.js';
@@ -8,10 +8,10 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
 import SectionMain from '@/components/SectionMain.vue'
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue';
-import { mdiOpenInNew, mdiStoreCogOutline } from '@mdi/js';
+import { mdiOpenInNew, mdiStoreCogOutline, mdiPencilOutline } from '@mdi/js';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/userStore';
-// import BaseIcon from '@/components/BaseIcon.vue';
+import BaseIcon from '@/components/BaseIcon.vue';
 import { useApiStore } from '@/stores/apiFuncs.js';
 const api= useApiStore();
 const tooltipText="請選擇動線"
@@ -20,6 +20,28 @@ const router = useRouter();
 const iframeSrc = router.resolve({ name: 'IframeContainer'}).href;
 // const iframeSrc=ref('http://127.0.0.1:5501/iframe_container_module.html')
 const userBrand=ref(authStore.MainConfig.BRAND)
+
+const batch_choosed_tags = ref({Tags:{}});
+const batchProducts = ref([]);
+const searchQuery = ref('');
+const searchTags = ref('');
+const filteredProducts = computed(() => {
+
+    return api.productList.filter(product => 
+        product.ItemName.toLowerCase().includes(searchQuery.value.toLowerCase())
+    );
+});
+
+const filteredTagGroups = computed(() => {
+    if (!searchTags.value) {
+        return api.tagGroupList;
+    }
+    return api.tagGroupList.map(group => ({
+        group: group.group,
+        tags: group.tags.filter(tag => tag.Name.toLowerCase().includes(searchTags.value.toLowerCase()))
+    })).filter(group => group.tags.length > 0);
+});
+
 
 const tagNum_row=ref(4);
 const pre = ref(false)
@@ -95,11 +117,11 @@ const hasTag = (product, tagGroupName, tag) => {
   return product.Tags[tagGroupName] && product.Tags[tagGroupName].some(t => t.Tag === tag.Tag);
 };
 
-const removeTag = (product, tagGroupName, tag) => {
+const removeTag = async(product, tagGroupName, tag) => {
   const index = product.Tags[tagGroupName].findIndex(t => t.Tag === tag.Tag);
   if (index !== -1) {
     product.Tags[tagGroupName].splice(index, 1);
-    api.saveProduct({
+    await api.saveProduct({
       Routes: product.Routes,
       Tags: product.Tags,
       id: product.id,
@@ -121,7 +143,7 @@ const getTagName = (tagObj) => {
   }
   catch(err)
   {
-    return err
+    console.error(err, tagObj)
   }
   
 }
@@ -151,6 +173,17 @@ const close_preview = () => {
     }, 400); 
   
 }
+
+const setBatchChoosedTags = (product, tagGroupName, tag) => {
+  if (!product.Tags[tagGroupName]) {
+    product.Tags[tagGroupName] = [];
+  }
+  const index = product.Tags[tagGroupName].findIndex(t => t.Tag === tag.Tag)
+  if (index === -1) {
+    product.Tags[tagGroupName].push(tag);
+  } 
+  console.log("setted")
+  }
 const setTag = (product, tagGroupName, tag) => {
   if (!product.Tags[tagGroupName]) {
     product.Tags[tagGroupName] = [];
@@ -168,6 +201,8 @@ const setTag = (product, tagGroupName, tag) => {
     id: product.id,
   });
 };
+
+
 function findTagInData(targetTag) {
   for (let group of api.tagGroupList) {
         for (let tag of group.tags) {
@@ -185,13 +220,17 @@ const tagListByProduct = (product) => {
   const tagList = [];
   for (const key in product.Tags) {
     product.Tags[key].forEach((tag) => {
-
+      
       const tagIn =  findTagInData(tag.Tag);
-      tagList.push({ tag: tagIn , group: key });
+      if(tagIn!=null)
+      {
+        tagList.push({ tag: tagIn , group: key }); 
+        
+      }
       
     });
   }
-  console.log(tagList)
+  
   
 
   return JSON.parse(JSON.stringify(tagList));
@@ -243,6 +282,69 @@ const deleteProduct = async () => {
   api.getProductList();
   setEditProduct({}, true, 'deleteModal');
 };
+
+const batchEdit = async(addOrDelete) => {
+  console.log(batchProducts.value, batch_choosed_tags.value, addOrDelete);
+
+  if (addOrDelete === 'add') {
+    batchProducts.value.forEach(async(batch_product_id) => {
+      // 
+      var product=api.productList.find(product => product.id === batch_product_id);
+      // 所有要被加的push進去
+      for (let tagGroup in batch_choosed_tags.value.Tags) 
+      {
+        for (let i in batch_choosed_tags.value.Tags[tagGroup]) 
+        {
+          var tag= batch_choosed_tags.value.Tags[tagGroup][i]
+          if (!product.Tags[tagGroup]) {
+            product.Tags[tagGroup] = [];
+          }
+          const index = product.Tags[tagGroup].findIndex(t => t.Tag === tag.Tag)
+          if (index === -1) {
+            product.Tags[tagGroup].push(tag);
+          } 
+        }
+      }
+      // 
+      await api.saveProduct({
+        Product: product.Product,
+        Tags: product.Tags,
+        id: product.id,
+      });
+    })
+  } else if (addOrDelete === 'delete') 
+  {
+    
+    batchProducts.value.forEach(async(batch_product_id) => {
+      var product=api.productList.find(product => product.id === batch_product_id);
+      for (let tagGroup in batch_choosed_tags.value.Tags) 
+      {
+        for (let i in batch_choosed_tags.value.Tags[tagGroup]) 
+        {
+          var tag= batch_choosed_tags.value.Tags[tagGroup][i]
+          if (!product.Tags[tagGroup]) {
+            product.Tags[tagGroup] = [];
+          }
+
+          const index = product.Tags[tagGroup].findIndex(t => t.Tag === tag.Tag);
+          if (index !== -1) {
+            product.Tags[tagGroup].splice(index, 1);
+          }
+        }
+      }
+      //
+      await api.saveProduct({
+        Product: product.Product,
+        Tags: product.Tags,
+        id: product.id,
+      });
+    });
+  }
+
+}
+const batch_edit=()=>{
+  toggleModal('batchModal');
+}
 onMounted(() => {
 
   if (window.innerWidth < 990) {
@@ -402,8 +504,19 @@ api.getTagGroupList();
 
   <SectionTitleLineWithButton  title="商品管理" > &emsp;</SectionTitleLineWithButton>
 
+
   <div class="container-fluid pb-3">
-    
+    <!-- batch edit -->
+    <h4 class="col-12 font-bold mb-2">
+          <div class=" h5 pl-4 bg-white border d-flex align-items-center justify-content-center rounded-pill cursor-pointer tag-title " 
+          style="max-width:max-content; box-shadow : rgba(0,0,0,0.15) 0 2px 8px; padding-top: 3px;padding-bottom: 3px;  font-weight: 600; "
+          @click="batch_edit()">
+              batch edit
+              <BaseIcon :path="mdiPencilOutline" class="mx-2" />
+          </div>
+      </h4>
+      <!----> 
+
     <div v-for="(product,productIdx) in api.productList"
          :key="productIdx"
          class="row mb-3">
@@ -556,7 +669,7 @@ api.getTagGroupList();
                                      class="d-flex flex-column mb-2">
 
                                     <div class="text-gray ml-2 mb-2">
-                                        {{tagGroup.group || '新增標籤'}}
+                                        {{tagGroup.group}}
                                     </div>
                                     <div class="container-fluid">
                                         <div class="row">
@@ -880,6 +993,196 @@ api.getTagGroupList();
     </div>
 </div>
 <!-- </transition> -->
+
+<!-- batch modal -->
+ <div class="modal fade"
+         id="batchModal"
+         tabindex="-1"
+         role="dialog"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered"
+             role="document"
+             style="max-width: 800px; max-height: 800px">
+            <div class="modal-content">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title">批量新增標籤</h5>
+                    <button type="button"
+                            class="close"
+                            data-dismiss="modal"
+                            aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                  <div class="row">
+                    <!--  -->
+                    <div class="batch-products col-md-6 d-flex flex-column">
+                      <h4 class=" font-bold">請選擇要編輯的項目：</h4>
+                      <input type="text" v-model="searchQuery" placeholder="搜尋商品..." class="form-control mb-3">
+                      <div class="border d-flex flex-column" style="border-radius: 10px; flex-grow: 1;">
+                        <div class="d-flex flex-column" style="max-height: 300px;  overflow-y: scroll; -ms-overflow-style: none; scrollbar-width: none;">
+                          <div v-for="(product,productIdx) in filteredProducts"  :key="productIdx"
+                          class="m-3 mb-3 d-flex align-items-center">
+                            <input :id="'product-' + productIdx" v-model="batchProducts" type="checkbox" :value="product.id" class="mr-1" >
+                            <label :for="'product-' + productIdx" class="cursor-pointer label-batch">
+                              <div class="d-flex align-items-center">
+                                <div class="profile-img m-0 mx-1" style="border-style:none;  box-shadow : rgba(0,0,0,0.15) 0 2px 8px; min-width: 35px;">
+                                    <div class="img-circle-wrapper" style="border-radius: 10%;">
+                                        <div class="img-circle img-fluid bg-gray-light"
+                                             :class="product.Imgsrc ? '' : 'd-none'">
+                                        </div>
+                                        <img class="img-circle img-fluid"
+                                             :class="product.Imgsrc ? '' : 'd-none'"
+                                             :src="product.Imgsrc"
+                                             alt="">
+                                    </div>
+                                </div>
+                                <span>
+                                  {{ product.ItemName }}
+                                </span>
+                            </div>
+                              
+
+                            </label>
+                          </div>
+                        </div>
+                        <!-- buttons -->
+                        <div class="d-flex justify-content-end align-items-end " style="flex-grow: 1;">
+                          <!-- reset -->
+                          <div>             
+                            <button type="button" class="btn btn-secondary m-2 " @click="batchProducts=[]">reset</button>
+                          </div>
+                          <!-- choose all -->
+                          <div>
+                            <button type="button" class="btn btn-secondary m-2" @click="batchProducts=api.productList.map(product => product.id)">choose all</button>
+                          </div>
+                        </div>
+                      </div>
+                      
+                    </div>
+                    <!--  -->
+                    <div class="batch-tags col-md-6 d-flex flex-column mt-6 mt-md-0" >
+
+                      <h4 class=" font-bold">請選擇標籤：</h4>
+                      <input type="text" v-model="searchTags" placeholder="搜尋標籤..." class="form-control mb-3">
+
+                      <div class=" border d-flex flex-column" style="border-radius: 10px; flex-grow: 1;">
+                        <div class="d-flex flex-column" style="max-height: 300px;  overflow-y: scroll; -ms-overflow-style: none; scrollbar-width: none;">
+                          <div v-for="tagGroup in filteredTagGroups"
+                                        :key="tagGroup"
+                                        class="d-flex flex-column m-2 mb-2">
+
+                                        <div class="text-gray ml-2 mb-2">
+                                            {{tagGroup.group}}
+                                        </div>
+                                        <div class="container-fluid">
+                                            <div class="row">
+                                                <div v-for="tag in tagGroup.tags"
+                                                    :key="tag"
+                                                    class="col-4 p-0 px-1 mb-2">
+                                                    <div class="w-100 cursor-pointer d-flex align-items-center border
+                                        position-relative"
+                                                        :class="hasTag(batch_choosed_tags, tagGroup.group, tag) ? 'bg-secondary text-white' : ' text-secondary'"
+                                                        :style="hasTag(batch_choosed_tags, tagGroup.group, tag) ? '':'backgroundColor: rgb(243,243,243);'"
+                                                        @click.stop="setBatchChoosedTags(batch_choosed_tags, tagGroup.group, tag)"
+                                                        style="line-height: 1; border-radius: 6px;">
+                                                        <div v-if="!hasTag(batch_choosed_tags, tagGroup.group, tag)"
+                                                            class="position-absolute left-0"
+                                                            style="top: 50%; transform: translate(50%, -50%);">
+                                                            <!-- plus -->
+                                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                                width="1em"
+                                                                height="1em"
+                                                                viewBox="0 0 24 24">
+                                                                <g fill="none">
+                                                                    <path d="M24 0v24H0V0zM12.593 23.258l-.011.002l-.071.035l-.02.004l-.014-.004l-.071-.035c-.01-.004-.019-.001-.024.005l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427c-.002-.01-.009-.017-.017-.018m.265-.113l-.013.002l-.185.093l-.01.01l-.003.011l.018.43l.005.012l.008.007l.201.093c.012.004.023 0 .029-.008l.004-.014l-.034-.614c-.003-.012-.01-.02-.02-.022m-.715.002a.023.023 0 0 0-.027.006l-.006.014l-.034.614c0 .012.007.02.017.024l.015-.002l.201-.093l.01-.008l.004-.011l.017-.43l-.003-.012l-.01-.01z" />
+                                                                    <path fill="currentColor"
+                                                                          d="M11 20a1 1 0 1 0 2 0v-7h7a1 1 0 1 0 0-2h-7V4a1 1 0 1 0-2 0v7H4a1 1 0 1 0 0 2h7z" />
+                                                                </g>
+                                                            </svg>
+                                                        </div>
+                                                        <div class="w-100 text-center d-inline-flex align-items-center px-3 px-md-4 py-1 py-md-1" style="line-height: 1.5; ">
+
+                                                            <div class="profile-img m-1 "
+                                                                style="border: none; width: 20px; min-width: 20px;">
+                                                                <div class="img-circle-wrapper">
+                                                                    <div class="img-circle img-fluid"
+                                                                        :class="tag.Imgsrc ? '' : 'd-none'"></div>
+                                                                    <img class="img-circle img-fluid"
+                                                                        :class="tag.Imgsrc ? '' : 'd-none'"
+                                                                        :src="tag.Imgsrc"
+                                                                        alt="">
+                                                                </div>
+                                                            </div>
+
+                                                            <div style="white-space: nowrap; overflow-x: scroll; -ms-overflow-style: none; scrollbar-width: none;">{{tag.Name}}</div>
+                                                        </div>
+                                                        <div v-if="hasTag(batch_choosed_tags, tagGroup.group, tag)"
+                                                            class="position-absolute right-0"
+                                                            style="top: 50%; transform: translate(-50%, -50%);">
+                                                            <!-- cross -->
+                                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                                width="1em"
+                                                                height="1em"
+                                                                viewBox="0 0 18 18">
+                                                                <path fill="none"
+                                                                      stroke="currentColor"
+                                                                      stroke-linecap="round"
+                                                                      stroke-linejoin="round"
+                                                                      d="m15.5 15.5l-10-10zm0-10l-10 10" />
+                                                            </svg>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                          </div>
+                        </div>
+                         <!-- buttons -->
+                         <div class="d-flex justify-content-end align-items-end" style="flex-grow: 1;">
+                          <!-- reset -->
+                          <div>             
+                            <button type="button" class="btn btn-secondary m-2 " @click="batch_choosed_tags.Tags={}">reset</button>
+                          </div>
+                          <!-- choose all -->
+                          <div>
+                            <button type="button" class="btn btn-secondary m-2" @click="()=>{api.tagGroupList.forEach(tagGroup => batch_choosed_tags.Tags[tagGroup.group]=tagGroup.tags)}">choose all</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                    <!--  -->
+                  <!-- <div class="row mt-4">
+                    
+                    <div class="add-or-delete col-md-12 custom-dropdown">
+                      <select v-model="addOrDelete" >
+                        <option value="add">Add</option>
+                        <option value="delete">Delete</option>
+                      </select>
+                      <p>操作：{{ addOrDelete }}</p>
+                    </div>
+                  </div> -->
+                  
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button"
+                            class="btn btn-secondary"
+                            data-dismiss="modal">取消</button>
+                    <button type="button"
+                            :disabled="batchProducts.length==0||Object.keys(batch_choosed_tags.Tags).length==0"
+                            class="btn btn-primary"
+                            @click="batchEdit('add')"
+                            >Add</button>
+                    <button type="button"
+                            :disabled="batchProducts.length==0||Object.keys(batch_choosed_tags.Tags).length==0"
+                            class="btn btn-primary"
+                            @click="batchEdit('delete')">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
     </SectionMain>
 </LayoutAuthenticated>
 </template>
@@ -975,6 +1278,10 @@ api.getTagGroupList();
   }
 }
 
+.label-batch:hover{
+  color: black ;
+  font-weight: 800;
+}
 button{
 
 }
@@ -1176,6 +1483,21 @@ html body .font-bold{
 }
 .disabled::after{
   background-color: rgb(228, 228, 228) !important;
+}
+
+.custom-dropdown select {
+  padding: 8px 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: white;
+  appearance: none;
+  cursor: pointer;
+  padding-right: 35px
+}
+
+.custom-dropdown select:focus {
+  outline: none;
+  border-color: #666;
 }
 </style>
 
