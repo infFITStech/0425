@@ -140,7 +140,7 @@
              role="document">
             <div class="modal-content">
                 <div class="modal-header border-0">
-                    <h5 class="modal-title">確認刪除</h5>
+                    <h4 class="modal-title font-bold">確認刪除</h4>
                     <button type="button"
                             class="close"
                             data-dismiss="modal"
@@ -173,7 +173,7 @@
              role="document">
             <div class="modal-content">
                 <div class="modal-header border-0">
-                    <h5 class="modal-title">{{editTag.Key=="edit" ? '編輯' : '新增'}}標籤</h5>
+                    <h4 class="modal-title font-bold">{{editTag.Key=="edit" ? '編輯' : '新增'}}標籤</h4>
                     <button type="button"
                             class="close"
                             data-dismiss="modal"
@@ -275,7 +275,7 @@
              role="document">
             <div class="modal-content">
                 <div class="modal-header border-0">
-                    <h5 class="modal-title">更新主題名稱</h5>
+                    <h4 class="modal-title font-bold">更新主題名稱</h4>
                     <button type="button"
                             class="close"
                             data-dismiss="modal"

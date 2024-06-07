@@ -161,7 +161,7 @@
              role="document">
             <div class="modal-content">
                 <div class="modal-header border-0">
-                    <h5 class="modal-title">確認刪除</h5>
+                    <h4 class="modal-title font-bold">確認刪除</h4>
                     <button type="button"
                             class="close"
                             data-dismiss="modal"
@@ -194,7 +194,7 @@
              role="document">
             <div class="modal-content">
                 <div class="modal-header border-0">
-                    <h5 class="modal-title">{{editRoute.isEditRoute ? '編輯' : '新增'}}動線</h5>
+                    <h4 class="modal-title font-bold">{{editRoute.isEditRoute ? '編輯' : '新增'}}動線</h4>
                     <button type="button"
                             class="close"
                             data-dismiss="modal"
@@ -228,7 +228,7 @@
 
                             <!-- 請選擇要顯示的項目： -->
                             <div class="row mb-3">
-                                <h4 class="col-12 font-bold">01 請選擇要顯示的項目：</h4>
+                                <h5 class="col-12 font-bold">01 請選擇要顯示的項目：</h5>
                                 <div class="col-12">
                                     <div v-for="tagGroup in api.tagGroupList"
                                          :key="tagGroup.group"
@@ -277,7 +277,7 @@
 
                             <!-- 請選擇問題順序 -->
                             <div class="row bg-gray-light py-3 rounded">
-                                <h4 class="col-12 font-bold">02 請選擇問題順序：</h4>
+                                <h5 class="col-12 font-bold">02 請選擇問題順序：</h5>
                                 <div class="col-12">
                                     <draggable v-model="editRoute.editingTagGroups"
                                                :item-key="'group'"

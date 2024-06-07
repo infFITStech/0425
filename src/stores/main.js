@@ -12,6 +12,7 @@ export const useMainStore = defineStore('main', () => {
   const showContextMenu = ref(false)
   const clients = ref([])
   const history = ref([])
+  const isLoading = ref(false)
   //有沒有在顯示announce
   const path=ref("")
   const IsAnnounce=ref({state:false, title:""})
@@ -22,6 +23,9 @@ export const useMainStore = defineStore('main', () => {
 
   }
 
+  function setIsLoading(state){
+    isLoading.value=state
+  }
   function setPath(state){
     path.value=state
   }
@@ -73,6 +77,8 @@ export const useMainStore = defineStore('main', () => {
     showContextMenu,
     setShowContextMenu,
     setPath,
-    path
+    path, 
+    isLoading,
+    setIsLoading
   }
 })

@@ -21,7 +21,7 @@ export const useApiStore = defineStore('api', () => {
         };
         const response = await axios.post('https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/update_product', payload);
         console.log(response,"saveproduct!!!!!!!!!!!!!1");
-        getProductList();
+        await getProductList();
       };
 
       const getProductList = async () => {
@@ -38,7 +38,7 @@ export const useApiStore = defineStore('api', () => {
           // 返回 true 表示保留在原列表中
           return true;
       });
-      console.log("bye",productList.value)
+      await console.log("bye",productList.value)
       
       
       

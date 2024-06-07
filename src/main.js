@@ -7,6 +7,9 @@ import { useMainStore } from '@/stores/main.js'
 import { useAuthStore } from '@/stores/userStore.js';
 import vTooltip from '@/v-tooltip.js';
 
+import Toast from "vue-toastification";
+// Import the CSS or use your own!
+import "vue-toastification/dist/index.css";
 // import './css/main.css'
 
 // Init Pinia
@@ -16,6 +19,11 @@ const pinia = createPinia()
 // Create Vue app
 const app=createApp(App)
 app.use(pinia)
+app.use(Toast,  {
+  transition: "Vue-Toastification__fade",
+  maxToasts: 3,
+  newestOnTop: true
+});
 
 const initApp = async () => {
   const parts = window.location.href.slice(1).split('/');
