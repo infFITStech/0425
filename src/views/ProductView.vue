@@ -35,6 +35,7 @@ const setting={
   rtl: false
   
 }
+
 const api= useApiStore();
 const tooltipText="請選擇動線"
 const authStore = useAuthStore();
@@ -44,10 +45,10 @@ const iframeSrc = router.resolve({ name: 'IframeContainer'}).href;
 const userBrand=ref(authStore.MainConfig.BRAND)
 const batch_choosed_tags = ref({Tags:{}});
 const batchProducts = ref([]);
+const batchRoutes=ref({});
 const searchQuery = ref('');
 const searchTags = ref('');
 const filteredProducts = computed(() => {
-
     return api.productList.filter(product => 
         product.ItemName.toLowerCase().includes(searchQuery.value.toLowerCase())
     );
@@ -70,7 +71,30 @@ const reset_batch_choosed_tags = () => {
             delete batch_choosed_tags.value.Tags[groupName];
         }
     }
+
 });
+}
+
+const set_batch_routes = (route) => {
+  batchRoutes.value=route
+  console.log(batchRoutes.value)
+}
+const choose_all_batch_choosed_tags = () => {
+  // filteredTagGroups.value.forEach(tagGroup => batch_choosed_tags.value.Tags[tagGroup.group]=tagGroup.tags); 
+
+  filteredTagGroups.value.forEach(tagGroup => {
+    tagGroup.tags.forEach(tag => {
+      if (!batch_choosed_tags.value.Tags[tagGroup.group]) {
+        batch_choosed_tags.value.Tags[tagGroup.group] = [];
+      }
+      const index = batch_choosed_tags.value.Tags[tagGroup.group].findIndex(t => t.Tag === tag.Tag);
+      if (index === -1) {
+        batch_choosed_tags.value.Tags[tagGroup.group].push(tag);
+      }
+    });
+  });
+
+  console.log(batch_choosed_tags.value)
 }
 // 指搜尋標籤
 // const filteredTagGroups = computed(() => {
@@ -88,6 +112,8 @@ const filteredTagGroups = computed(() => {
     if (!searchTags.value) {
         return api.tagGroupList;
     }
+
+
     const searchLower = searchTags.value.toLowerCase();
     return api.tagGroupList.reduce((filteredGroups, group) => {
         const matchesGroup = group.group.toLowerCase().includes(searchLower);
@@ -100,6 +126,7 @@ const filteredTagGroups = computed(() => {
         }
         return filteredGroups;
     }, []);
+    
 });
 
 const tagNum_row=ref(4);
@@ -233,19 +260,21 @@ const close_preview = () => {
   
 }
 
-const setBatchChoosedTags = (product, tagGroupName, tag) => {
-  if (!product.Tags[tagGroupName]) {
-    product.Tags[tagGroupName] = [];
+const setBatchChoosedTags = ( tagGroupName, tag) => {
+  if (!batch_choosed_tags.value.Tags[tagGroupName]) {
+    batch_choosed_tags.value.Tags[tagGroupName] = [];
   }
-  const index = product.Tags[tagGroupName].findIndex(t => t.Tag === tag.Tag)
+  const index = batch_choosed_tags.value.Tags[tagGroupName].findIndex(t => t.Tag === tag.Tag)
   if (index === -1) {
-    product.Tags[tagGroupName].push(tag);
+    batch_choosed_tags.value.Tags[tagGroupName].push(tag);
   } 
   else{
-    product.Tags[tagGroupName].splice(index, 1);
+    console.log( index)
+
+    batch_choosed_tags.value.Tags[tagGroupName].splice(index, 1);
   }
-  console.log("setted")
-  }
+
+}
 const setTag = (product, tagGroupName, tag) => {
   if (!product.Tags[tagGroupName]) {
     product.Tags[tagGroupName] = [];
@@ -345,6 +374,29 @@ const deleteProduct = async () => {
   setEditProduct({}, true, 'deleteModal');
 };
 
+const batchEditRoute = async() => {
+  mainStore.setIsLoading(true);
+  const toast = useToast();
+  console.log(batchProducts.value, batchRoutes.value);
+
+  const operations = batchProducts.value.map(async (batch_product_id) => {
+    var product = api.productList.find(product => product.id === batch_product_id);
+    var route = api.routeList.find(route => route.Route === batchRoutes.value.Route);
+    await setProductRoute(product, route);
+  });
+  await Promise.all(operations);
+  // 所有操作完成後顯示toast
+  
+    toast("成功設定動線", setting);
+  
+
+  // 清空選擇的標籤和產品
+  batchRoutes.value = {};
+  batchProducts.value = [];
+  searchQuery.value = '';
+  mainStore.setIsLoading(false);
+
+}
 const batchEdit = async(addOrDelete) => {
   mainStore.setIsLoading(true);
   const toast = useToast();
@@ -581,6 +633,17 @@ api.getTagGroupList();
             text-align: center;"
           @click="batch_edit()">
               批次設定標籤
+              <!-- <BaseIcon :path="mdiPencilOutline" class="mx-2" /> -->
+          </div>
+
+          <div class="font-bold bg-white border d-flex align-items-center justify-content-center cursor-pointer tag-title ml-2" 
+          style="max-width:max-content; box-shadow : rgba(0,0,0,0.15) 0 2px 8px; font-weight: 500; color:black;
+          padding: 5px 10px;
+            border-radius: 3px;
+            color: #333366;
+            text-align: center;"
+          @click="toggleModal('batchModalRoute')">
+              批次設定動線
               <!-- <BaseIcon :path="mdiPencilOutline" class="mx-2" /> -->
           </div>
       <!----> 
@@ -1152,14 +1215,15 @@ api.getTagGroupList();
                           </div>
                           <!-- choose all -->
                           <div>
-                            <button type="button" class="btn border" style="box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);" @click="()=>{filteredTagGroups.forEach(tagGroup => batch_choosed_tags.Tags[tagGroup.group]=tagGroup.tags)}">全選</button>
+                            <button type="button" class="btn border" style="box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);" @click="choose_all_batch_choosed_tags()">全選</button>
                           </div>
                         </div>
                       </div>
 
                       <div class=" border d-flex flex-column" style="border-radius: 10px; flex-grow: 1;">
                         <div class="d-flex flex-column" style="max-height: 300px;  overflow-y: scroll; -ms-overflow-style: none; scrollbar-width: none;">
-                          <div v-for="tagGroup in filteredTagGroups"
+                          <!-- <div v-for="tagGroup in filteredTagGroups" -->
+                           <div v-for="tagGroup in filteredTagGroups"
                                         :key="tagGroup"
                                         class="d-flex flex-column m-2 mb-2">
 
@@ -1175,7 +1239,7 @@ api.getTagGroupList();
                                         position-relative"
                                                         :class="hasTag(batch_choosed_tags, tagGroup.group, tag) ? 'bg-secondary text-white' : ' text-secondary'"
                                                         :style="hasTag(batch_choosed_tags, tagGroup.group, tag) ? '':'backgroundColor: rgb(243,243,243);'"
-                                                        @click.stop="setBatchChoosedTags(batch_choosed_tags, tagGroup.group, tag)"
+                                                        @click.stop="setBatchChoosedTags(tagGroup.group, tag)"
                                                         style="line-height: 1; border-radius: 6px;">
                                                         <div v-if="!hasTag(batch_choosed_tags, tagGroup.group, tag)"
                                                             class="position-absolute left-0"
@@ -1253,6 +1317,170 @@ api.getTagGroupList();
                               class="btn my-2 ml-1 border"
                               style="box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); "
                               @click="batchEdit('add')"
+                              >+ 新增</button>
+                          </div>                 
+
+                        </div>
+
+                      </div>
+                    </div>
+                  </div>
+                    <!--  -->
+                  <!-- <div class="row mt-4">
+                    
+                    <div class="add-or-delete col-md-12 custom-dropdown">
+                      <select v-model="addOrDelete" >
+                        <option value="add">Add</option>
+                        <option value="delete">Delete</option>
+                      </select>
+                      <p>操作：{{ addOrDelete }}</p>
+                    </div>
+                  </div> -->
+                  
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button"
+                            class="btn btn-primary"
+                            data-dismiss="modal">關閉</button>
+                   
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+<!-- batch modal route -->
+ <div class="modal fade"
+         id="batchModalRoute"
+         tabindex="-1"
+         role="dialog"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered"
+             role="document"
+             style="max-width: 800px; max-height: 800px">
+            <div class="modal-content batch">
+                <div class="modal-header border-0">
+                    <h4 class="modal-title font-bold">批次設定動線</h4>
+                    <button type="button"
+                            class="close"
+                            data-dismiss="modal"
+                            aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                  <div class="row">
+                    <!--  -->
+                    <div class="batch-products col-md-6 d-flex flex-column">
+                      <h5 class=" font-bold">選擇設定的商品頁面：</h5>
+
+                      <div class="d-flex mb-3 align-items-center">
+                        <input type="text" v-model="searchQuery" placeholder="搜尋商品..." class="form-control mr-1" style="border-radius: 270px">
+                        <!-- buttons -->
+                        <div class="d-flex justify-content-end align-items-end " style="flex-grow: 1;">
+                          <!-- reset -->
+                          <div>             
+                            <button type="button" class="btn mr-1 border" style="box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); " @click="batchProducts = batchProducts.filter(id => !filteredProducts.map(product => product.id).includes(id));">取消全選</button>
+                          </div>
+                          <!-- choose all -->
+                          <div>
+                            <button type="button" class="btn border" style="box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);" @click="batchProducts = [...batchProducts, ...filteredProducts.map(product => product.id)];">全選</button>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="border d-flex flex-column" style="border-radius: 10px; flex-grow: 1;">
+                        <div class="d-flex flex-column py-2 px-2.5" style="max-height: 300px;  overflow-y: scroll; -ms-overflow-style: none; scrollbar-width: none;">
+                          <div v-for="(product,productIdx) in filteredProducts"  :key="productIdx"
+                          class="m-2  d-flex align-items-center">
+                            <input :id="'product-' + productIdx" v-model="batchProducts" type="checkbox" :value="product.id" class="mr-1" >
+                            <label :for="'product-' + productIdx" class="cursor-pointer label-batch">
+                              <div class="d-flex align-items-center">
+                                <div class="profile-img m-0 mx-1" style="border-style:none;  box-shadow : rgba(0,0,0,0.15) 0 2px 8px; min-width: 35px;">
+                                    <div class="img-circle-wrapper" style="border-radius: 10%;">
+                                        <div class="img-circle img-fluid bg-gray-light"
+                                             :class="product.Imgsrc ? '' : 'd-none'">
+                                        </div>
+                                        <img class="img-circle img-fluid"
+                                             :class="product.Imgsrc ? '' : 'd-none'"
+                                             :src="product.Imgsrc"
+                                             alt="">
+                                    </div>
+                                </div>
+                                <span>
+                                  {{ product.ItemName }}
+                                </span>
+                            </div>
+                              
+
+                            </label>
+                          </div>
+                        </div>
+                        
+                      </div>
+                      
+                    </div>
+                    <!--  -->
+                    <div class="batch-tags col-md-6 d-flex flex-column mt-6 mt-md-0" >
+                      
+                      <h5 class=" font-bold">選擇對應的動線：</h5>
+
+                      <div class="d-flex mb-3 align-items-center">
+                        <input type="text" v-model="searchTags" placeholder="搜尋動線..." class="form-control mr-1" style="border-radius: 270px">
+                        <!-- buttons -->
+                        <div class="d-flex justify-content-end align-items-end " style="flex-grow: 1;visibility:hidden;">
+                          <!-- reset -->
+                          <div>             
+                            <button type="button" class="btn mr-1 border" style="box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); " >取消全選</button>
+                          </div>
+                          <!-- choose all -->
+                          <div>
+                            <button type="button" class="btn border" style="box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);" @click="choose_all_batch_choosed_tags()">全選</button>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class=" border d-flex flex-column" style="border-radius: 10px; flex-grow: 1;">
+                        <div class="d-flex flex-column" style="max-height: 300px;  overflow-y: scroll; -ms-overflow-style: none; scrollbar-width: none;">
+                          <!-- <div v-for="tagGroup in filteredTagGroups" -->
+                           <div v-for="route in api.routeList"
+                                        :key="route"
+                                        class="route-box p-2"
+                                        :class="route.Route===batchRoutes.Route ? 'choosed_route' : ''"
+                                        style="white-space: nowrap; overflow-x: scroll; -ms-overflow-style: none; scrollbar-width: none;"
+                                        @click="set_batch_routes(route)">
+
+                                        <span class="font-bold mr-3" >{{ route.Name }}</span>
+                                        <small v-if="route.Description"
+                                          class="text-break text-truncate mb-3">
+                                          {{route.Description}}
+                                      </small>
+                                 <p class="mb-0">{{route.TagGroups_order.join(' - ')}}</p>   
+
+                          </div>
+                        </div>
+                        <!-- buttons -->
+                        <div class="d-flex justify-content-end align-items-end px-2 " style="flex-grow: 1;">
+
+                          <!-- 新增 -->
+                          <div>
+                           
+                            
+                            <button type="button"
+                          :disabled="batchProducts.length==0||Object.keys(batchRoutes).length==0"
+                          
+                          class="btn my-2 mr-1 border"
+                           style="box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);"
+                          @click="batchEditRoute()">- 刪除</button>
+                          
+                          </div>
+
+                          <!-- 刪除 -->
+                          <div>             
+                                <button type="button"
+                              :disabled="batchProducts.length==0||Object.keys(batchRoutes).length==0"
+                              class="btn my-2 ml-1 border"
+                              style="box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); "
+                              @click="batchEditRoute()"
                               >+ 新增</button>
                           </div>                 
 
@@ -1605,5 +1833,18 @@ html body .font-bold{
   overflow-y: scroll; -ms-overflow-style: none; scrollbar-width: none; 
 }
 
+.route-box{
+  color: #71748d;
+  border: 1px solid #e0e0e0;
+  border-radius: 1px;
+  margin: 5px;
+  margin-bottom: 0px;
+  transition: background-color 0.3s;
+}
+
+
+.route-box:hover, .choosed_route {
+  background-color: #ececec;
+}
 </style>
 
