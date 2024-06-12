@@ -47,10 +47,18 @@ const batch_choosed_tags = ref({Tags:{}});
 const batchProducts = ref([]);
 const batchRoutes=ref({});
 const searchQuery = ref('');
+const searchQueryRoute=ref('');
 const searchTags = ref('');
 const filteredProducts = computed(() => {
     return api.productList.filter(product => 
         product.ItemName.toLowerCase().includes(searchQuery.value.toLowerCase())
+    );
+});
+
+const filteredRoutes = computed(() => {
+    return api.routeList.filter(route =>
+     route.Name.toLowerCase().includes(searchQueryRoute.value.toLowerCase())
+        
     );
 });
 
@@ -1425,7 +1433,7 @@ api.getTagGroupList();
                       <h5 class=" font-bold">選擇對應的動線：</h5>
 
                       <div class="d-flex mb-3 align-items-center">
-                        <input type="text" v-model="searchTags" placeholder="搜尋動線..." class="form-control mr-1" style="border-radius: 270px">
+                        <input type="text" v-model="searchQueryRoute" placeholder="搜尋動線..." class="form-control mr-1" style="border-radius: 270px">
                         <!-- buttons -->
                         <div class="d-flex justify-content-end align-items-end " style="flex-grow: 1;visibility:hidden;">
                           <!-- reset -->
@@ -1442,19 +1450,20 @@ api.getTagGroupList();
                       <div class=" border d-flex flex-column" style="border-radius: 10px; flex-grow: 1;">
                         <div class="d-flex flex-column" style="max-height: 300px;  overflow-y: scroll; -ms-overflow-style: none; scrollbar-width: none;">
                           <!-- <div v-for="tagGroup in filteredTagGroups" -->
-                           <div v-for="route in api.routeList"
+                           <div v-for="route in filteredRoutes"
                                         :key="route"
-                                        class="route-box p-2"
+                                        class="route-box px-3 py-2"
                                         :class="route.Route===batchRoutes.Route ? 'choosed_route' : ''"
                                         style="white-space: nowrap; overflow-x: scroll; -ms-overflow-style: none; scrollbar-width: none;"
                                         @click="set_batch_routes(route)">
 
-                                        <span class="font-bold mr-3" >{{ route.Name }}</span>
-                                        <small v-if="route.Description"
+                                        <div class="font-bold mr-3" >{{ route.Name }}</div>
+                                        <!-- <small v-if="route.Description"
                                           class="text-break text-truncate mb-3">
                                           {{route.Description}}
-                                      </small>
+                                      </small> -->
                                  <p class="mb-0">{{route.TagGroups_order.join(' - ')}}</p>   
+                                
 
                           </div>
                         </div>

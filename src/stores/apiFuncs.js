@@ -49,6 +49,7 @@ export const useApiStore = defineStore('api', () => {
               
         const response = await axios.get('https://xjsoc4o2ci.execute-api.ap-northeast-1.amazonaws.com/v0/extension/get_routes?Brand='+userBrand.value+'&Per_Page=100&Page=1');
         routeList.value = [...response.data.models];
+        console.log("routttttttttttte",routeList.value);
         };
 
     
