@@ -32,6 +32,7 @@ const fillChartData = () => {
 
 onMounted(() => {
   fillChartData()
+  // mainStore.setIsLoading(false)
 })
 
 const mainStore = useMainStore()

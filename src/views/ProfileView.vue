@@ -12,12 +12,11 @@ import BaseButtons from '@/components/BaseButtons.vue'
 import UserCard from '@/components/UserCard.vue'
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue'
-import TabCard from '@/components/TabCard.vue'
+// import TabCard from '@/components/TabCard.vue'
 import OrderNow from '@/components/OrderNow.vue'
 import OrderNext from '@/components/OrderNext.vue'
 import { useAuthStore } from '@/stores/userStore.js';
-import BreadCrumb from '@/components/BreadCrumb.vue';
-
+// import BreadCrumb from '@/components/BreadCrumb.vue';
 
 const authStore = useAuthStore();
 
@@ -28,6 +27,7 @@ const passwordForm = ref({
   password: '',
   password_confirmation: ''
 })
+
 
 const tabsForChild = ref([
   { name: '本期訂閱', component: markRaw(OrderNow)},

@@ -243,6 +243,7 @@ Before using this method, AWS Credentials must be set in AWS config.
 /*
 If user has logged in before, get the previous session so user doesn't need to log in again.
 */
+
 function getCurrentLoggedInSession() {
 
   $("#loader").show();
@@ -309,6 +310,8 @@ else if ( Object.prototype.hasOwnProperty.call(getQueryParams(document.location.
 
   
 }
+
+
 )
 
 //Register
@@ -334,6 +337,7 @@ if (window.location.href.includes('?')) {
 else {
     window.location.href = "/#/signup";
 }
+
 }
 </script>
 

@@ -229,7 +229,17 @@
                             </div> -->
                             <!-- 名稱 -->
                             <div class="d-flex align-items-center mb-2">
-                                <label class="pr-2 flex-shrink-0">名稱</label>
+                                <label class="pr-2 flex-shrink-0">主題描述</label>
+                                <input type="text"
+                                       name="Name"
+                                       v-model="ThemeDesciption"
+                                       
+                                       class="form-control">
+                            </div> 
+                            
+                            <!-- 名稱 -->
+                            <div class="d-flex align-items-center mb-2">
+                                <label class="pr-2 flex-shrink-0">標籤名稱</label>
                                 <input type="text"
                                        name="Name"
                                        v-model="editTag.Name"
@@ -237,7 +247,7 @@
                             </div>
                             <!-- 描述 -->
                             <div class="d-flex align-items-center mb-2">
-                                <label class="pr-2 flex-shrink-0">描述</label>
+                                <label class="pr-2 flex-shrink-0">標籤描述</label>
                                 <input type="text"
                                        name="Description"
                                        v-model="editTag.Description"
@@ -307,6 +317,8 @@
                                        class="form-control">
                             </div>
 
+                            <!-- theme decription -->
+
                         </div>
                     </form>
                 </div>
@@ -347,11 +359,34 @@ import { mdiPencilOutline, mdiImage } from '@mdi/js';
 import BaseIcon from '@/components/BaseIcon.vue';
 import { useAuthStore } from '@/stores/userStore';
 import { useApiStore } from '@/stores/apiFuncs';
+import { useMainStore } from '@/stores/main';
+import { useToast } from "vue-toastification";
+import { error } from 'jquery';
+
+const mainStore = useMainStore();
+const setting={
+  toastClassName: 'blackToast',
+  bodyClassName: ['blackToast'],
+  position: "bottom-right",
+  timeout: 1619,
+  closeOnClick: true,
+  pauseOnFocusLoss: false,
+  pauseOnHover: false,
+  draggable: false,
+  draggablePercent: 0.6,
+  showCloseButtonOnHover: false,
+  hideProgressBar: true,
+  closeButton: "button",
+  icon: true,
+  rtl: false
+  
+}
 const api = useApiStore()
 const authStore = useAuthStore();
 const userBrand =ref(authStore.MainConfig.BRAND)
 const editTag = ref({});
 const new_group_name = ref('');
+const ThemeDesciption = ref('');
 const defaultImg='https://s3.ap-northeast-1.amazonaws.com/inffits.com/mkt/img/empty.jpg'
  // https://s3.ap-northeast-2.amazonaws.com/inffitsmanager.assets/tmp/tmp/115-300x400.jpg
 const tooltipText="請填寫完整資訊"
@@ -439,6 +474,8 @@ const updateThemeName=(old_name)=>{
 }
 
 const update_themeName = async(old_name) =>{
+    mainStore.setIsLoading(true);
+
     if (typeof AWS === 'undefined') {
     const region = 'ap-northeast-1';
     const identityPoolId = 'ap-northeast-1:ec9d0f5d-ae3e-4ff2-986f-2025ddbedf1a';
@@ -475,6 +512,8 @@ const update_themeName = async(old_name) =>{
       api.getTagGroupList()
       setEditTag({}, true, 'updateModal');
       new_group_name.value = '';
+      mainStore.setIsLoading(false);
+
     } catch (error) {
       console.error(error);
     }
@@ -499,7 +538,29 @@ const toggleModal = (modalId) => {
     
   }
 
+const checkTag=(name, tagGroup)=>{
+    //不能有同名標籤
+    const allTags = api.tagGroupList.flatMap(group => group.tags);
+    const targetTag = allTags.find(tag => tag.TagGroup === tagGroup && tag.Name === name);
+    if(targetTag)
+    {
+        const toast = useToast();
+        toast("新增標籤失敗，標籤名稱重複", setting);
+        
+        return false
+    }
+    return true
+
+}
+
 const saveTag=() =>{
+    //不能有同名標籤
+    
+    if(!checkTag(editTag.value.Name, editTag.value.TagGroup))
+    {
+        return
+    }
+
     if(!editTag.value.Imgsrc){
         editTag.value.Imgsrc = defaultImg
     }
@@ -597,9 +658,7 @@ const updateRoutes=(deletedTagGroup)=>{
 
 
 
-onMounted(() => {
-  
-});
+
 api.getTagGroupList();
 api.getRouteList();
 api.getProductList();

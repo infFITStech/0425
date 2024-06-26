@@ -68,7 +68,7 @@
 <script setup>
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
 import SectionMain from '@/components/SectionMain.vue'
-import { ref } from 'vue'
+import { ref , onMounted} from 'vue'
 import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda'
 import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses";
 
@@ -76,7 +76,8 @@ import { useAuthStore } from '@/stores/userStore.js'
 import { useCognito } from '@/components/new/useCognito.js';
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue';
 import {  mdiEmailOutline } from '@mdi/js';
-
+// import { useMainStore } from '@/stores/main.js';
+// const mainStore = useMainStore();
 const name = ref("")
 const email = ref("")
 const message = ref("")
@@ -87,6 +88,9 @@ isSending.value=true
 //   const subject = document.getElementById('BrandName').innerText + "後台問題"
 //   沒有brandname 先用authstore username代替看看
 const authStore = useAuthStore();
+// onMounted(() => {
+//   mainStore.setIsLoading(false);
+// });
 const subject = authStore.cognitoUser.username + "後台問題"
 
   if (name.value !== "" && email.value.includes('@') && message.value !== "") {

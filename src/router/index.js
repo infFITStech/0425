@@ -2,8 +2,8 @@ import { createRouter, createWebHashHistory, createWebHistory } from 'vue-router
 // import Style from '@/views/StyleView.vue'
 import Home from '@/views/HomeView.vue'
 import { useAuthStore } from '@/stores/userStore.js';
-
-
+// import { useMainStore } from '@/stores/main';
+// const mainStore = useMainStore();
 
 const routes = [
   {
@@ -113,9 +113,8 @@ const router = createRouter({
   }
 })
 
-
-
 router.beforeEach((to, from, next) => {
+  // mainStore.setIsLoading(true)
   const parts= window.location.href.slice(1).split('/');
 
   const authStore = useAuthStore();

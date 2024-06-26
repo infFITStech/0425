@@ -40,8 +40,8 @@ const api= useApiStore();
 const tooltipText="請選擇動線"
 const authStore = useAuthStore();
 const router = useRouter();
-const iframeSrc = router.resolve({ name: 'IframeContainer'}).href;
-// const iframeSrc=ref('http://127.0.0.1:5501/iframe_container_module.html')
+//const iframeSrc = router.resolve({ name: 'IframeContainer'}).href;
+const iframeSrc=ref('http://127.0.0.1:5500/iframe_container_module.html')
 const userBrand=ref(authStore.MainConfig.BRAND)
 const batch_choosed_tags = ref({Tags:{}});
 const batchProducts = ref([]);
@@ -340,8 +340,10 @@ const myiframe = ref(null);
 
 
 const preview=async(product)=>{
+  mainStore.setIsLoading(true);
+
   //每次preview再設一次route給product(更改route的taggroup之後，並未同步更新商品內的資訊)
-  const foundObject = api.routeList.find(item => item.Route === product.Routes[0].Route);
+  const foundObject = api.routeList.find(item => item.Route === product.Routes[0]?.Route);
   console.log(foundObject, "pppp")
   await setProductRoute(product, foundObject);
   
@@ -351,8 +353,10 @@ const preview=async(product)=>{
   iframe_preview_obj['header']='from_preview';
   iframe_preview_obj['brand']=product.Brand;
   if (myiframe.value) {
-    myiframe.value.contentWindow.postMessage(iframe_preview_obj, "*");
+    await myiframe.value.contentWindow.postMessage(iframe_preview_obj, "*");
   }
+  mainStore.setIsLoading(false);
+
 }
 
 const updateMktOnline=(newMktOnline, id)=> {
@@ -473,7 +477,13 @@ const batchEdit = async(addOrDelete) => {
 const batch_edit=()=>{
   toggleModal('batchModal');
 }
+// mainStore.setIsLoading(true);
+
 onMounted(() => {
+  // setTimeout(() => {
+  // mainStore.setIsLoading(false);
+  // }, 300)
+
 
   if (window.innerWidth < 990) {
     tagNum_row.value = 2;
@@ -484,7 +494,6 @@ onMounted(() => {
   else {
     tagNum_row.value = 4;
   }
-
 
 
 });
@@ -546,7 +555,7 @@ api.getTagGroupList();
                                 style="  box-shadow : rgba(0,0,0,0.15) 0 2px 8px; font-size:12px
                                 "
                                 v-tooltip="tooltipText"
-                                :disabled="(b.Routes[0]&&Object.keys(b.Routes[0]).length === 0)"
+                                :disabled="(b.Routes&&b.Routes.length === 0)"
                                 >
                               <img src="@/img/inffits_f_black.png" alt="f" class="m-1" style="height: 10px; width:auto; vertical-align: middle; margin-right: 3px; "> 預覽
                         </button>
@@ -603,7 +612,7 @@ api.getTagGroupList();
                                 @click="()=>{preview( b);}"
                                 style="  box-shadow : rgba(0,0,0,0.15) 0 2px 8px; font-size:12px"
                                 v-tooltip="tooltipText"
-                                :disabled="(b.Routes[0]&&Object.keys(b.Routes[0]).length === 0)"
+                                :disabled="(b.Routes&&b.Routes.length === 0)"
                                 >
                               <img src="@/img/inffits_f_black.png" alt="f" class="m-1" style="height: 10px; width:auto; vertical-align: middle; margin-right: 3px; "> 預覽
                         </button>
@@ -702,7 +711,7 @@ api.getTagGroupList();
                                 style="  box-shadow : rgba(0,0,0,0.15) 0 2px 8px; font-size:12px
                                 "
                                 v-tooltip="tooltipText"
-                                :disabled="(product.Routes[0]&&Object.keys(product.Routes[0]).length === 0)"
+                                :disabled="(product.Routes&&product.Routes.length === 0)"
                                 >
                               <img src="@/img/inffits_f_black.png" alt="f" class="m-1" style="height: 10px; width:auto; vertical-align: middle; margin-right: 3px; "> 預覽
                         </button>
@@ -723,10 +732,10 @@ api.getTagGroupList();
                         
                         <label class="h3 text-danger d-inline-flex align-items-center cursor-pointer mb-0" 
                              >
-                            <input :disabled="(product.Routes[0]&&Object.keys(product.Routes[0]).length === 0)" type="checkbox" value="" class="sr-only peer" v-model="product.mktOnline" @change="updateMktOnline(product.mktOnline, product.id) " >
+                            <input :disabled="(product.Routes&&product.Routes.length === 0)" type="checkbox" value="" class="sr-only peer" v-model="product.mktOnline" @change="updateMktOnline(product.mktOnline, product.id) " >
                             <div class="toggle-switch relative h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"
                                   style=""
-                                  :class="(product.Routes[0]&&Object.keys(product.Routes[0]).length === 0)? 'disabled' : ''"
+                                  :class="(product.Routes&&product.Routes.length === 0)? 'disabled' : ''"
                                  >
                             </div>
                             <!-- {{ console.log(product, "aaaaaaaaaaaaaaaaaaa") }} -->
@@ -1057,7 +1066,7 @@ api.getTagGroupList();
                                 style="  box-shadow : rgba(0,0,0,0.15) 0 2px 8px; font-size:12px
                                 "
                                 v-tooltip="tooltipText"
-                                :disabled="(product.Routes[0]&&Object.keys(product.Routes[0]).length === 0)"
+                                :disabled="(product.Routes&&product.Routes.length === 0)"
                                 >
                               <img src="@/img/inffits_f_black.png" alt="f" class="m-1" style="height: 10px; width:auto; vertical-align: middle; margin-right: 3px; "> 預覽
                         </button>
@@ -1066,10 +1075,10 @@ api.getTagGroupList();
                         <label class="h3 text-danger d-inline-flex align-items-center cursor-pointer mb-0" 
                              >
                             
-                            <input :disabled="(product.Routes[0]&&Object.keys(product.Routes[0]).length === 0)" type="checkbox" value="" class="sr-only peer" v-model="product.mktOnline" @change="updateMktOnline(product.mktOnline, product.id)">
+                            <input :disabled="(product.Routes&&product.Routes.length === 0)" type="checkbox" value="" class="sr-only peer" v-model="product.mktOnline" @change="updateMktOnline(product.mktOnline, product.id)">
                             <div class="toggle-switch relative h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"
                                   style=""
-                                  :class="(product.Routes[0]&&Object.keys(product.Routes[0]).length === 0)? 'disabled' : ''"
+                                  :class="(product.Routes&&product.Routes.length === 0)? 'disabled' : ''"
                                   >
                             </div>
                       </label>
@@ -1129,10 +1138,13 @@ api.getTagGroupList();
 <!-- <transition name="fade"> -->
 <div id="preview_box" style="position: fixed; width: 100%; height: 100%; top: 0px; left: 0px; z-index: 2147483647; background: rgba(0, 0, 0, 0.5); transform: none; display: none;">
   <div id="inffits_cblock" style='z-index:60;display:block;position: absolute;top:0;bottom:0;left:0;right:0;margin:auto;'>
-      <div id="tryon"><iframe ref="myiframe" id="inffits_tryon_window" style=" width:100%; height:100%; visibility:visible; position:relative; border:none; outline:none;  z-index:14;border-radius:10px;box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 8px;" :src="iframeSrc"></iframe></div>
-      <div id="inf_close" @click="close_preview()" style="cursor: pointer;position:absolute;top: -5px;z-index: 10000009;right: -10px;padding: 5px;height: 25px;width: 25px;border-radius: 50%;box-shadow: rgb(54 62 81 / 15%) 0px 0.0625rem 0.125rem 0.0625rem;background: white; opacity:1">
+      <div id="tryon"><iframe ref="myiframe" id="inffits_tryon_window" style=" width:100%; height:100%; visibility:visible; position:relative; border:none; outline:none;  z-index:14;border-radius:10px;" :src="iframeSrc"></iframe></div>
+      <!-- style="cursor: pointer;position:absolute;top: -5px;z-index: 10000009;right: -10px;padding: 5px;height: 25px;width: 25px;border-radius: 50%;box-shadow: rgb(54 62 81 / 15%) 0px 0.0625rem 0.125rem 0.0625rem;background: white; opacity:1" -->
+      <div id="inf_close" @click="close_preview()" style="cursor: pointer;position:absolute;top: 14%;z-index: 10000009;right: -10px;padding: 5px;height: 20px;width: 20px;border-radius: 50%;box-shadow: rgb(54 62 81 / 15%) 0px 0.0625rem 0.125rem 0.0625rem;background: white; opacity:1">
         <img src="https://inffits.com/webDesign/HTML/img/cancel.png" style="position:absolute;top:0;bottom:0;right:0;left:0;width:10px;margin:auto;">
       </div>
+
+      
 
     </div>
 </div>
@@ -1470,7 +1482,7 @@ api.getTagGroupList();
                         <!-- buttons -->
                         <div class="d-flex justify-content-end align-items-end px-2 " style="flex-grow: 1;">
 
-                          <!-- 新增 -->
+                          <!-- 新增
                           <div>
                            
                             
@@ -1481,7 +1493,7 @@ api.getTagGroupList();
                            style="box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);"
                           @click="batchEditRoute()">- 刪除</button>
                           
-                          </div>
+                          </div> -->
 
                           <!-- 刪除 -->
                           <div>             

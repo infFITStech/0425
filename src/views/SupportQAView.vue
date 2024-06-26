@@ -22,6 +22,9 @@ import SupportQA from '@/components/SupportQA.vue';
 import SectionMain from '@/components/SectionMain.vue'
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue';
 import {  mdiHelpCircleOutline } from '@mdi/js';
+// import { onMounted } from 'vue';
+// import { useMainStore } from '@/stores/main';
+// const mainStore = useMainStore();
 const QA=[
     {
         title:"官網及商品管理",
@@ -93,6 +96,7 @@ const QA=[
         
     }
 ]
+
 </script>
 
 

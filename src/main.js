@@ -3,6 +3,8 @@ import { createPinia } from 'pinia'
 
 import App from './App.vue'
 import router from './router'
+import NProgress from 'nprogress';
+import 'nprogress/nprogress.css';
 import { useMainStore } from '@/stores/main.js'
 import { useAuthStore } from '@/stores/userStore.js';
 import vTooltip from '@/v-tooltip.js';
@@ -51,10 +53,31 @@ const initApp = async () => {
 
   // Set document title from route meta
   router.afterEach((to) => {
+    
     document.title = to.meta?.title
       ? `${defaultDocumentTitle} — ${to.meta.title}`
       : defaultDocumentTitle
   })
+
+  
+router.beforeResolve((to, from, next) => {
+  // If this isn't an initial page load.
+  if (to.name) {
+    // Start the route progress bar.
+    NProgress.start()
+    // NProgress.set(0.4);     // Sorta same as .start()
+
+  }
+  next()
+})
+
+router.afterEach((to, from) => {
+  // Complete the animation of the route progress bar.
+  NProgress.done()
+})
+
+
+
 
 }
 

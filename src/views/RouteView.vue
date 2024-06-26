@@ -333,6 +333,8 @@ import SectionMain from '@/components/SectionMain.vue'
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue';
 import { useAuthStore } from '@/stores/userStore';
 import { useApiStore } from '@/stores/apiFuncs';
+import { useMainStore } from '@/stores/main';
+const mainStore = useMainStore();
 const authStore = useAuthStore();
 
 
@@ -497,7 +499,6 @@ const setProductRoute = async(product, route) => {
         api.getTagGroupList();
     api.getRouteList();
     api.getProductList();
-      
     });
 
    
