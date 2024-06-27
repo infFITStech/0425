@@ -478,7 +478,9 @@ const batch_edit=()=>{
   toggleModal('batchModal');
 }
 // mainStore.setIsLoading(true);
-
+const setWebsite = async () => {
+  
+}
 onMounted(() => {
   // setTimeout(() => {
   // mainStore.setIsLoading(false);
@@ -516,7 +518,6 @@ api.getTagGroupList();
     <div v-for="(b,bIdx) in api.brandList"
          :key="bIdx"
          class="row mb-3">
-        <!-- render tags -->
         <div class="col-12 ">
             <div class="h-100 flex-grow-1 bg-white rounded container-fluid">
                 <div class="row d-flex align-items-center py-4">
@@ -634,6 +635,165 @@ api.getTagGroupList();
                 </div>
             </div>
         </div>
+    </div>
+    <div class="row">
+      <!-- ADD NEW -->
+      <div class="col-12 mb-3">
+          <div class="h-100 flex-grow-1 card shadow text-center bg-white border-0 rounded cursor-pointer"
+               @click="setWebsite()">
+              <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                  <div class="d-flex align-items-center">
+                      <div class="profile-img border-4 mr-2"
+                           style="width: 40px;">
+                          <div class="img-circle-wrapper text-primary">
+                              <svg xmlns="http://www.w3.org/2000/svg"
+                                   width="40"
+                                   height="40"
+                                   fill="currentColor"
+                                   class="bi bi-plus img-circle"
+                                   viewBox="0 0 16 16">
+                                  <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
+                              </svg>
+                          </div>
+                      </div>
+                      <p class="h5 font-bold text-balck-50 mb-1">新增頁面</p>
+                  </div>
+              </div>
+          </div>
+      </div>      
+    </div>
+
+        <!-- link holder -->
+    <div v-for="(b,bIdx) in api.brandList"
+         :key="bIdx"
+         class="row mb-3">
+        <!-- render tags -->
+        <div class="col-12 ">
+            <div class="h-100 flex-grow-1 bg-white rounded container-fluid">
+                <div class="row d-flex align-items-center py-4">
+                    <!-- img -->
+                    <div class="col-2 col-md-1 flex-grow-0 mb-4 mb-md-0 px-3">
+                        <div class="profile-img m-0" style="border-style:none;  box-shadow : rgba(0,0,0,0.15) 0 2px 8px;">
+                            <div class="img-circle-wrapper">
+                                <div class="img-circle img-fluid bg-gray-light"
+                                     :class="authStore.MainConfig.Logo ? '' : 'd-none'"></div>
+                                <img class="img-circle img-fluid"
+                                     :class="authStore.MainConfig.Logo ? '' : 'd-none'"
+                                     :src="authStore.MainConfig.Logo"
+                                     alt="">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex-row col-7 col-md-2 text-body font-bold mb-4 mb-md-0 px-0" style="white-space: nowrap; overflow-x: scroll; -ms-overflow-style: none; scrollbar-width: none; display:flex; " >
+                      <span class="ItemName-width" style="white-space: nowrap; overflow-x: scroll; -ms-overflow-style: none; scrollbar-width: none; display:flex; width:calc(100% - 16px)">{{authStore.MainConfig.BrandName}}</span>
+                      <!-- url -->
+                      <a href="product.Link" target="_blank" style="display:flex; padding-left: 3px; ">
+                      <svg viewBox="0 0 24 24" width="20px" height="20px" class="inline-block">
+                        <path fill="currentColor" :d="mdiOpenInNew" />
+                      </svg>
+                      </a>
+                    </div>
+
+                  <div class="col-3 d-flex d-md-none text-right align-items-center mb-4" style="justify-content:flex-end">
+                    <!-- preview -->
+                    <div class="d-flex d-md-none mx-3" >
+                      <div class="flex-shrink-0 mr-1" style="display:inline-flex">
+                
+                        <button class="btn h4 mb-0 pl-2 bg-white border d-flex align-items-center justify-content-center rounded-pill rounded-md-circle"
+                                type="button"
+                                @click="()=>{preview( b);}"
+                                style="  box-shadow : rgba(0,0,0,0.15) 0 2px 8px; font-size:12px
+                                "
+                                v-tooltip="tooltipText"
+                                :disabled="(b.Routes&&b.Routes.length === 0)"
+                                >
+                              <img src="@/img/inffits_f_black.png" alt="f" class="m-1" style="height: 10px; width:auto; vertical-align: middle; margin-right: 3px; "> 預覽
+                        </button>
+                        </div>
+                    </div>
+
+                  </div>
+
+                    
+
+                  <div class="col-12 px-md-0 col-md flex-shrink-0 flex-grow-1 d-flex flex-column flex-md-row align-items-center " style="justify-content: start;" >
+                    <!-- route -->
+                  
+                    <div class="dropdown mr-md-1 mr-lg-1 mb-1 mb-md-0 ml-md-1 px-0 border rounded-pill btn brand-route-choose"
+                    style="color: gray; text-align: left;">
+                    <span class="w-100"
+                    type="button"
+                      data-toggle="dropdown"
+                        aria-expanded="false">
+                        
+                        <button class="pl-2"
+                        style="color: gray; white-space: nowrap; overflow-x: scroll; -ms-overflow-style: none; scrollbar-width: none; width: calc(100% - 1em);">
+                            {{(b.Routes[0]&&Object.keys(b.Routes[0]).length !== 0)?getRouteName(b.Routes, b):'選擇動線'}}
+                        </button>
+                        <button class="dropdown-toggle">
+                        </button>
+                    </span>
+
+                    <div class="dropdown-menu" id="brand-route-menu" >
+                      <div class="dropdown-item"
+                           disabled>
+                          選擇欲顯示的詢問動線
+                      </div>
+                      <div v-for="(route,idx) in api.routeList"
+                           :key="route.Route"
+                           class="dropdown-item"
+                           @click="setProductRoute(b, route)">
+                          {{route.Name}} ({{route.TagGroups_order.join(' - ')}})
+                      </div>
+                  </div>
+
+                    </div>   
+
+
+                    <input class="container-fluid px-0 mr-md-2 border py-1 px-2" style="border-radius: 13px; min-height:39px"  :placeholder="b.link?b.link:'您要顯示動線的網頁連結'" v-model="b.link">
+                
+
+                      
+
+                </div>
+
+                
+                
+                    <!-- delete -->
+                    <div class="d-none d-md-flex col-auto text-right pr-2 pl-0 align-items-center">
+                        <!-- preview tag button-->
+                         <div class="flex-shrink-0 mr-1" style="display:inline-flex">
+                
+                        <button class="btn h4 mb-0 pl-2 bg-white border d-flex align-items-center justify-content-center rounded-pill rounded-md-circle"
+                                type="button"
+                                @click="()=>{preview( b);}"
+                                style="  box-shadow : rgba(0,0,0,0.15) 0 2px 8px; font-size:12px"
+                                v-tooltip="tooltipText"
+                                :disabled="(b.Routes&&b.Routes.length === 0)"
+                                >
+                              <img src="@/img/inffits_f_black.png" alt="f" class="m-1" style="height: 10px; width:auto; vertical-align: middle; margin-right: 3px; "> 預覽
+                        </button>
+                        </div>
+
+                        <!-- <div class="h3 text-danger d-inline-flex align-items-center cursor-pointer mb-0"
+                             @click="setEditBrand(b, true, 'deleteModal')">
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                 width="0.9em"
+                                 height="0.9em"
+                                 viewBox="0 0 24 24">
+                                <path fill="currentColor"
+                                      d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6zM19 4h-3.5l-1-1h-5l-1 1H5v2h14z" />
+                            </svg>
+                        </div> -->
+                         
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
     </div>
 
 </div>
