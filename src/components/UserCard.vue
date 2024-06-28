@@ -20,11 +20,11 @@ const userName = authStore.cognitoUser ?authStore.cognitoUser.username:'';
     <BaseDivider />
     <BaseLevel type="justify-around lg:justify-center">
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
+<!-- 
         <div class="lg:col-span-1"> 
 
             <UserAvatarCurrentUser class="lg:mx-12" />
-        </div>
+        </div> -->
 
         <div class="lg:col-span-1" style="place-items: center;display: grid;"> 
           <div class="space-y-3 text-center md:text-left lg:mx-12">

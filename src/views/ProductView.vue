@@ -6,9 +6,10 @@ import 'popper.js';
 import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
+
 import SectionMain from '@/components/SectionMain.vue'
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue';
-import { mdiOpenInNew, mdiStoreCogOutline, mdiPencilOutline } from '@mdi/js';
+import { mdiOpenInNew, mdiStoreCogOutline, mdiPencilOutline, mdiPencilCircleOutline } from '@mdi/js';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/userStore';
 import BaseIcon from '@/components/BaseIcon.vue';
@@ -18,6 +19,7 @@ import Loading from 'vue-loading-overlay';
 import 'vue-loading-overlay/dist/css/index.css';
 import { useMainStore } from '@/stores/main';
 const mainStore = useMainStore();
+const showEditIcon = ref(false);
 const setting={
   toastClassName: 'blackToast',
   bodyClassName: ['blackToast'],
@@ -49,6 +51,7 @@ const batchRoutes=ref({});
 const searchQuery = ref('');
 const searchQueryRoute=ref('');
 const searchTags = ref('');
+
 const filteredProducts = computed(() => {
     return api.productList.filter(product => 
         product.ItemName.toLowerCase().includes(searchQuery.value.toLowerCase())
@@ -481,6 +484,7 @@ const batch_edit=()=>{
 const setWebsite = async () => {
   
 }
+
 onMounted(() => {
   // setTimeout(() => {
   // mainStore.setIsLoading(false);
@@ -561,6 +565,17 @@ api.getTagGroupList();
                               <img src="@/img/inffits_f_black.png" alt="f" class="m-1" style="height: 10px; width:auto; vertical-align: middle; margin-right: 3px; "> 預覽
                         </button>
                         </div>
+
+                         <div class="h3 mb-0 text-danger d-inline-flex align-items-center cursor-pointer "
+                             @click="setEditProduct(product, true, 'deleteModal')">
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                 width="1em"
+                                 height="1em"
+                                 viewBox="0 0 24 24">
+                                <path fill="currentColor"
+                                      d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6zM19 4h-3.5l-1-1h-5l-1 1H5v2h14z" />
+                            </svg>
+                        </div>
                     </div>
 
                   </div>
@@ -600,7 +615,15 @@ api.getTagGroupList();
 
                     </div>   
 
-                      
+                    <div class="mb-1 mb-md-0 w100-max768-link flex" style="width: 75%;">
+                      <div class="px-0 mr-1 mr-md-2 border px-2 flex-1-max-768 flex" style="border-radius: 13px; min-height:39px;width: 60%; padding-top:0.375rem; padding-bottom:0.375rem; position: relative;" >
+                        <input  :placeholder="b.link?b.link:'您要顯示動線的網頁連結'" v-model="b.link" style="border: none; outline:none; width: 100%" class="p-0 input-link"  @focus="showEditIcon = bIdx" @blur="showEditIcon = null">
+                        <svg  v-if="showEditIcon === bIdx" class="edit-icon inline-block" viewBox="0 0 24 24" width="20px" height="20px"  >
+                          <path fill="currentColor" :d="mdiPencilOutline" />
+                        </svg>
+                      </div>
+                      <button class="btn btn-primary mr-2" type="button" @click="updateLink(b.link)">更新</button>
+                    </div>
 
                 </div>
                     <!-- delete -->
@@ -619,7 +642,7 @@ api.getTagGroupList();
                         </button>
                         </div>
 
-                        <!-- <div class="h3 text-danger d-inline-flex align-items-center cursor-pointer mb-0"
+                        <div class="h3 text-danger d-inline-flex align-items-center cursor-pointer mb-0"
                              @click="setEditBrand(b, true, 'deleteModal')">
                             <svg xmlns="http://www.w3.org/2000/svg"
                                  width="0.9em"
@@ -628,7 +651,7 @@ api.getTagGroupList();
                                 <path fill="currentColor"
                                       d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6zM19 4h-3.5l-1-1h-5l-1 1H5v2h14z" />
                             </svg>
-                        </div> -->
+                        </div>
                          
 
                     </div>
@@ -636,6 +659,10 @@ api.getTagGroupList();
             </div>
         </div>
     </div>
+    
+
+   
+
     <div class="row">
       <!-- ADD NEW -->
       <div class="col-12 mb-3">
@@ -662,140 +689,6 @@ api.getTagGroupList();
           </div>
       </div>      
     </div>
-
-        <!-- link holder -->
-    <div v-for="(b,bIdx) in api.brandList"
-         :key="bIdx"
-         class="row mb-3">
-        <!-- render tags -->
-        <div class="col-12 ">
-            <div class="h-100 flex-grow-1 bg-white rounded container-fluid">
-                <div class="row d-flex align-items-center py-4">
-                    <!-- img -->
-                    <div class="col-2 col-md-1 flex-grow-0 mb-4 mb-md-0 px-3">
-                        <div class="profile-img m-0" style="border-style:none;  box-shadow : rgba(0,0,0,0.15) 0 2px 8px;">
-                            <div class="img-circle-wrapper">
-                                <div class="img-circle img-fluid bg-gray-light"
-                                     :class="authStore.MainConfig.Logo ? '' : 'd-none'"></div>
-                                <img class="img-circle img-fluid"
-                                     :class="authStore.MainConfig.Logo ? '' : 'd-none'"
-                                     :src="authStore.MainConfig.Logo"
-                                     alt="">
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="flex-row col-7 col-md-2 text-body font-bold mb-4 mb-md-0 px-0" style="white-space: nowrap; overflow-x: scroll; -ms-overflow-style: none; scrollbar-width: none; display:flex; " >
-                      <span class="ItemName-width" style="white-space: nowrap; overflow-x: scroll; -ms-overflow-style: none; scrollbar-width: none; display:flex; width:calc(100% - 16px)">{{authStore.MainConfig.BrandName}}</span>
-                      <!-- url -->
-                      <a href="product.Link" target="_blank" style="display:flex; padding-left: 3px; ">
-                      <svg viewBox="0 0 24 24" width="20px" height="20px" class="inline-block">
-                        <path fill="currentColor" :d="mdiOpenInNew" />
-                      </svg>
-                      </a>
-                    </div>
-
-                  <div class="col-3 d-flex d-md-none text-right align-items-center mb-4" style="justify-content:flex-end">
-                    <!-- preview -->
-                    <div class="d-flex d-md-none mx-3" >
-                      <div class="flex-shrink-0 mr-1" style="display:inline-flex">
-                
-                        <button class="btn h4 mb-0 pl-2 bg-white border d-flex align-items-center justify-content-center rounded-pill rounded-md-circle"
-                                type="button"
-                                @click="()=>{preview( b);}"
-                                style="  box-shadow : rgba(0,0,0,0.15) 0 2px 8px; font-size:12px
-                                "
-                                v-tooltip="tooltipText"
-                                :disabled="(b.Routes&&b.Routes.length === 0)"
-                                >
-                              <img src="@/img/inffits_f_black.png" alt="f" class="m-1" style="height: 10px; width:auto; vertical-align: middle; margin-right: 3px; "> 預覽
-                        </button>
-                        </div>
-                    </div>
-
-                  </div>
-
-                    
-
-                  <div class="col-12 px-md-0 col-md flex-shrink-0 flex-grow-1 d-flex flex-column flex-md-row align-items-center " style="justify-content: start;" >
-                    <!-- route -->
-                  
-                    <div class="dropdown mr-md-1 mr-lg-1 mb-1 mb-md-0 ml-md-1 px-0 border rounded-pill btn brand-route-choose"
-                    style="color: gray; text-align: left;">
-                    <span class="w-100"
-                    type="button"
-                      data-toggle="dropdown"
-                        aria-expanded="false">
-                        
-                        <button class="pl-2"
-                        style="color: gray; white-space: nowrap; overflow-x: scroll; -ms-overflow-style: none; scrollbar-width: none; width: calc(100% - 1em);">
-                            {{(b.Routes[0]&&Object.keys(b.Routes[0]).length !== 0)?getRouteName(b.Routes, b):'選擇動線'}}
-                        </button>
-                        <button class="dropdown-toggle">
-                        </button>
-                    </span>
-
-                    <div class="dropdown-menu" id="brand-route-menu" >
-                      <div class="dropdown-item"
-                           disabled>
-                          選擇欲顯示的詢問動線
-                      </div>
-                      <div v-for="(route,idx) in api.routeList"
-                           :key="route.Route"
-                           class="dropdown-item"
-                           @click="setProductRoute(b, route)">
-                          {{route.Name}} ({{route.TagGroups_order.join(' - ')}})
-                      </div>
-                  </div>
-
-                    </div>   
-
-
-                    <input class="container-fluid px-0 mr-md-2 border py-1 px-2" style="border-radius: 13px; min-height:39px"  :placeholder="b.link?b.link:'您要顯示動線的網頁連結'" v-model="b.link">
-                
-
-                      
-
-                </div>
-
-                
-                
-                    <!-- delete -->
-                    <div class="d-none d-md-flex col-auto text-right pr-2 pl-0 align-items-center">
-                        <!-- preview tag button-->
-                         <div class="flex-shrink-0 mr-1" style="display:inline-flex">
-                
-                        <button class="btn h4 mb-0 pl-2 bg-white border d-flex align-items-center justify-content-center rounded-pill rounded-md-circle"
-                                type="button"
-                                @click="()=>{preview( b);}"
-                                style="  box-shadow : rgba(0,0,0,0.15) 0 2px 8px; font-size:12px"
-                                v-tooltip="tooltipText"
-                                :disabled="(b.Routes&&b.Routes.length === 0)"
-                                >
-                              <img src="@/img/inffits_f_black.png" alt="f" class="m-1" style="height: 10px; width:auto; vertical-align: middle; margin-right: 3px; "> 預覽
-                        </button>
-                        </div>
-
-                        <!-- <div class="h3 text-danger d-inline-flex align-items-center cursor-pointer mb-0"
-                             @click="setEditBrand(b, true, 'deleteModal')">
-                            <svg xmlns="http://www.w3.org/2000/svg"
-                                 width="0.9em"
-                                 height="0.9em"
-                                 viewBox="0 0 24 24">
-                                <path fill="currentColor"
-                                      d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6zM19 4h-3.5l-1-1h-5l-1 1H5v2h14z" />
-                            </svg>
-                        </div> -->
-                         
-
-                    </div>
-                </div>
-            </div>
-        </div>
-
-
-    </div>
-
 </div>
 
 
@@ -1803,6 +1696,13 @@ html body .font-bold{
   .w100-max768{
     width: 100%;
   }
+  .flex-1-max-768{
+    flex: 1;
+  }
+
+  .w100-max768-link{
+    width: 100% !important;
+  }
 
 }
 @media (min-width: 768px) {
@@ -2026,6 +1926,18 @@ html body .font-bold{
 
 .route-box:hover, .choosed_route {
   background-color: #ececec;
+}
+.edit-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #999;
+  font-size: 16px;
+}
+.input-link:focus{
+  box-shadow: none;
 }
 </style>
 

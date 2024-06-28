@@ -76,8 +76,8 @@ const submitPass = async () => {
       <!-- user img and inform -->
 
     
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
+      <div class="grid grid-cols-1 gap-6">
+<!-- lg:grid-cols-2 -->
         <!-- change profile -->
         <!-- <CardBox is-form @submit.prevent="submitProfile">
           <FormField label="Avatar" help="Max 500kb">
